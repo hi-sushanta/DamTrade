@@ -1,35 +1,13 @@
+
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'pages/second.dart';
+import 'third.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: MyHomePage(), // Replace with your actual class name
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
+class SecondScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-        
-
           // Option 2: Setting Image height to full (with aspect ratio)
           Image.asset(
             'assets/sushanta.jpeg',
@@ -73,7 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () {
                     // Handle button 2 press
                     Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => SecondScreen()));
+                    MaterialPageRoute(builder: (context) => ThirdScreen()),);
 
                   },
                   child: Text(
@@ -91,8 +69,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
 
             ),
-        ],  
-      ),
-    );
+        ],
+      ),  
+      );
   }
 }
