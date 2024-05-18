@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'third.dart';
-
+import 'AuthService.dart';
 class SecondScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -26,6 +26,8 @@ class SecondScreen extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     // Handle button 1 press
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => AuthService().handleAuthState()));
                   },
                   child: const Text(
                     'Skip',

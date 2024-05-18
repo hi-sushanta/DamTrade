@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'pages/second.dart';
+import "pages/AuthService.dart";
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+
+void main() async {
+  // calling of runApp
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
   runApp(const MyApp());
 }
 
@@ -23,13 +30,13 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+    //String? user = FirebaseAuth.instance.currentUser!.email ?? FirebaseAuth.instance.currentUser!.displayName;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-        
-
           // Option 2: Setting Image height to full (with aspect ratio)
           Image.asset(
             'assets/sushanta.jpeg',
@@ -48,6 +55,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 ElevatedButton(
                   onPressed: () {
                     // Handle button 1 press
+                    Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AuthService().handleAuthState()));
                   },
                   child: const Text(
                     'Skip',
@@ -96,3 +105,4 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
