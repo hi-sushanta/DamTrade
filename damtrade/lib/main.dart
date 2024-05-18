@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'pages/second.dart';
-import "pages/AuthService.dart";
-import 'package:firebase_core/firebase_core.dart';
 
 
 void main() async {
   // calling of runApp
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-
   runApp(const MyApp());
 }
 
@@ -45,61 +39,38 @@ class _MyHomePageState extends State<MyHomePage> {
             width: double.infinity
           ),
           // Container for buttons with positioning
-          Positioned(
-            left: 30.0,
-            bottom: 30.0, // Adjust spacing as needed
-            width: 100,
-            height:55.0,
-            
-            child: 
-                ElevatedButton(
-                  onPressed: () {
+            Positioned(
+                  child:Container(
+                    margin:const EdgeInsets.only(bottom:20.0),
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    widthFactor: 50.0,
+                    child: ElevatedButton(
+                      onPressed: () {
                     // Handle button 1 press
-                    Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AuthService().handleAuthState()));
-                  },
+                    //  Navigator.push(context,
+                    // MaterialPageRoute(builder: (context) => AuthService().handleAuthState()));
+
+                    },
                   child: const Text(
-                    'Skip',
+                    'Next',
                     style: TextStyle(color:Color.fromARGB(255, 0, 0, 0),
                     fontSize: 16)
                     ),
+
                    style: ElevatedButton.styleFrom(
+                    fixedSize: Size(120.0, 55.0),
                 backgroundColor: Color.fromARGB(255, 234, 234, 234), // Set button color
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0)
-                )
-              ),
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                ),
                   
                 ),
-             ), // Add spacing between buttons
-             Positioned(
-              right:30.0,
-              bottom:30.0,
-              width: 120.0,
-              height: 55.0,
-              child:
-                ElevatedButton(
-                  onPressed: () {
-                    // Handle button 2 press
-                    Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => SecondScreen()));
-
-                  },
-                  child: Text(
-                    'Next',
-                    style: TextStyle(color: Color.fromARGB(225, 255, 255, 255),
-                    fontSize: 16)
-                    ),
-                  style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromARGB(255, 0, 0, 0), // Set button color
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0)
                   ),
-              ),
-                  
-                ),
-
-            ),
+                  ),
+            )
+                
         ],  
       ),
     );
