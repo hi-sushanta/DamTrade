@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "467721621108",
+    "project_id": "damtrade-c06f8",
+    "storage_bucket": "damtrade-c06f8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:467721621108:android:f8ca7249f78e51ef8b0b21",
+        "android_client_info": {
+          "package_name": "dam.trade.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAd21jAwm5Cz5q1ZMQRE5pfBCSshgQqDLE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
