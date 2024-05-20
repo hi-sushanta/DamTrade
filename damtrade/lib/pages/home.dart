@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
-
+import "package:flutter/widgets.dart";
+import "tab_bar_modify.dart";
 
 void main() => runApp(const Home());
 
@@ -10,66 +11,152 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: MyHomePage(), // Replace with your actual class name
+      home: HomePage(), // Replace with your actual class name
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class HomePage extends StatefulWidget {
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
     //String? user = FirebaseAuth.instance.currentUser!.email ?? FirebaseAuth.instance.currentUser!.displayName;
+  late final TabController _tabController;
+
+  var titles = ["watchlist1","watchlist2","watchlist3","watchlist4","watchlist5","watchlist6","watchlist7","watchlist8",'watchlist9',"watchlist10"];
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: titles.length, vsync: this);
+  }
+  
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Option 2: Setting Image height to full (with aspect ratio)
-          Image.asset(
-            'assets/sushanta.jpeg',
-            fit: BoxFit.cover,
-            height: double.infinity,
-            width: double.infinity
-          ),
-          // Container for buttons with positioning
-            Positioned(
-                  child:Container(
-                    margin:const EdgeInsets.only(bottom:20.0),
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    widthFactor: 50.0,
-                    child: ElevatedButton(
-                      onPressed: () {
-                    // Handle button 1 press
-                     
-
-                    },
-                  child: const Text(
-                    'Next',
-                    style: TextStyle(color:Color.fromARGB(255, 0, 0, 0),
-                    fontSize: 16)
-                    ),
-
-                   style: ElevatedButton.styleFrom(
-                    fixedSize: Size(120.0, 55.0),
-                backgroundColor: Color.fromARGB(255, 234, 234, 234), // Set button color
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                ),
-                  
-                ),
-                  ),
-                  ),
-            )
-                
-        ],  
+        appBar: AppBar(
+        title: const Text("Watch Stock"),
+       bottom: TabBar(
+          controller: _tabController,
+          isScrollable: true,
+          tabAlignment: TabAlignment.start,
+          tabs: titles.map((title) => _buildTab(title)).toList(),
+            // tabs: <Widget>[
+            //   Tab(
+            //     icon: const Icon(Icons.cloud_outlined),
+            //     text: titles[0],
+            //   ),
+            //   Tab(
+            //     icon: const Icon(Icons.beach_access_sharp),
+            //     text: titles[1],
+            //   ),
+            //   Tab(
+            //     icon: const Icon(Icons.brightness_5_sharp),
+            //     text: titles[2],
+            //   ),
+            //   Tab(
+            //     icon: const Icon(Icons.access_alarm),
+            //     text: titles[3],
+            //   ),
+            //   Tab(
+            //     icon: Icon(Icons.access_alarm_rounded),
+            //     text: titles[4],
+            //   ),
+            // ],
       ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: <Widget>[
+          ListView.builder(
+            itemBuilder: (context, index) => ListTile(
+              title: Text('Item ${index + 1} of ${titles[index]}'),
+            ),
+            itemCount: 10, // Sample list items
+          ),
+          ListView.builder(
+            itemBuilder: (context, index) => ListTile(
+              title: Text('Item ${index + 1} of ${titles[index]}'),
+            ),
+            itemCount: 10, // Sample list items
+          ),
+          ListView.builder(
+            itemBuilder: (context, index) => ListTile(
+              title: Text('Item ${index + 1} of ${titles[index]}'),
+            ),
+            itemCount: 10, // Sample list items
+          ),
+          ListView.builder(
+            itemBuilder: (context, index) => ListTile(
+              title: Text('Item ${index + 1} of ${titles[index]}'),
+            ),
+            itemCount: 10, // Sample list items
+          ),
+          ListView.builder(
+            itemBuilder: (context, index) => ListTile(
+              title: Text('Item ${index + 1} of ${titles[index]}'),
+            ),
+            itemCount: 10, // Sample list items
+          ),
+          ListView.builder(
+            itemBuilder: (context, index) => ListTile(
+              title: Text('Item ${index + 1} of ${titles[index]}'),
+            ),
+            itemCount: 10, // Sample list items
+          ),
+          ListView.builder(
+            itemBuilder: (context, index) => ListTile(
+              title: Text('Item ${index + 1} of ${titles[index]}'),
+            ),
+            itemCount: 10, // Sample list items
+          ),
+          ListView.builder(
+            itemBuilder: (context, index) => ListTile(
+              title: Text('Item ${index + 1} of ${titles[index]}'),
+            ),
+            itemCount: 10, // Sample list items
+          ),
+          ListView.builder(
+            itemBuilder: (context, index) => ListTile(
+              title: Text('Item ${index + 1} of ${titles[index]}'),
+            ),
+            itemCount: 10, // Sample list items
+          ),
+          ListView.builder(
+            itemBuilder: (context, index) => ListTile(
+              title: Text('Item ${index + 1} of ${titles[index]}'),
+            ),
+            itemCount: 10, // Sample list items
+          ),
+        ],
+      ),
+     
     );
   }
+
+  Widget _buildTab(String title) {
+    return GestureDetector(
+      onLongPress: () {
+        // Navigate to DetailsPage on long press
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const TabBarDesging()), // Pass title as data
+        );
+      },
+      child: Tab(
+        text: title,
+      ),
+    );
+  }  
 }
 
+class WatchlistItem {
+  
+}

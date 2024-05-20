@@ -2,6 +2,8 @@ import 'package:damtrade/firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'pages/auth_gate.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'pages/home.dart';
 
 void main() async {
   // calling of runApp
@@ -30,10 +32,19 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
     //String? user = FirebaseAuth.instance.currentUser!.email ?? FirebaseAuth.instance.currentUser!.displayName;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return StreamBuilder<User?>(
+      stream: _auth.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData){
+          print(snapshot.hasData);
+          return const Home();
+        }
+        else{
+          return Scaffold(
       body: Stack(
         children: [
           // Option 2: Setting Image height to full (with aspect ratio)
@@ -79,6 +90,10 @@ class _MyHomePageState extends State<MyHomePage> {
         ],  
       ),
     );
+        }
+      },
+    );
+
   }
 }
 
