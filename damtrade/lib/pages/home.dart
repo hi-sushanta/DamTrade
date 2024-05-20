@@ -1,4 +1,6 @@
 
+
+import "package:flutter/foundation.dart";
 import 'package:flutter/material.dart';
 import "package:flutter/widgets.dart";
 import "tab_bar_modify.dart";
@@ -24,12 +26,15 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
     //String? user = FirebaseAuth.instance.currentUser!.email ?? FirebaseAuth.instance.currentUser!.displayName;
   late final TabController _tabController;
+  final TextEditingController _searchController = TextEditingController();
 
-  var titles = ["watchlist1","watchlist2","watchlist3","watchlist4","watchlist5","watchlist6","watchlist7","watchlist8",'watchlist9',"watchlist10"];
+
+  // var titles = ["watchlist1","watchlist2","watchlist3","watchlist4","watchlist5","watchlist6","watchlist7","watchlist8",'watchlist9',"watchlist10"];
+ var watchlist = WatchlistItem();
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: titles.length, vsync: this);
+    _tabController = TabController(length: watchlist.titles.length, vsync: this);
   }
   
   @override
@@ -41,13 +46,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+       
         appBar: AppBar(
         title: const Text("Watch Stock"),
        bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
           tabAlignment: TabAlignment.start,
-          tabs: titles.map((title) => _buildTab(title)).toList(),
+          tabs: watchlist.titles.map((title) => _buildTab(title)).toList(),
             // tabs: <Widget>[
             //   Tab(
             //     icon: const Icon(Icons.cloud_outlined),
@@ -72,72 +78,96 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
             // ],
       ),
       ),
-      body: TabBarView(
+
+      body:  Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: const InputDecoration(
+                hintText: "Search Watchlist",
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (value) {
+                debugPrint(value); //Note
+                
+                // Implement search logic based on user input (value)
+              },
+            ),
+          ),
+         Expanded( // Use Expanded widget for flexible sizing
+            child:TabBarView(
         controller: _tabController,
         children: <Widget>[
           ListView.builder(
             itemBuilder: (context, index) => ListTile(
-              title: Text('Item ${index + 1} of ${titles[index]}'),
+              title: Text('Item ${index + 1} of ${watchlist.titles[index]}'),
+              ),
+             
+            itemCount: 10, // Sample list items
+          ),
+          ListView.builder(
+            itemBuilder: (context, index) => ListTile(
+              title: Text('Item ${index + 1} of ${watchlist.titles[index]}'),
             ),
             itemCount: 10, // Sample list items
           ),
           ListView.builder(
             itemBuilder: (context, index) => ListTile(
-              title: Text('Item ${index + 1} of ${titles[index]}'),
+              title: Text('Item ${index + 1} of ${watchlist.titles[index]}'),
             ),
             itemCount: 10, // Sample list items
           ),
           ListView.builder(
             itemBuilder: (context, index) => ListTile(
-              title: Text('Item ${index + 1} of ${titles[index]}'),
+              title: Text('Item ${index + 1} of ${watchlist.titles[index]}'),
             ),
             itemCount: 10, // Sample list items
           ),
           ListView.builder(
             itemBuilder: (context, index) => ListTile(
-              title: Text('Item ${index + 1} of ${titles[index]}'),
+              title: Text('Item ${index + 1} of ${watchlist.titles[index]}'),
             ),
             itemCount: 10, // Sample list items
           ),
           ListView.builder(
             itemBuilder: (context, index) => ListTile(
-              title: Text('Item ${index + 1} of ${titles[index]}'),
+              title: Text('Item ${index + 1} of ${watchlist.titles[index]}'),
             ),
             itemCount: 10, // Sample list items
           ),
           ListView.builder(
             itemBuilder: (context, index) => ListTile(
-              title: Text('Item ${index + 1} of ${titles[index]}'),
+              title: Text('Item ${index + 1} of ${watchlist.titles[index]}'),
             ),
             itemCount: 10, // Sample list items
           ),
           ListView.builder(
             itemBuilder: (context, index) => ListTile(
-              title: Text('Item ${index + 1} of ${titles[index]}'),
+              title: Text('Item ${index + 1} of ${watchlist.titles[index]}'),
             ),
             itemCount: 10, // Sample list items
           ),
           ListView.builder(
             itemBuilder: (context, index) => ListTile(
-              title: Text('Item ${index + 1} of ${titles[index]}'),
+              title: Text('Item ${index + 1} of ${watchlist.titles[index]}'),
             ),
             itemCount: 10, // Sample list items
           ),
           ListView.builder(
             itemBuilder: (context, index) => ListTile(
-              title: Text('Item ${index + 1} of ${titles[index]}'),
-            ),
-            itemCount: 10, // Sample list items
-          ),
-          ListView.builder(
-            itemBuilder: (context, index) => ListTile(
-              title: Text('Item ${index + 1} of ${titles[index]}'),
+              title: Text('Item ${index + 1} of ${watchlist.titles[index]}'),
             ),
             itemCount: 10, // Sample list items
           ),
         ],
       ),
-     
+         ),
+        ],
+      ),
+      
     );
   }
 
@@ -158,5 +188,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
 }
 
 class WatchlistItem {
+  var titles = ["watchlist1","watchlist2","watchlist3","watchlist4","watchlist5","watchlist6","watchlist7","watchlist8",'watchlist9',"watchlist10"];
+  var item = [];
   
 }
