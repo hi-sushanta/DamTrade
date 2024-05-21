@@ -4,7 +4,7 @@ import "package:flutter/foundation.dart";
 import 'package:flutter/material.dart';
 import "package:flutter/widgets.dart";
 import "tab_bar_modify.dart";
-
+import 'watch_list_info.dart';
 void main() => runApp(const Home());
 
 class Home extends StatelessWidget {
@@ -29,12 +29,21 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   final TextEditingController _searchController = TextEditingController();
 
 
-  // var titles = ["watchlist1","watchlist2","watchlist3","watchlist4","watchlist5","watchlist6","watchlist7","watchlist8",'watchlist9',"watchlist10"];
- var watchlist = WatchlistItem();
+  var titles = ["watchlist1","watchlist2","watchlist3","watchlist4","watchlist5","watchlist6","watchlist7","watchlist8",'watchlist9',"watchlist10"];
+  List<WatchlistItem> watchlist = [WatchlistItem("watchlist1",["jio","reliance","tata"]),
+                 WatchlistItem("watchlist1",["jio","reliance","tata"]),
+                 WatchlistItem("watchlist1",["jio","reliance","tata"]),
+                 WatchlistItem("watchlist1",["jio","reliance","tata"]),
+                 WatchlistItem("watchlist1",["jio","reliance","tata"]),
+                 WatchlistItem("watchlist1",["jio","reliance","tata"]),
+                 WatchlistItem("watchlist1",["jio","reliance","tata"]),
+                 WatchlistItem("watchlist1",["jio","reliance","tata"]),
+                 WatchlistItem("watchlist1",["jio","reliance","tata"]),
+                 WatchlistItem("watchlist1",["jio","reliance","tata"])];
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: watchlist.titles.length, vsync: this);
+    _tabController = TabController(length: watchlist.length, vsync: this);
   }
   
   @override
@@ -42,9 +51,31 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
     _tabController.dispose();
     super.dispose();
   }
+  
+  List nameWatchlist(){
+    List<String> item = [];
+    for (int i=0; i < 10; i++){
+      item.add(watchlist[i].name.toString());
+    }
+    return item;
+  }
 
+  void updateMyWatchList(int oldIndex,int newIndex,index){
+    setState(() {
+      // an adjustment is needed when moving the item down the list
+      if (oldIndex < newIndex){
+        newIndex--;
+      }
+      // get the list are moving
+      final item = watchlist[index].stock.removeAt(oldIndex);
+
+      // place the list are new position
+      watchlist[index].stock.insert(newIndex, item);
+    });
+  }
   @override
   Widget build(BuildContext context) {
+    var item = nameWatchlist();
     return Scaffold(
        
         appBar: AppBar(
@@ -53,7 +84,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
           controller: _tabController,
           isScrollable: true,
           tabAlignment: TabAlignment.start,
-          tabs: watchlist.titles.map((title) => _buildTab(title)).toList(),
+          tabs: item.map((title) => _buildTab(title)).toList(),//watchlist.map((stock) => _buildTab(stock)).toList(),
             // tabs: <Widget>[
             //   Tab(
             //     icon: const Icon(Icons.cloud_outlined),
@@ -101,67 +132,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
             child:TabBarView(
         controller: _tabController,
         children: <Widget>[
-          ListView.builder(
-            itemBuilder: (context, index) => ListTile(
-              title: Text('Item ${index + 1} of ${watchlist.titles[index]}'),
+          for (int i=0; i < 10; i++ )
+            ReorderableListView(children:[ 
+              for (final item in watchlist[i].stock)
+              ListTile(
+                key: ValueKey(item),
+                title: Text(item),
               ),
-             
-            itemCount: 10, // Sample list items
+          ],
+          onReorder: (oldIndex, newIndex) => updateMyWatchList(oldIndex,newIndex,i),
           ),
-          ListView.builder(
-            itemBuilder: (context, index) => ListTile(
-              title: Text('Item ${index + 1} of ${watchlist.titles[index]}'),
-            ),
-            itemCount: 10, // Sample list items
-          ),
-          ListView.builder(
-            itemBuilder: (context, index) => ListTile(
-              title: Text('Item ${index + 1} of ${watchlist.titles[index]}'),
-            ),
-            itemCount: 10, // Sample list items
-          ),
-          ListView.builder(
-            itemBuilder: (context, index) => ListTile(
-              title: Text('Item ${index + 1} of ${watchlist.titles[index]}'),
-            ),
-            itemCount: 10, // Sample list items
-          ),
-          ListView.builder(
-            itemBuilder: (context, index) => ListTile(
-              title: Text('Item ${index + 1} of ${watchlist.titles[index]}'),
-            ),
-            itemCount: 10, // Sample list items
-          ),
-          ListView.builder(
-            itemBuilder: (context, index) => ListTile(
-              title: Text('Item ${index + 1} of ${watchlist.titles[index]}'),
-            ),
-            itemCount: 10, // Sample list items
-          ),
-          ListView.builder(
-            itemBuilder: (context, index) => ListTile(
-              title: Text('Item ${index + 1} of ${watchlist.titles[index]}'),
-            ),
-            itemCount: 10, // Sample list items
-          ),
-          ListView.builder(
-            itemBuilder: (context, index) => ListTile(
-              title: Text('Item ${index + 1} of ${watchlist.titles[index]}'),
-            ),
-            itemCount: 10, // Sample list items
-          ),
-          ListView.builder(
-            itemBuilder: (context, index) => ListTile(
-              title: Text('Item ${index + 1} of ${watchlist.titles[index]}'),
-            ),
-            itemCount: 10, // Sample list items
-          ),
-          ListView.builder(
-            itemBuilder: (context, index) => ListTile(
-              title: Text('Item ${index + 1} of ${watchlist.titles[index]}'),
-            ),
-            itemCount: 10, // Sample list items
-          ),
+          
         ],
       ),
          ),
@@ -187,8 +168,4 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   }  
 }
 
-class WatchlistItem {
-  var titles = ["watchlist1","watchlist2","watchlist3","watchlist4","watchlist5","watchlist6","watchlist7","watchlist8",'watchlist9',"watchlist10"];
-  var item = [];
-  
-}
+
