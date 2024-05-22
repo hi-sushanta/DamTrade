@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:damtrade/firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -11,6 +12,7 @@ void main() async {
  await Firebase.initializeApp(
    options: DefaultFirebaseOptions.currentPlatform,
  );
+ 
   runApp(const MyApp());
 }
 
@@ -33,7 +35,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
     //String? user = FirebaseAuth.instance.currentUser!.email ?? FirebaseAuth.instance.currentUser!.displayName;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
