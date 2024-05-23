@@ -38,12 +38,67 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
     //String? user = FirebaseAuth.instance.currentUser!.email ?? FirebaseAuth.instance.currentUser!.displayName;
-  late final TabController _tabController;
+  int _selectedIndex = 0; // Track the selected index for the navigation bar
+  final List<Widget> _pages = [
+    BaseHome(), // Replace with your content widget for Home
+    SecondPageContent(), // Replace with your content widget for second tab
+    ThirdPageContent(), // Replace with your content widget for third tab
+    FourthPageContent(), // Replace with your content widget for fourth tab
+  ];
+  @override
+  Widget build(BuildContext context) {
+    final counterRef = FirebaseFirestore.instance.collection(userId);
 
-  final TextEditingController _searchController = TextEditingController();
+    return Scaffold(
+        body: _pages[_selectedIndex], // Display content based on selected index
+        bottomNavigationBar: NavigationBar(
+        onDestinationSelected: (int index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+      
+        },
+        indicatorColor: Colors.amber,
+        selectedIndex: _selectedIndex,
+        destinations: const <Widget>[
+          NavigationDestination(
+            selectedIcon: Icon(Icons.home),
+            icon: Icon(Icons.home_outlined),
+            label: 'Home',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.shopping_basket_sharp),
+            label: 'Busket',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.alarm),
+            label: 'Alart',
+          ),
+          NavigationDestination(
+            icon:Icon(Icons.info), 
+            label: "Account")
+        ],
+        
+      ), 
+       
+    );
+  }
+
+  
+}
+
+class BaseHome extends StatefulWidget {
+  @override
+  HomePageBar createState() => HomePageBar();
+}
+
+class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
+  late final TabController _tabController;
+    final TextEditingController _searchController = TextEditingController();
   var titles = ["watchlist1","watchlist2","watchlist3","watchlist4","watchlist5","watchlist6","watchlist7","watchlist8",'watchlist9',"watchlist10"];
   
   WatchlistItem watchlist = WatchlistItem(userId);
+
   @override
   void initState() {
     super.initState();
@@ -77,44 +132,23 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
       watchlist.data["data"]![userId]![index].insert(newIndex, item);
     });
   }
+
   @override
   Widget build(BuildContext context) {
-    final counterRef = FirebaseFirestore.instance.collection(userId);
-    
     var item = nameWatchlist();
-    return Scaffold(
-        appBar: AppBar(
+
+   return Scaffold(
+      appBar: AppBar(
         title: const Text("Watch Stock"),
        bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
           tabAlignment: TabAlignment.start,
           tabs: item.map((title) => _buildTab(title)).toList(),
-            // tabs: <Widget>[
-            //   Tab(
-            //     icon: const Icon(Icons.cloud_outlined),
-            //     text: titles[0],
-            //   ),
-            //   Tab(
-            //     icon: const Icon(Icons.beach_access_sharp),
-            //     text: titles[1],
-            //   ),
-            //   Tab(
-            //     icon: const Icon(Icons.brightness_5_sharp),
-            //     text: titles[2],
-            //   ),
-            //   Tab(
-            //     icon: const Icon(Icons.access_alarm),
-            //     text: titles[3],
-            //   ),
-            //   Tab(
-            //     icon: Icon(Icons.access_alarm_rounded),
-            //     text: titles[4],
-            //   ),
-            // ],
-      ),
-      ),
 
+      ),
+      ),
+      
         body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) => [
           SliverAppBar(
@@ -171,10 +205,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
           
         ],
       ),
-        ),  
-    );
+        ),
+   );
   }
-
   Widget _buildTab(String title) {
     return GestureDetector(
       onLongPress: () {
@@ -189,9 +222,30 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
       ),
     );
   } 
-  
 }
 
+
+
+class SecondPageContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Text('Second Page Content'));
+  }
+}
+
+class ThirdPageContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Text('Third Page Content'));
+  }
+}
+
+class FourthPageContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Text('Fourth Page Content'));
+  }
+}
 
 
 
