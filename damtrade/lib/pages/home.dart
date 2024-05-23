@@ -96,7 +96,7 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
   late final TabController _tabController;
     final TextEditingController _searchController = TextEditingController();
   var titles = ["watchlist1","watchlist2","watchlist3","watchlist4","watchlist5","watchlist6","watchlist7","watchlist8",'watchlist9',"watchlist10"];
-  
+  List<String>price_info = ["7.10","0.53%","^","1337.50"];
   WatchlistItem watchlist = WatchlistItem(userId);
 
   @override
@@ -104,6 +104,9 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
     super.initState();
     _tabController = TabController(length: watchlist.data["data"]![userId]![0].length, vsync: this);
   }
+
+  int get tabControllerLength => watchlist.data["data"]![userId]![0].length;
+
   
   @override
   void dispose() {
@@ -136,7 +139,8 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
   @override
   Widget build(BuildContext context) {
     var item = nameWatchlist();
-
+    final Color oddItemColor = Colors.lime.shade100;
+    
    return Scaffold(
       appBar: AppBar(
         title: const Text("Watch Stock"),
@@ -150,7 +154,7 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
       ),
       
         body: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) => [
+        headerSliverBuilder: (BuildContext contex, bool innerBoxIsScrolled) => [
           SliverAppBar(
             floating: true, // Ensures the search bar remains visible
             expandedHeight: kToolbarHeight, // Adjust height if needed
@@ -159,7 +163,7 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
               child: TextField(
                 controller: _searchController,
                 decoration: const InputDecoration(
-                  hintText: "Search Watchlist",
+                  hintText: "Search Stock",
                   prefixIcon: Icon(Icons.search),
                   border: OutlineInputBorder(),
                 ),
@@ -178,21 +182,62 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
           children: [ Expanded( // Use Expanded widget for flexible sizing
                       child:TabBarView(
                       controller: _tabController,
-                      children: <Widget>[
-                      for (int i=1; i <= 10; i++ )
+                      children: [
+                      for (int i=1; i <= tabControllerLength; i++ )
                             // SingleChildScrollView(
-                              ReorderableListView(
+                              
+                               ReorderableListView(
+                                
+                              
                                 children:[ 
-                                  for (final item in watchlist.data["data"]![userId]![i])
-                                      
-                                      ListTile(
-                                        key: ValueKey(item),
-                                        title: Text(item),
+                                  
+                                  for (String item in watchlist.data["data"]![userId]![i])
+      
+                                      Card(
+                                      key: ValueKey<String>(item),
+                                      color: oddItemColor,
+                                      child: Padding(
+                                      padding: const EdgeInsets.all(8.0), // Adjust padding as needed
+                                      child: Row(
+                                        children: [
+                                          // Padding(
+                                          // padding: EdgeInsets.all(8.0),
+                                          Expanded(
+                                            flex: 2,
+                                            child:Padding(
+                                              padding: EdgeInsets.all(8.0),
+                                          
+                                              child: Text(item,)
+                                            ),
+                                            ),
+                                          //  ), // Left text takes 2/6 of space
+                                          Expanded(
+                                            flex: 4,
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.end,
+
+                                              crossAxisAlignment: CrossAxisAlignment.end, // Align texts to right
+                                              children: [
+                                                _buildValueRow("${price_info[0]}"),
+                                                _buildValueRow("${price_info[1]}"),
+                                                _buildValueRow("${price_info[2]}"),
+                                                _buildValueRow("${price_info[3]}")
+                                              ]
+                                            ),
+                                          ),
+                                        ],
                                       ),
+                                    ),
+
+                                      )
+
+                                      // ),
 
                                 ],
                                 onReorder: (oldIndex, newIndex) => updateMyWatchList(oldIndex,newIndex,i),
                               ),
+                                             
+                              
           
 
 
@@ -208,6 +253,17 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
         ),
    );
   }
+
+  Widget _buildValueRow(String value) {
+    return Padding(padding: EdgeInsets.all(8.0),
+        child: Text(
+          value.split(' ').last, // Extract numerical value
+          style: const TextStyle(fontSize: 16.0),
+        ),
+        );
+      
+  }
+
   Widget _buildTab(String title) {
     return GestureDetector(
       onLongPress: () {
