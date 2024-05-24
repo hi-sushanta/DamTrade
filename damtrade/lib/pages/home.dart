@@ -1,5 +1,7 @@
 
 
+import "dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart";
+
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:firebase_core/firebase_core.dart";
@@ -12,13 +14,14 @@ import 'watch_list_info.dart';
 
 
 final userId = FirebaseAuth.instance.currentUser!.uid;
+final WatchlistItem watchlist = WatchlistItem(userId);
 
-void main() async{
-  WidgetsFlutterBinding.ensureInitialized();
- await Firebase.initializeApp();
+// void main() async{
+//   WidgetsFlutterBinding.ensureInitialized();
+//  await Firebase.initializeApp();
 
-  runApp(const Home());
-}
+//   runApp(const Home());
+// }
 
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
@@ -95,17 +98,20 @@ class BaseHome extends StatefulWidget {
 class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
   late final TabController _tabController;
     final TextEditingController _searchController = TextEditingController();
-  var titles = ["watchlist1","watchlist2","watchlist3","watchlist4","watchlist5","watchlist6","watchlist7","watchlist8",'watchlist9',"watchlist10"];
+  // var titles = ["watchlist1","watchlist2","watchlist3","watchlist4","watchlist5","watchlist6","watchlist7","watchlist8",'watchlist9',"watchlist10"];
   List<String>price_info = ["7.10","0.53%","^","1337.50"];
-  WatchlistItem watchlist = WatchlistItem(userId);
+  late List? item;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: watchlist.data["data"]![userId]![0].length, vsync: this);
+    _tabController = TabController(length: watchlist!.data["data"]![userId]![0].length, vsync: this);
+    item = this.nameWatchlist();
   }
 
-  int get tabControllerLength => watchlist.data["data"]![userId]![0].length;
+  
+
+  int get tabControllerLength => watchlist!.data["data"]![userId]![0].length;
 
   
   @override
@@ -115,11 +121,11 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
   }
   
   List nameWatchlist(){
-    List<String> item = [];
+    List<String> demoitem = [];
     for (int i=0; i < 10; i++){
-      item.add(watchlist.data["data"]![userId]![0][i].toString());
+      demoitem.add(watchlist!.data["data"]![userId]![0][i].toString());
     }
-    return item;
+    return demoitem;
   }
 
   void updateMyWatchList(int oldIndex,int newIndex,index){
@@ -129,16 +135,15 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
         newIndex--;
       }
       // get the list are moving
-      final item = watchlist.data["data"]![userId]![index].removeAt(oldIndex);
+      final demoitem = watchlist!.data["data"]![userId]![index].removeAt(oldIndex);
 
       // place the list are new position
-      watchlist.data["data"]![userId]![index].insert(newIndex, item);
+      watchlist!.data["data"]![userId]![index].insert(newIndex, demoitem);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    var item = nameWatchlist();
     final Color oddItemColor = Colors.lime.shade100;
     
    return Scaffold(
@@ -148,8 +153,12 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
           controller: _tabController,
           isScrollable: true,
           tabAlignment: TabAlignment.start,
-          tabs: item.map((title) => _buildTab(title)).toList(),
-
+          // tabs: item.map((title) => _buildTab(title)).toList(),
+          tabs: item!.asMap().entries.map((entry){
+            final int index = entry.key;
+            final String title = entry.value;
+            return _buildTab(title,index);
+          }).toList()
       ),
       ),
       
@@ -191,7 +200,7 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
                               
                                 children:[ 
                                   
-                                  for (String item in watchlist.data["data"]![userId]![i])
+                                  for (String item in watchlist!.data["data"]![userId]![i])
       
                                       Card(
                                       key: ValueKey<String>(item),
@@ -204,11 +213,25 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
                                           // padding: EdgeInsets.all(8.0),
                                           Expanded(
                                             flex: 2,
-                                            child:Padding(
-                                              padding: EdgeInsets.all(8.0),
+                                            child:Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.all(8.0),
                                           
-                                              child: Text(item,)
-                                            ),
+                                                  child: Text(item),
+                                                ),
+
+                                                Padding(
+                                                  padding: const EdgeInsets.all(8.0), // Adjust padding as needed
+                                                  child: Text(
+                                                    item ,
+                                                    style: const TextStyle(fontSize: 12.0, color: Colors.grey), // Adjust description style
+                                                  ),
+                                                ),
+                                              ],
+        
+                                                ),
                                             ),
                                           //  ), // Left text takes 2/6 of space
                                           Expanded(
@@ -264,13 +287,13 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
       
   }
 
-  Widget _buildTab(String title) {
+  Widget _buildTab(String title, int index) {
     return GestureDetector(
       onLongPress: () {
         // Navigate to DetailsPage on long press
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const TabBarDesging()), // Pass title as data
+          MaterialPageRoute(builder: (context) => TabBarDesging(index)), // Pass title as data
         );
       },
       child: Tab(
