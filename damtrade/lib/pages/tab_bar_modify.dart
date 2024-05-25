@@ -2,7 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'home.dart';
-
+import 'auth_gate.dart';
+import '../main.dart';
 // void main() => runApp(
 //   const TabBarDesging()
 //   );
@@ -32,7 +33,7 @@ class TabBarDesging extends StatelessWidget {
           actions: [
             TextButton(onPressed: (){
               if (_searchController.text.isNotEmpty){
-                debugPrint("WatchList:${watchlist.data['data']![userId]![0][this.index]}, _searchControll: ${_searchController.text}");
+                debugPrint("WatchList:${watchlist!.data['data']![userId]![0][this.index]}, _searchControll: ${_searchController.text}");
                 watchlist!.data["data"]![userId]![0][this.index!] = _searchController.text;
               }
               Navigator.pop(context);

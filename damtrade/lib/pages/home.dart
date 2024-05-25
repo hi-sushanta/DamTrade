@@ -1,6 +1,5 @@
 
 
-import "dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart";
 
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
@@ -11,12 +10,17 @@ import 'package:flutter/material.dart';
 import "package:flutter/widgets.dart";
 import "tab_bar_modify.dart";
 import 'watch_list_info.dart';
-
-
+import 'referenece.dart';
+import 'auth_gate.dart';
+import '../main.dart';
 final userId = FirebaseAuth.instance.currentUser!.uid;
-final WatchlistItem watchlist = WatchlistItem(userId);
+
+
+
+// final WatchlistItem watchlist = WatchlistItem(userId);
 
 // void main() async{
+  
 //   WidgetsFlutterBinding.ensureInitialized();
 //  await Firebase.initializeApp();
 
@@ -96,17 +100,28 @@ class BaseHome extends StatefulWidget {
 }
 
 class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
-  late final TabController _tabController;
+  late TabController _tabController;
+  late List? item;
+  int count = 0;
+
     final TextEditingController _searchController = TextEditingController();
   // var titles = ["watchlist1","watchlist2","watchlist3","watchlist4","watchlist5","watchlist6","watchlist7","watchlist8",'watchlist9',"watchlist10"];
   List<String>price_info = ["7.10","0.53%","^","1337.50"];
-  late List? item;
+  
+  HomePageBar(){
+    item = nameWatchlist();
+  }
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: watchlist!.data["data"]![userId]![0].length, vsync: this);
-    item = this.nameWatchlist();
+    if (count == 0){
+        _tabController = TabController(length: watchlist!.data["data"]![userId]![0].length, vsync: this);
+        count += 1;
+    }else{
+      _tabController.dispose();
+      _tabController = TabController(length: watchlist!.data['data']![userId]![0].length, vsync: this);
+    }
   }
 
   
