@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'pages/home.dart';
 import 'pages/watch_list_info.dart';
 
+
 WatchlistItem? watchlist;
 void main() async {
   // calling of runApp
@@ -43,7 +44,6 @@ class _MyHomePageState extends State<MyHomePage> {
       stream: _auth.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.hasData){
-          print(snapshot.hasData);
           watchlist = WatchlistItem(snapshot.data!.uid);
           return const Home();
         }

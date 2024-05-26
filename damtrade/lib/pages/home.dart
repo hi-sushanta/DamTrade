@@ -27,6 +27,7 @@ final userId = FirebaseAuth.instance.currentUser!.uid;
 //   runApp(const Home());
 // }
 
+
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
   
@@ -36,6 +37,7 @@ class Home extends StatelessWidget {
       home: HomePage(), // Replace with your actual class name
     );
   }
+
 }
 
 class HomePage extends StatefulWidget {
@@ -43,19 +45,25 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
+
+
+
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
     //String? user = FirebaseAuth.instance.currentUser!.email ?? FirebaseAuth.instance.currentUser!.displayName;
   int _selectedIndex = 0; // Track the selected index for the navigation bar
+
   final List<Widget> _pages = [
     BaseHome(), // Replace with your content widget for Home
     SecondPageContent(), // Replace with your content widget for second tab
     ThirdPageContent(), // Replace with your content widget for third tab
     FourthPageContent(), // Replace with your content widget for fourth tab
   ];
+  
+  
+
   @override
   Widget build(BuildContext context) {
     final counterRef = FirebaseFirestore.instance.collection(userId);
-
     return Scaffold(
         body: _pages[_selectedIndex], // Display content based on selected index
         bottomNavigationBar: NavigationBar(
@@ -102,26 +110,18 @@ class BaseHome extends StatefulWidget {
 class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
   late TabController _tabController;
   late List? item;
-  int count = 0;
 
     final TextEditingController _searchController = TextEditingController();
   // var titles = ["watchlist1","watchlist2","watchlist3","watchlist4","watchlist5","watchlist6","watchlist7","watchlist8",'watchlist9',"watchlist10"];
   List<String>price_info = ["7.10","0.53%","^","1337.50"];
   
-  HomePageBar(){
-    item = nameWatchlist();
-  }
-
+    // Define a method to refresh the state
   @override
   void initState() {
     super.initState();
-    if (count == 0){
-        _tabController = TabController(length: watchlist!.data["data"]![userId]![0].length, vsync: this);
-        count += 1;
-    }else{
-      _tabController.dispose();
+      item = nameWatchlist();
+      // debugPrint("Hellow It's done");
       _tabController = TabController(length: watchlist!.data['data']![userId]![0].length, vsync: this);
-    }
   }
 
   
@@ -133,6 +133,7 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
   void dispose() {
     _tabController.dispose();
     super.dispose();
+
   }
   
   List nameWatchlist(){
@@ -157,10 +158,22 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
     });
   }
 
+void deleteWatchListItem(int tabIndex, int itemIndex) {
+    setState(() {
+      watchlist!.data["data"]![userId]![tabIndex].removeAt(itemIndex);
+    });
+  }
+  void updateTabName(int index, String newName){
+    setState(() {
+      watchlist!.data["data"]![userId]![0][index] = newName;
+      item = nameWatchlist(); // Update the local list
+      _tabController = TabController(length: item!.length, vsync: this); // Reset TabController
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final Color oddItemColor = Colors.lime.shade100;
-    
    return Scaffold(
       appBar: AppBar(
         title: const Text("Watch Stock"),
@@ -308,7 +321,8 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
         // Navigate to DetailsPage on long press
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => TabBarDesging(index)), // Pass title as data
+          MaterialPageRoute(builder: (context) => TabBarDesging(index,
+          onSave: (newName) => updateTabName(index, newName))), // Pass title as data
         );
       },
       child: Tab(
@@ -339,7 +353,9 @@ class FourthPageContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(child: Text('Fourth Page Content'));
   }
+
 }
+
 
 
 

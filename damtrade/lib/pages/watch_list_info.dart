@@ -16,7 +16,7 @@ class WatchlistItem {
      ["watchlist1","watchlist2","watchlist3","watchlist4","watchlist5",
     "watchlist6","watchlist7","watchlist8","watchlist9","watchlist10"],
     ["jio","tata","reliance","mehandra","Airtle","samsung","nokia","hi","li","why","osum","by","like"],
-    [],
+    ["tata","reliance","mehandra"],
     [],
     [],
     [],
@@ -29,5 +29,14 @@ class WatchlistItem {
     ]
     };
   }
+
+  bool ifHaveUuid(String uuid){
+    for (String? key in data['data']!.keys.toList()){
+        if (uuid == key){
+             return true;
+        }
+      }
+    return false;
    
+  }
 }
