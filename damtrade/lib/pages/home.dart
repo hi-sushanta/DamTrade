@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import "package:flutter/widgets.dart";
 import "tab_bar_modify.dart";
 import 'watch_list_info.dart';
-import 'referenece.dart';
 import 'auth_gate.dart';
 import '../main.dart';
 final userId = FirebaseAuth.instance.currentUser!.uid;
