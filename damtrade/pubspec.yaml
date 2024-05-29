@@ -33,6 +33,7 @@ dependencies:
   http: ^1.2.1
   provider: ^6.1.2
   json_annotation: ^4.9.0
+  html: ^0.15.4
 
 
 

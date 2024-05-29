@@ -12,6 +12,9 @@ import "tab_bar_modify.dart";
 import 'watch_list_info.dart';
 import 'auth_gate.dart';
 import '../main.dart';
+import 'stock_service.dart';
+import 'dart:async';
+
 final userId = FirebaseAuth.instance.currentUser!.uid;
 
 
@@ -110,7 +113,9 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
   late TabController _tabController;
   late List? item;
 
-    final TextEditingController _searchController = TextEditingController();
+  Timer? _timer;
+
+  final TextEditingController _searchController = TextEditingController();
   // var titles = ["watchlist1","watchlist2","watchlist3","watchlist4","watchlist5","watchlist6","watchlist7","watchlist8",'watchlist9',"watchlist10"];
   List<String>price_info = ["7.10","0.53%","^","1337.50"];
   
@@ -121,7 +126,10 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
       item = nameWatchlist();
       // debugPrint("Hellow It's done");
       _tabController = TabController(length: watchlist!.data['data']![userId]![0].length, vsync: this);
+
   }
+
+
 
   
 
@@ -131,6 +139,8 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
   @override
   void dispose() {
     _tabController.dispose();
+    _timer?.cancel();
+
     super.dispose();
 
   }
@@ -228,7 +238,6 @@ void deleteWatchListItem(int tabIndex, int itemIndex) {
                                 children:[ 
                                   
                                   for (String item in watchlist!.data["data"]![userId]![i])
-      
                                       Card(
                                       key: ValueKey<String>(item),
                                       color: oddItemColor,
@@ -261,9 +270,13 @@ void deleteWatchListItem(int tabIndex, int itemIndex) {
                                                 ),
                                             ),
                                           //  ), // Left text takes 2/6 of space
+                                          
+
                                           Expanded(
+
                                             flex: 4,
                                             child: Row(
+
                                               mainAxisAlignment: MainAxisAlignment.end,
 
                                               crossAxisAlignment: CrossAxisAlignment.end, // Align texts to right
@@ -313,6 +326,8 @@ void deleteWatchListItem(int tabIndex, int itemIndex) {
         );
       
   }
+
+
 
   Widget _buildTab(String title, int index) {
     return GestureDetector(

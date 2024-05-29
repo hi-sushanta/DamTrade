@@ -1,32 +1,38 @@
+
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'dart:async';
+import 'package:html/parser.dart' as parser;
+import 'package:http/http.dart' as http;
 
-Future<void> getIntradayStockData(String symbol, String interval) async {
-  final apiKey = "UWW5FGYV50XQSJ0K"; // Replace with your Alpha Vantage API key
-  final url = 'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=$symbol&interval=$interval&apikey=$apiKey';
-
-  final response = await http.get(Uri.parse(url));
-  print(response.statusCode);
-  if (response.statusCode == 200) {
-    final data = json.decode(response.body);
-    final timeSeries = data['Time Series ($interval)'];
-    print(data);
-    if (timeSeries != null && timeSeries.isNotEmpty) {
-      final latestTime = timeSeries.keys.first;
-      final latestData = timeSeries[latestTime];
-      final stockPrice = latestData['1. open'];
-
-      print('Stock Price of $symbol at $latestTime: $stockPrice');
-    } else {
-      print('Error: No time series data available.');
-      print('Response body: ${response.body}');
-    }
-  } else {
-    print('Failed to load stock data. Status code: ${response.statusCode}');
-    print('Response body: ${response.body}');
+void main() async {
+  try {
+    final htmlData = await fetchHTMLData('https://www.nseindia.com/get-quotes/equity?symbol=HINDALCO');
+    parseHTML(htmlData);
+  } catch (e) {
+    print('Error: $e');
   }
 }
 
-void main() {
-  getIntradayStockData('RELIANCE', '1min'); // Example to get 1-minute interval data for Reliance Industries Ltd.
+Future<String> fetchHTMLData(String url) async {
+  final response = await http.get(Uri.parse(url));
+  if (response.statusCode == 200) {
+    return response.body;
+  } else {
+    throw Exception('Failed to load HTML data');
+  }
 }
+
+
+void parseHTML(String html) {
+  final document = parser.parse(html);
+  print(document.outerHtml);
+    
+
+}
+
+
+
+
+
+
