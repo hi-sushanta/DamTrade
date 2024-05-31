@@ -1,6 +1,3 @@
-
-
-
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:firebase_core/firebase_core.dart";
@@ -118,14 +115,17 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
   final TextEditingController _searchController = TextEditingController();
   // var titles = ["watchlist1","watchlist2","watchlist3","watchlist4","watchlist5","watchlist6","watchlist7","watchlist8",'watchlist9',"watchlist10"];
   List<String>price_info = ["7.10","0.53%","^","1337.50"];
-  
+  List<Map<String,Map<String,String>>> stockData = [];
+  late Map<String,List<String>> watchListItem;
     // Define a method to refresh the state
   @override
   void initState() {
     super.initState();
       item = nameWatchlist();
+      watchListItem = getItem();
       // debugPrint("Hellow It's done");
       _tabController = TabController(length: watchlist!.data['data']![userId]![0].length, vsync: this);
+     _startFetchingStockData();
 
   }
 
@@ -152,6 +152,51 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
     }
     return demoitem;
   }
+
+  Map<String,List<String>> getItem(){
+    Map<String,List<String>> stock = {};
+    for (int i=0; i<10; i++){
+      List<String> demoitem  = [];
+      for (String it in watchlist!.data['data']![userId]![i+1]){
+        demoitem.add(it.toUpperCase());
+      }
+      stock[watchlist!.data['data']![userId]![0][i]] = demoitem;
+    }
+
+    return stock;
+  }
+
+
+  void _startFetchingStockData() async {
+    // _timer = Timer.periodic(Duration(seconds: 60), (timer) async {
+      await _updateStockData();
+    // });
+  }
+
+  Future<void> _updateStockData() async {
+    try {
+      List<Map<String,Map<String,String>>> updatedStockData = [];
+      for (var watchName in watchListItem.keys) {
+        Map<String,Map<String,String>>stockInfo = {};
+        for (var stock in watchListItem[watchName]!) {
+          debugPrint(stock);
+          Map<String,String> data = await fetchStockData(stock);
+          debugPrint("$data");
+          stockInfo[stock]= data;
+        }
+        updatedStockData.add(stockInfo);
+        debugPrint("$updatedStockData");
+      }
+      setState(() {
+        stockData = updatedStockData;
+        debugPrint("$stockData");
+      });
+    } catch (e) {
+      print('Error updating stock data: $e');
+    }
+  }
+
+  
 
   void updateMyWatchList(int oldIndex,int newIndex,index){
     setState(() {
@@ -181,9 +226,9 @@ void deleteWatchListItem(int tabIndex, int itemIndex) {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)  {
     final Color oddItemColor = Colors.lime.shade100;
-   return Scaffold(
+   return  Scaffold(
       appBar: AppBar(
         title: const Text("Watch Stock"),
        bottom: TabBar(
@@ -229,7 +274,7 @@ void deleteWatchListItem(int tabIndex, int itemIndex) {
                       child:TabBarView(
                       controller: _tabController,
                       children: [
-                      for (int i=1; i <= tabControllerLength; i++ )
+                      for (int i=0; i < tabControllerLength; i++ )
                             // SingleChildScrollView(
                               
                                ReorderableListView(
@@ -237,9 +282,9 @@ void deleteWatchListItem(int tabIndex, int itemIndex) {
                               
                                 children:[ 
                                   
-                                  for (String item in watchlist!.data["data"]![userId]![i])
+                                  for (String stock in watchlist!.data["data"]![userId]![i+1])
                                       Card(
-                                      key: ValueKey<String>(item),
+                                      key: ValueKey<String>(stock),
                                       color: oddItemColor,
                                       child: Padding(
                                       padding: const EdgeInsets.all(8.0), // Adjust padding as needed
@@ -255,13 +300,13 @@ void deleteWatchListItem(int tabIndex, int itemIndex) {
                                                 Padding(
                                                   padding: EdgeInsets.all(8.0),
                                           
-                                                  child: Text(item),
+                                                  child: Text(stock),
                                                 ),
 
                                                 Padding(
                                                   padding: const EdgeInsets.all(8.0), // Adjust padding as needed
                                                   child: Text(
-                                                    item ,
+                                                    stock ,
                                                     style: const TextStyle(fontSize: 12.0, color: Colors.grey), // Adjust description style
                                                   ),
                                                 ),
@@ -281,10 +326,11 @@ void deleteWatchListItem(int tabIndex, int itemIndex) {
 
                                               crossAxisAlignment: CrossAxisAlignment.end, // Align texts to right
                                               children: [
-                                                _buildValueRow("${price_info[0]}"),
-                                                _buildValueRow("${price_info[1]}"),
-                                                _buildValueRow("${price_info[2]}"),
-                                                _buildValueRow("${price_info[3]}")
+                                                
+                                                      // _buildValueRow(stockData[i][stock]?['currentPrice'] ?? ""),
+                                                      // _buildValueRow(stockData[i][stock]?['amountChange'] ?? ""),
+                                                      // _buildValueRow(stockData[i][stock]?['percentageChange'] ?? ""),
+
                                               ]
                                             ),
                                           ),
@@ -369,6 +415,7 @@ class FourthPageContent extends StatelessWidget {
   }
 
 }
+
 
 
 
