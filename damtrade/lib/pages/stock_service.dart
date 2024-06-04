@@ -1,57 +1,58 @@
-import 'package:puppeteer/puppeteer.dart';
+// import 'package:puppeteer/puppeteer.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-Future<Map<String,String>> fetchStockData(String symbol) async {
-  var browser = await puppeteer.launch(headless: true);
-  var page = await browser.newPage();
+String vApiKey = "26I8020Q51YJS3QJ"; // for hiwhywork@gmail.com
+// String vApiKey = "LBCB5E2CG522SVMK"; // for iamchi@skiff.com
 
-  // Set user agent and headers to mimic a regular browser
-  await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36');
-  await page.setExtraHTTPHeaders({
-    'Accept-Language': 'en-US,en;q=0.9',
-    'Upgrade-Insecure-Requests': '1',
-    'Referer': 'https://www.nseindia.com/',
-  });
 
-  // Navigate to the NSE page for the specific stock
-  var url = 'https://www.nseindia.com/get-quotes/equity?symbol=$symbol';
-  await page.goto(url, wait: Until.networkIdle);
+Future<Map<String, String>> fetchStockData(String symbol) async {
+  // Replace with your Twelve Data API key
+  const apiKey = '99772cd07c144e08a855af9fe47be083';
+  final url =
+      'https://api.twelvedata.com/time_series?symbol=$symbol&interval=1min&apikey=$apiKey';
 
-  // Check if the page has loaded the necessary elements
-  try {
-    await page.waitForSelector('#quoteLtp', timeout: Duration(seconds: 60));
+  final response = await http.get(Uri.parse(url));
+  if (response.statusCode == 200) {
+    final data = json.decode(response.body);
+    // print(data);
+    if (data.containsKey('values')) {
+      final timeSeries = data['values'];
+      // print(timeSeries);
+      final latestData = timeSeries.first;
 
-    // Print the page content to inspect the HTML structure
+      final openPrice = latestData['open'];
+      final closePrice = latestData['close'];
+      
+      // Ensure correct data type conversion
+      final double open = double.parse(openPrice);
+      final double close = double.parse(closePrice);
+      
+      final amountChange = (close - open).toStringAsFixed(2);
+      final percentageChange =
+          "${((close - open) / open * 100).toStringAsFixed(2)}%";
 
-    // Extract the text content of the elements
-    String currentPrice = await page.$eval('#quoteLtp', 'element => element.textContent');
-    var priceInfo = await page.$eval('#priceInfoStatus', 'element => element.textContent');
-    // var amountChange = await page.$eval('#quoteChange', 'element => element.textContent');
 
-    await browser.close();
-    var priceChangeData = priceInfo?.trim().split(" ");
-    String amountChange = "${priceChangeData[0]}";
-    String percentageChanges = "${priceChangeData[1].split("(")[1]}%";
-    return {
-      "currentPrice": currentPrice,
-      "amountChange": amountChange,
-      "percentageChange": percentageChanges
-    };
-    // print('Amount Change: ${amountChange?.trim() ?? 'N/A'}');
-  } catch (e) {
-    await browser.close();
-    throw Exception('Failed to fetch stock data: $e');
+
+      return {
+        "currentPrice": double.parse(closePrice).toStringAsFixed(2),
+        "amountChange": amountChange,
+        "percentageChange": percentageChange,
+      };
+    } else {
+      throw Exception('No data available');
+    }
+  } else {
+    throw Exception('Failed to fetch stock data');
   }
 }
 
-
-
 // void main() async {
-//   try {
-//     const symbol = 'HINDALCO'; // Example symbol
-//     var data = await fetchStockData(symbol);
-//     print("$data");
-//   } catch (e) {
-//     print('Error: $e');
-//   }
+//   const symbol = "AAPL";
+//   var data = await fetchStockData(symbol);
+//   print(data);
 // }
+
+
+
 

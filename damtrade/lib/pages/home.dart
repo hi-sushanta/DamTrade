@@ -11,6 +11,9 @@ import 'auth_gate.dart';
 import '../main.dart';
 import 'stock_service.dart';
 import 'dart:async';
+import 'package:http/http.dart' as http;
+import 'package:html/parser.dart' show parse;
+import 'dart:math';
 
 final userId = FirebaseAuth.instance.currentUser!.uid;
 
@@ -25,6 +28,8 @@ final userId = FirebaseAuth.instance.currentUser!.uid;
 
 //   runApp(const Home());
 // }
+
+
 
 
 class Home extends StatelessWidget {
@@ -174,25 +179,25 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
   }
 
   Future<void> _updateStockData() async {
+    List<Map<String,Map<String,String>>> updatedStockData = [];
+
     try {
-      List<Map<String,Map<String,String>>> updatedStockData = [];
       for (var watchName in watchListItem.keys) {
         Map<String,Map<String,String>>stockInfo = {};
         for (var stock in watchListItem[watchName]!) {
           debugPrint(stock);
           Map<String,String> data = await fetchStockData(stock);
-          debugPrint("$data");
           stockInfo[stock]= data;
         }
         updatedStockData.add(stockInfo);
-        debugPrint("$updatedStockData");
       }
+
       setState(() {
-        stockData = updatedStockData;
-        debugPrint("$stockData");
+        stockData =  updatedStockData;
       });
     } catch (e) {
       print('Error updating stock data: $e');
+
     }
   }
 
@@ -316,24 +321,25 @@ void deleteWatchListItem(int tabIndex, int itemIndex) {
                                             ),
                                           //  ), // Left text takes 2/6 of space
                                           
+                                          if (stockData.isNotEmpty)
+                                              Expanded(
 
-                                          Expanded(
+                                                flex: 4,
+                                                child: Row(
 
-                                            flex: 4,
-                                            child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.end,
 
-                                              mainAxisAlignment: MainAxisAlignment.end,
+                                                  crossAxisAlignment: CrossAxisAlignment.end, // Align texts to right
+                                                  children: [
+                                                          
+                                                          _buildValueRow(stockData[i][stock]?['currentPrice'] ?? ""),
+                                                          _buildValueRow(stockData[i][stock]?['amountChange'] ?? ""),
+                                                          _buildValueRow(stockData[i][stock]?['percentageChange'] ?? ""),
 
-                                              crossAxisAlignment: CrossAxisAlignment.end, // Align texts to right
-                                              children: [
-                                                
-                                                      // _buildValueRow(stockData[i][stock]?['currentPrice'] ?? ""),
-                                                      // _buildValueRow(stockData[i][stock]?['amountChange'] ?? ""),
-                                                      // _buildValueRow(stockData[i][stock]?['percentageChange'] ?? ""),
-
-                                              ]
-                                            ),
-                                          ),
+                                                  ]
+                                                ),
+                                              ),
+                                          
                                         ],
                                       ),
                                     ),
