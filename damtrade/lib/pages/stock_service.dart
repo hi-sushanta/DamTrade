@@ -5,10 +5,10 @@ import 'package:http/http.dart' as http;
 String vApiKey = "26I8020Q51YJS3QJ"; // for hiwhywork@gmail.com
 // String vApiKey = "LBCB5E2CG522SVMK"; // for iamchi@skiff.com
 
+const apiKey = '99772cd07c144e08a855af9fe47be083';
 
 Future<Map<String, String>> fetchStockData(String symbol) async {
   // Replace with your Twelve Data API key
-  const apiKey = '99772cd07c144e08a855af9fe47be083';
   final url =
       'https://api.twelvedata.com/time_series?symbol=$symbol&interval=1min&apikey=$apiKey';
 
@@ -44,6 +44,30 @@ Future<Map<String, String>> fetchStockData(String symbol) async {
     }
   } else {
     throw Exception('Failed to fetch stock data');
+  }
+}
+
+class TwelveDataService {
+
+  Future<List<String>> fetchStockSuggestions(String query) async {
+    final url = 'https://api.twelvedata.com/symbol_search?symbol=$query&apikey=$apiKey';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      if (data.containsKey('data')) {
+        final suggestions = (data['data'] as List)
+            .map((item) => item['symbol'] as String)
+            .toList();
+        return suggestions;
+      } else {
+        return [];
+      }
+    } else {
+      throw Exception('Failed to fetch stock suggestions');
+    }
   }
 }
 

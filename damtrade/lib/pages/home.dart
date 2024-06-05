@@ -173,7 +173,7 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
 
 
   void _startFetchingStockData() async {
-    // _timer = Timer.periodic(Duration(seconds: 60), (timer) async {
+    // _timer = Timer.periodic(Duration(seconds: 30), (timer) async {
       await _updateStockData();
     // });
   }
@@ -259,17 +259,15 @@ void deleteWatchListItem(int tabIndex, int itemIndex) {
               child: TextField(
                 controller: _searchController,
                 decoration: const InputDecoration(
-                  hintText: "Search Stock",
+                  hintText: "Search & Add",
                   prefixIcon: Icon(Icons.search),
+                  suffixIcon: Icon(Icons.mediation),
                   border: OutlineInputBorder(),
                 ),
-                onChanged: (value) {
-                  // Implement search logic based on user input
-                },
-                onSubmitted: (value) {
+                onTap: (){
                   
-                  // ...
                 },
+                
               ),
             ),
           ),
