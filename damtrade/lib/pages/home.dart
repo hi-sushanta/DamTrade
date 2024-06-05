@@ -349,7 +349,7 @@ void deleteWatchListItem(int tabIndex, int itemIndex) {
                                       // ),
 
                                 ],
-                                onReorder: (oldIndex, newIndex) => updateMyWatchList(oldIndex,newIndex,i),
+                                onReorder: (oldIndex, newIndex) => updateMyWatchList(oldIndex,newIndex,i+1),
                               ),
                                              
                               
