@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'package:damtrade/main.dart';
 import 'package:flutter/material.dart';
 import 'stock_service.dart'; // Ensure you have this file properly set up
-import 'home.dart';
 
 class SearchPage extends StatefulWidget {
   final int index;

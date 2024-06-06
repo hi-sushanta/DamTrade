@@ -1,22 +1,9 @@
-import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
-import "package:firebase_core/firebase_core.dart";
-import 'package:flutter/cupertino.dart';
-import 'dart:ui';
-import "package:flutter/foundation.dart";
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/rendering.dart';
-import "package:flutter/widgets.dart";
 import "tab_bar_modify.dart";
-import 'watch_list_info.dart';
-import 'auth_gate.dart';
 import '../main.dart';
 import 'stock_service.dart';
 import 'dart:async';
-import 'package:http/http.dart' as http;
-import 'package:html/parser.dart' show parse;
-import 'dart:math';
 import 'search_bar_desgine.dart';
 
 final userId = FirebaseAuth.instance.currentUser!.uid;
@@ -71,7 +58,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
 
   @override
   Widget build(BuildContext context) {
-    final counterRef = FirebaseFirestore.instance.collection(userId);
     return Scaffold(
         body: _pages[_selectedIndex], // Display content based on selected index
         bottomNavigationBar: NavigationBar(
