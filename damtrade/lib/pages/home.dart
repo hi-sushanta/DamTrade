@@ -189,8 +189,9 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
       for (var watchName in watchListItem.keys) {
         Map<String,Map<String,String>>stockInfo = {};
         for (var stock in watchListItem[watchName]!) {
+          String istock = stock.split("+")[0];
           debugPrint(stock);
-          Map<String,String> data = await fetchStockData(stock);
+          Map<String,String> data = await fetchStockData(istock);
           stockInfo[stock]= data;
         }
         updatedStockData.add(stockInfo);
@@ -315,13 +316,13 @@ void deleteWatchListItem(int tabIndex, int itemIndex) {
                                                 Padding(
                                                   padding: EdgeInsets.all(8.0),
                                           
-                                                  child: Text(stock),
+                                                  child: Text(stock.split("+")[0]),
                                                 ),
 
                                                 Padding(
                                                   padding: const EdgeInsets.all(8.0), // Adjust padding as needed
                                                   child: Text(
-                                                    stock ,
+                                                    stock.split("+")[1] ,
                                                     style: const TextStyle(fontSize: 12.0, color: Colors.grey), // Adjust description style
                                                   ),
                                                 ),
