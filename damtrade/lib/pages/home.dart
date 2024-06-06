@@ -1,9 +1,12 @@
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:firebase_core/firebase_core.dart";
+import 'package:flutter/cupertino.dart';
 import 'dart:ui';
 import "package:flutter/foundation.dart";
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/rendering.dart';
 import "package:flutter/widgets.dart";
 import "tab_bar_modify.dart";
 import 'watch_list_info.dart';
@@ -14,6 +17,7 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
 import 'dart:math';
+import 'search_bar_desgine.dart';
 
 final userId = FirebaseAuth.instance.currentUser!.uid;
 
@@ -258,15 +262,23 @@ void deleteWatchListItem(int tabIndex, int itemIndex) {
               padding: const EdgeInsets.all(8.0),
               child: TextField(
                 controller: _searchController,
+                readOnly: true,
                 decoration: const InputDecoration(
                   hintText: "Search & Add",
+                  
                   prefixIcon: Icon(Icons.search),
                   suffixIcon: Icon(Icons.mediation),
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(30.0))),
+                  
                 ),
                 onTap: (){
-                  
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SearchPage()), // Pass title as data
+                  );
+                
                 },
+                
                 
               ),
             ),

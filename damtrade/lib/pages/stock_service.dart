@@ -49,7 +49,8 @@ Future<Map<String, String>> fetchStockData(String symbol) async {
 
 class TwelveDataService {
 
-  Future<List<String>> fetchStockSuggestions(String query) async {
+  Future<Map<String,List<String>>> fetchStockSuggestions(String query) async {
+    Map<String,List<String>> final_data = {};
     final url = 'https://api.twelvedata.com/symbol_search?symbol=$query&apikey=$apiKey';
 
     final response = await http.get(Uri.parse(url));
@@ -61,9 +62,14 @@ class TwelveDataService {
         final suggestions = (data['data'] as List)
             .map((item) => item['symbol'] as String)
             .toList();
-        return suggestions;
+        final fullName = (data['data'] as List)
+              .map((item) => item['instrument_name'] as String)
+              .toList();
+        final_data["suggestion"] = suggestions;
+        final_data["fullName"] = fullName;
+        return final_data;
       } else {
-        return [];
+        return final_data;
       }
     } else {
       throw Exception('Failed to fetch stock suggestions');
@@ -73,8 +79,8 @@ class TwelveDataService {
 
 // void main() async {
 //   const symbol = "AAPL";
-//   var data = await fetchStockData(symbol);
-//   print(data);
+//   var data = await TwelveDataService().fetchStockSuggestions('a');
+//   // print(data);
 // }
 
 
