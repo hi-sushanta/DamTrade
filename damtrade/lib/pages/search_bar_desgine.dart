@@ -1,18 +1,28 @@
 import 'dart:async';
+import 'package:damtrade/main.dart';
 import 'package:flutter/material.dart';
 import 'stock_service.dart'; // Ensure you have this file properly set up
+import 'home.dart';
 
 class SearchPage extends StatefulWidget {
-  const SearchPage({Key? key}) : super(key: key);
+  final int index;
+  final Function(int,String,String) addStock;
+
+  const SearchPage(this.index,{Key? key, required this.addStock}) : super(key: key);
 
   @override
-  _SearchState createState() => _SearchState();
+  _SearchState createState() => _SearchState(this.index,this.addStock);
 }
 
 class _SearchState extends State<SearchPage> {
+  final int index;
+  final Function(int,String,String) addStock;
+  _SearchState(this.index,this.addStock);
   final TwelveDataService _twelveDataService = TwelveDataService();
   List<String> _suggestions = [];
   List<String> _fullName = [];
+  List<String> _exchangeName = [];
+
   Timer? _timer;
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
@@ -42,18 +52,23 @@ class _SearchState extends State<SearchPage> {
         setState(() {
           _suggestions = finalData["suggestion"] ?? [];
           _fullName = finalData["fullName"] ?? [];
+          _exchangeName = finalData["exchange"] ?? [];
         });
       } else {
         setState(() {
           _suggestions = [];
           _fullName = [];
+          _exchangeName = [];
         });
       }
     });
   }
 
-  void _onSuggestionSelected(String suggestion) {
-    Navigator.pop(context, suggestion);
+  void _onSuggestionSelected(int index , String suggestion,String exchangeName) {
+    this.addStock(index+1,suggestion,exchangeName);
+    // watchlist!.data['data']![userId]![index+1].add("$suggestion+$exchangeName");
+    // debugPrint("${watchlist!.data['data']![userId]![index+1]}");
+    Navigator.pop(context);
   }
 
   @override
@@ -79,7 +94,7 @@ class _SearchState extends State<SearchPage> {
               onChanged: _onSearchChanged,
             ),
           ),
-          if (_suggestions.isNotEmpty && _fullName.isNotEmpty)
+          if (_suggestions.isNotEmpty && _fullName.isNotEmpty && _exchangeName.isNotEmpty)
             Expanded(
               child: ListView.builder(
                 itemCount: _suggestions.length,
@@ -87,7 +102,7 @@ class _SearchState extends State<SearchPage> {
                 itemBuilder: (context, index) {
                   final suggestion = _suggestions[index];
                   final fullName = _fullName[index];
-
+                  final exchangeName = _exchangeName[index];
                   return ListTile(
                     splashColor: Colors.amber,
                     leading: Container(
@@ -98,9 +113,9 @@ class _SearchState extends State<SearchPage> {
                         borderRadius: BorderRadius.circular(4.0),
 
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Text(
-                          "NSE",
+                          exchangeName,
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -121,12 +136,13 @@ class _SearchState extends State<SearchPage> {
                     ),
                     trailing: IconButton(
                       icon: const Icon(Icons.add),
+                      highlightColor: Colors.amber,
                       onPressed: () {
                         // Implement add functionality
-                        Navigator.pop(context,suggestion);
+                        _onSuggestionSelected(this.index,suggestion,exchangeName);
                       },
                     ),
-                    onTap: () => _onSuggestionSelected(suggestion),
+                    onTap: () => _onSuggestionSelected(this.index,suggestion,exchangeName),
 
                   );
                 },

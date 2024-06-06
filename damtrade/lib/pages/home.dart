@@ -118,8 +118,9 @@ class BaseHome extends StatefulWidget {
 class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
   late TabController _tabController;
   late List? item;
-
+  int index = 0;
   Timer? _timer;
+
 
   final TextEditingController _searchController = TextEditingController();
   // var titles = ["watchlist1","watchlist2","watchlist3","watchlist4","watchlist5","watchlist6","watchlist7","watchlist8",'watchlist9',"watchlist10"];
@@ -134,13 +135,11 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
       watchListItem = getItem();
       // debugPrint("Hellow It's done");
       _tabController = TabController(length: watchlist!.data['data']![userId]![0].length, vsync: this);
-     _startFetchingStockData();
+      
+      _startFetchingStockData();
 
   }
 
-
-
-  
 
   int get tabControllerLength => watchlist!.data["data"]![userId]![0].length;
 
@@ -177,9 +176,7 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
 
 
   void _startFetchingStockData() async {
-    // _timer = Timer.periodic(Duration(seconds: 30), (timer) async {
-      await _updateStockData();
-    // });
+        await _updateStockData();
   }
 
   Future<void> _updateStockData() async {
@@ -190,7 +187,6 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
         Map<String,Map<String,String>>stockInfo = {};
         for (var stock in watchListItem[watchName]!) {
           String istock = stock.split("+")[0];
-          debugPrint(stock);
           Map<String,String> data = await fetchStockData(istock);
           stockInfo[stock]= data;
         }
@@ -232,6 +228,18 @@ void deleteWatchListItem(int tabIndex, int itemIndex) {
       watchlist!.data["data"]![userId]![0][index] = newName;
       item = nameWatchlist(); // Update the local list
       _tabController = TabController(length: item!.length, vsync: this); // Reset TabController
+      _tabController.index = index;
+    });
+  }
+
+  void addStock(int index,String suggestion,String exchange){
+    setState(() {
+      watchlist!.data['data']![userId]![index].add("$suggestion+$exchange");
+      item = nameWatchlist();
+      watchListItem = getItem();
+      _tabController = TabController(length: item!.length, vsync: this);
+      _tabController.index = index - 1;
+      _startFetchingStockData();
     });
   }
 
@@ -266,7 +274,6 @@ void deleteWatchListItem(int tabIndex, int itemIndex) {
                 readOnly: true,
                 decoration: const InputDecoration(
                   hintText: "Search & Add",
-                  
                   prefixIcon: Icon(Icons.search),
                   suffixIcon: Icon(Icons.mediation),
                   border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(30.0))),
@@ -275,9 +282,11 @@ void deleteWatchListItem(int tabIndex, int itemIndex) {
                 onTap: (){
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SearchPage()), // Pass title as data
+                    MaterialPageRoute(builder: (context) => SearchPage(_tabController.index,
+                    addStock: (index,suggestion,exchange) => addStock(index, suggestion, exchange))), // Pass title as data
                   );
-                
+                  
+                             
                 },
                 
                 

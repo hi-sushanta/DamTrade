@@ -65,8 +65,13 @@ class TwelveDataService {
         final fullName = (data['data'] as List)
               .map((item) => item['instrument_name'] as String)
               .toList();
+        final exchangeName = (data['data'] as List)
+              .map((item) => item["exchange"] as String)
+              .toList();
+
         final_data["suggestion"] = suggestions;
         final_data["fullName"] = fullName;
+        final_data['exchange'] = exchangeName;
         return final_data;
       } else {
         return final_data;
