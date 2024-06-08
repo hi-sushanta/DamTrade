@@ -15,7 +15,6 @@ Future<Map<String, String>> fetchStockData(String symbol) async {
   final response = await http.get(Uri.parse(url));
   if (response.statusCode == 200) {
     final data = json.decode(response.body);
-    // print(data);
     if (data.containsKey('values')) {
       final timeSeries = data['values'];
       // print(timeSeries);

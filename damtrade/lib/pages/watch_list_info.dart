@@ -39,4 +39,13 @@ class WatchlistItem {
     return false;
    
   }
+
+  bool ifHaveStock(String uuid, int index, String stockAndExchange){
+    for (String stock in data["data"]![uuid]![index]){
+      if (stock == stockAndExchange){
+        return false;
+      }
+    }
+    return true;
+  }
 }

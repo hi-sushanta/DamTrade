@@ -15,7 +15,9 @@ void main() async {
    options: DefaultFirebaseOptions.currentPlatform,
  );
  
-  runApp(const MyApp());
+  runApp(
+
+    const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -24,6 +26,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false, // Remove the debug banner
       home: MyHomePage(), // Replace with your actual class name
     );
   }
