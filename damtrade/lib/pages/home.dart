@@ -155,7 +155,7 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
   
   List nameWatchlist(){
     List<String> demoitem = [];
-    for (int i=0; i < 10; i++){
+    for (int i=0; i < watchlist!.data['data']![userId]![0].length; i++){
       demoitem.add(watchlist!.data["data"]![userId]![0][i].toString());
     }
     return demoitem;
@@ -163,7 +163,7 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
 
   Map<String,List<String>> getItem(){
     Map<String,List<String>> stock = {};
-    for (int i=0; i<10; i++){
+    for (int i=0; i<watchlist!.data['data']![userId]![0].length; i++){
       List<String> demoitem  = [];
       for (String it in watchlist!.data['data']![userId]![i+1]){
         demoitem.add(it.toUpperCase());
@@ -313,20 +313,23 @@ void addStock(int index,String suggestion,String exchange){
           child:Text("Dam Trade",
           style: TextStyle(color:Colors.green.shade600,fontWeight: FontWeight.bold),),
         ),
-       bottom: TabBar(
-          controller: _tabController,
-          isScrollable: true,
-          tabAlignment: TabAlignment.start,
-          // tabs: item.map((title) => _buildTab(title)).toList(),
-          tabs: item!.asMap().entries.map((entry){
-            final int index = entry.key;
-            final String title = entry.value;
-            return _buildTab(title,index);
-          }).toList(),
-          
+       bottom: PreferredSize(
+          preferredSize: Size.fromHeight(50.0),
+          child: Container(
+            alignment: Alignment.center,
+            child: TabBar(
+              controller: _tabController,
+              isScrollable: false,
+              indicatorColor: Colors.amber,
+              tabs: item!.asMap().entries.map((entry){
+                final int index = entry.key;
+                final String title = entry.value;
+                return _buildTab(title,index);
+              }).toList(),
+            ),
+          ),
+        ),
       ),
-      ),
-
       
         body: NestedScrollView(
         headerSliverBuilder: (BuildContext contex, bool innerBoxIsScrolled) => [

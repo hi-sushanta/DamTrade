@@ -4,30 +4,27 @@
 class WatchlistItem {
   String? uuid;
   Map<String,Map<String,List>> data = {}; 
-
+  Map<String,Map<String,List<List>>> protfollio = {};
   WatchlistItem(this.uuid){
     addData(uuid!);
+    protfollio[uuid!] = {"stock":[[]]};
   }
   
 
  
   void addData(String uuid){
     data["data"] = {uuid:[
-     ["watchlist1","watchlist2","watchlist3","watchlist4","watchlist5",
-    "watchlist6","watchlist7","watchlist8","watchlist9","watchlist10"],
+     ["watchlist1","watchlist2","watchlist3"],
     ["AAPL+NYSE","IBM+NYSE","TSLA+NYSE"],
     [],
     [],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-    []
     // ["jio","reliance","tata"]
     ]
     };
+  }
+
+  void addProtfolio(String uuid, String stockName,List<double> priceInfo){
+    protfollio[uuid]!['stock']![0].add([stockName,priceInfo[0],priceInfo[1]]);
   }
 
   bool ifHaveUuid(String uuid){
