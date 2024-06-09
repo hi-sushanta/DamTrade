@@ -5,7 +5,7 @@ import '../main.dart';
 import 'stock_service.dart';
 import 'dart:async';
 import 'search_bar_desgine.dart';
-
+import  'busket_page.dart';
 final userId = FirebaseAuth.instance.currentUser!.uid;
 
 
@@ -567,12 +567,6 @@ void addStock(int index,String suggestion,String exchange){
 
 
 
-class SecondPageContent extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('Second Page Content'));
-  }
-}
 
 class ThirdPageContent extends StatelessWidget {
   @override
