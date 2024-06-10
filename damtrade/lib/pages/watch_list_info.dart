@@ -8,7 +8,7 @@ class WatchlistItem {
   WatchlistItem(this.uuid){
     addData(uuid!);
     protfollio[uuid!] = [
-      ["AAPL+NYSE",1330.0,1500.0]
+      ["AAPL+NYSE","Buy",1,1330.0,1500.0]
     ];
   }
   
