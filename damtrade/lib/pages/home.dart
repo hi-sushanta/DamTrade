@@ -6,8 +6,9 @@ import 'stock_service.dart';
 import 'dart:async';
 import 'search_bar_desgine.dart';
 import  'busket_page.dart';
-final userId = FirebaseAuth.instance.currentUser!.uid;
+import 'stock_buy.dart';
 
+final userId = FirebaseAuth.instance.currentUser!.uid;
 
 
 // final WatchlistItem watchlist = WatchlistItem(userId);
@@ -502,9 +503,20 @@ void addStock(int index,String suggestion,String exchange){
           onBuy: () {
             // Implement Buy action
             Navigator.pop(context); // Close the bottom sheet
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Buy action for $stockName')),
-            );
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   SnackBar(content: Text('Buy action for $stockName')),
+            // );
+            Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>  StockBuyPage(
+                  stockName: stockName,
+                  livePrice: double.parse(currentPrice), // Example, use actual BSE price
+                ),
+
+            ),
+          );
+
           },
           onSell: () {
             // Implement Sell action
