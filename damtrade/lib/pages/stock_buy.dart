@@ -1,3 +1,5 @@
+import 'package:damtrade/main.dart';
+import 'package:damtrade/pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swipe_button/flutter_swipe_button.dart';
 
@@ -15,6 +17,7 @@ class StockBuyPage extends StatefulWidget {
 }
 
 class _StockBuyPageState extends State<StockBuyPage> {
+  
   final TextEditingController _quantityController = TextEditingController(text: '1');
   final TextEditingController _priceController = TextEditingController();
 
@@ -42,6 +45,11 @@ class _StockBuyPageState extends State<StockBuyPage> {
     // Implement your buy logic here.
     // For example, show a confirmation dialog or process the order.
     // Navigate back to the home screen.
+    if (_quantityController.text.isNotEmpty){
+      if (int.tryParse(_quantityController.text)! > 0){
+        watchlist!.addProtfolio(userId, widget.stockName, int.tryParse(_quantityController.text)!, 10.15, 71.05,8.90,1.14,-8.75);
+      }
+    }
     Navigator.pop(context);
   }
 

@@ -4,12 +4,22 @@
 class WatchlistItem {
   String? uuid;
   Map<String,Map<String,List>> data = {}; 
-  Map<String,List<List>> protfollio = {};
+  Map<String,List<Map<String,dynamic>>> protfollio = {};
+  Map<String,double> amountHave = {};
   WatchlistItem(this.uuid){
     addData(uuid!);
     protfollio[uuid!] = [
-      ["AAPL+NYSE","Buy",1,1330.0,1500.0]
+      {
+        "name": "AAPL",
+        "quantity": 7,
+        "averagePrice": 10.15,
+        "investedAmount": 71.05,
+        "currentPrice": 8.90,
+        "plPercentage": 1.14,
+        "plAmount": -8.75,
+      },
     ];
+    amountHave[uuid!] = 3000000.0;
   }
   
 
@@ -25,8 +35,16 @@ class WatchlistItem {
     };
   }
 
-  void addProtfolio(String uuid, String stockName,List<double> priceInfo){
-    protfollio[uuid]!.add([stockName,priceInfo[0],priceInfo[1]]);
+  void addProtfolio(String uuid, String stockName,int quantity,double avgPrice,double invPrice,double currPrice,double plPercentage,double plAmount){
+    protfollio[uuid]!.add({
+      "name":stockName,
+      "quantity":quantity,
+      "averagePrice":avgPrice,
+      "investedAmount":invPrice,
+      "currentPrice": currPrice,
+      "plPercentage": plPercentage,
+      "plAmount": plAmount
+    });
   }
 
   bool ifHaveUuid(String uuid){
