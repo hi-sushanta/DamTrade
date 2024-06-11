@@ -73,15 +73,27 @@ class _PortfolioPageState extends State<_PortfolioPage> {
     if (watchlist!.protfollio.isNotEmpty){
           int i = 0;
           plAmount = [];
+          bool goOut = true;
           for (Map<String,dynamic> item in watchlist!.protfollio[userId]!){
                   investedAmount += item["investedAmount"];
                   if(stockData.isNotEmpty){
                     item["currentPrice"] = double.parse(stockData[0][item["name"]]!['currentPrice']!);
+
+                    if (item["orederType"]=="Buy"){
                     plAmount.add((item['currentPrice']*item['quantity']) - item["investedAmount"]);
                     debugPrint("$plAmount");
                     watchlist!.protfollio[userId]![i]["currentPrice"] = item['currentPrice'];
                     watchlist!.protfollio[userId]![i]['plAmount'] = plAmount[i];
-                    i += 1;
+                    profitLoss += item["currentPrice"] - item['investedAmount'];
+                    }
+                    else{
+                      plAmount.add(item["investedAmount"] - (item['currentPrice']*item['quantity']));
+                      watchlist!.protfollio[userId]![i]['currentPrice'] = item["currentPrice"];
+                      watchlist!.protfollio[userId]![i]["plAmount"] = plAmount[i];
+                      profitLoss += item['investedAmount'] - item['currentPrice'];
+                    }
+                  i += 1;
+                  goOut = false;
                   }else{
                     plAmount.add(item['plAmount']);
                   }
@@ -89,7 +101,10 @@ class _PortfolioPageState extends State<_PortfolioPage> {
                   orderType.add(item["orderType"]);
           }
 
-          profitLoss = currentValue - investedAmount;
+          if (goOut){
+            profitLoss = currentValue - investedAmount;
+
+          }
           profitLossPercentage = (profitLoss / investedAmount) * 100;
     }
 
@@ -166,11 +181,15 @@ class _PortfolioPageState extends State<_PortfolioPage> {
         RichText(
           text: TextSpan(
             children: [
-              TextSpan(
-                text: "₹ ${value.toStringAsFixed(2)}",
-                style: TextStyle(
-                    fontSize: 18, color: isProfit ? Colors.green : Colors.red),
-              ),
+              ((label != "Invested") & (label != "Current")) ?
+                  TextSpan(
+                    text: "₹ ${value.toStringAsFixed(2)}",
+                    style: TextStyle(
+                        fontSize: 18, color: isProfit ? Colors.green : Colors.red),
+                  ): TextSpan(text: "₹ ${value.toStringAsFixed(2)}",
+                    style: TextStyle(
+                        fontSize: 18, color:Colors.black)),
+                  
               if (percentage != null)
                 TextSpan(
                   text: " (${percentage.toStringAsFixed(2)}%)",
@@ -203,9 +222,9 @@ class _PortfolioPageState extends State<_PortfolioPage> {
                 child:Container(
                     padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                     decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 49, 248, 85),
+                      color: orderType[index]=="Buy" ? Color.fromARGB(255, 49, 248, 85): Colors.red,
                       borderRadius: BorderRadius.circular(5.0),
-                    ),
+                    ) ,
                     child: Text(
                       orderType[index],
                       textAlign: TextAlign.center,

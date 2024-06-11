@@ -1,3 +1,4 @@
+import 'package:damtrade/pages/stock_sell.dart';
 import "package:firebase_auth/firebase_auth.dart";
 import 'package:flutter/material.dart';
 import "tab_bar_modify.dart";
@@ -547,10 +548,10 @@ void addStock(int index,String suggestion,String exchange){
 
           },
           onSell: () {
-            // Implement Sell action
-            Navigator.pop(context); // Close the bottom sheet
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Sell action for $stockName')),
+            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => StockSellPage(stockName: stockName, livePrice: double.parse(currentPrice)))
             );
           },
           onSetAlert: () {
