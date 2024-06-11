@@ -1,6 +1,8 @@
 import 'package:damtrade/main.dart';
 import 'package:damtrade/pages/home.dart';
 import 'package:flutter/material.dart';
+import 'stock_service.dart';
+import 'dart:async';
 
 class SecondPageContent extends StatelessWidget {
   @override
@@ -17,6 +19,50 @@ class _PortfolioPage extends StatefulWidget {
 }
 
 class _PortfolioPageState extends State<_PortfolioPage> {
+  Timer? _timer;
+  List<Map<String,Map<String,String>>> stockData = [];
+  List<double> plAmount = [];
+  List<String> orderType = [];
+  
+
+  @override
+  void initState(){
+    super.initState();
+    _updateStockData().then((_) => _startFetchingStockData());
+
+  }
+
+  @override
+  void dispose(){
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _startFetchingStockData() async {
+    _timer = Timer.periodic(Duration(seconds: 30), (timer) async {
+        await _updateStockData();
+    });
+  }
+  Future<void> _updateStockData() async {
+    List<Map<String,Map<String,String>>> updatedStockData = [];
+
+    try {
+      Map<String,Map<String,String>>stockInfo = {};
+      for (var item in watchlist!.protfollio[userId]!) {
+          String istock = item['name'];
+          Map<String,String> data = await fetchStockData(istock);
+          stockInfo[istock]= data;
+        }
+        updatedStockData.add(stockInfo);
+
+      setState(() {
+        stockData =  updatedStockData;
+      });
+    } catch (e) {
+      print('Error updating stock data: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Sample data for demonstration
@@ -25,9 +71,22 @@ class _PortfolioPageState extends State<_PortfolioPage> {
     double profitLoss = 0.0;
     double profitLossPercentage = 0;
     if (watchlist!.protfollio.isNotEmpty){
+          int i = 0;
+          plAmount = [];
           for (Map<String,dynamic> item in watchlist!.protfollio[userId]!){
                   investedAmount += item["investedAmount"];
+                  if(stockData.isNotEmpty){
+                    item["currentPrice"] = double.parse(stockData[0][item["name"]]!['currentPrice']!);
+                    plAmount.add((item['currentPrice']*item['quantity']) - item["investedAmount"]);
+                    debugPrint("$plAmount");
+                    watchlist!.protfollio[userId]![i]["currentPrice"] = item['currentPrice'];
+                    watchlist!.protfollio[userId]![i]['plAmount'] = plAmount[i];
+                    i += 1;
+                  }else{
+                    plAmount.add(item['plAmount']);
+                  }
                   currentValue += item['currentPrice'] * item["quantity"];
+                  orderType.add(item["orderType"]);
           }
 
           profitLoss = currentValue - investedAmount;
@@ -132,14 +191,20 @@ class _PortfolioPageState extends State<_PortfolioPage> {
         itemCount: holdings.length,
         itemBuilder: (context, index) {
           final holding = holdings[index];
-          final isProfit = holding['plAmount'] >= 0;
+          final isProfit = plAmount[index] >= 0;
 
           return ListTile(
             contentPadding: EdgeInsets.all(16.0),
-            title: Text(
-              holding['name'],
+            title: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(orderType[index],
+                style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(
+                holding['name'],
               style: TextStyle(fontWeight: FontWeight.bold),
-            ),
+              
+            )],),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -152,8 +217,8 @@ class _PortfolioPageState extends State<_PortfolioPage> {
               children: [
                 Text(
                   isProfit
-                      ? "+₹${holding['plAmount']}"
-                      : "-₹${holding['plAmount'].abs()}",
+                      ? "+₹${plAmount[index].toStringAsFixed(2)}"
+                      : "-₹${plAmount[index].toStringAsFixed(2)}",
                   style: TextStyle(
                     color: isProfit ? Colors.green : Colors.red,
                     fontSize: 16,

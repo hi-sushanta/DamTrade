@@ -9,15 +9,15 @@ class WatchlistItem {
   WatchlistItem(this.uuid){
     addData(uuid!);
     protfollio[uuid!] = [
-      {
-        "name": "AAPL",
-        "quantity": 7,
-        "averagePrice": 10.15,
-        "investedAmount": 71.05,
-        "currentPrice": 8.90,
-        "plPercentage": 1.14,
-        "plAmount": -8.75,
-      },
+      // {
+      //   "name": "AAPL",
+      //   "quantity": 7,
+      //   "averagePrice": 10.15,
+      //   "investedAmount": 71.05,
+      //   "currentPrice": 8.90,
+      //   // "plPercentage": 1.14,
+      //   "plAmount": -8.75,
+      // },
     ];
     amountHave[uuid!] = 3000000.0;
   }
@@ -35,14 +35,15 @@ class WatchlistItem {
     };
   }
 
-  void addProtfolio(String uuid, String stockName,int quantity,double avgPrice,double invPrice,double currPrice,double plPercentage,double plAmount){
+  void addProtfolio(String uuid, String stockName,String orederType,int quantity,double avgPrice,double invPrice,double currPrice,double plAmount){
     protfollio[uuid]!.add({
       "name":stockName,
+      "orderType":orederType,
       "quantity":quantity,
       "averagePrice":avgPrice,
       "investedAmount":invPrice,
       "currentPrice": currPrice,
-      "plPercentage": plPercentage,
+      // "plPercentage": plPercentage,
       "plAmount": plAmount
     });
   }

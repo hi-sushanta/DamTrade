@@ -281,6 +281,33 @@ Future<void> _showMyDialog() async {
   );
 }
 
+Future<void> _showDialog() async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false, // user must tap button!
+    builder: (BuildContext context) {
+      return GestureDetector(
+        behavior:HitTestBehavior.translucent,
+        child:const AlertDialog(
+        title: Text('Price Not Loaded'),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              Text('Please Wait your price is not loaded successfully⌛⌛⌛'),
+            ],
+          ),
+        ),
+      ),
+      onTap: (){
+         Navigator.of(context).pop();
+
+      },
+
+      );
+    },
+  );
+}
+
 void addStock(int index,String suggestion,String exchange){
     setState(() {
 
@@ -389,7 +416,8 @@ void addStock(int index,String suggestion,String exchange){
                                           stockData[i][stock]?["percentageChange"]??"");
 
                                       }else{
-                                        _onStockTap(i,stock,"null","null","null");
+                                        // _onStockTap(i,stock,"null","null","null");
+                                        _showDialog();
                                       }
                                       
                                     },

@@ -47,7 +47,8 @@ class _StockBuyPageState extends State<StockBuyPage> {
     // Navigate back to the home screen.
     if (_quantityController.text.isNotEmpty){
       if (int.tryParse(_quantityController.text)! > 0){
-        watchlist!.addProtfolio(userId, widget.stockName, int.tryParse(_quantityController.text)!, 10.15, 71.05,8.90,1.14,-8.75);
+        watchlist!.addProtfolio(userId, widget.stockName,"Buy", int.tryParse(_quantityController.text)!, widget.livePrice, double.parse(_priceController.text)
+                                ,widget.livePrice,0);
       }
     }
     Navigator.pop(context);
