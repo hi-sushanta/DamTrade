@@ -198,13 +198,34 @@ class _PortfolioPageState extends State<_PortfolioPage> {
             title: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(orderType[index],
-                style: TextStyle(fontWeight: FontWeight.bold)),
-                Text(
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 1.0,vertical:8.0),
+                child:Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 49, 248, 85),
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                    child: Text(
+                      orderType[index],
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black, // Changed to match your requirements
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding:EdgeInsets.all(8.0),
+                  child:Text(
                 holding['name'],
               style: TextStyle(fontWeight: FontWeight.bold),
               
-            )],),
+            ),
+            ),
+            ],
+            ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
