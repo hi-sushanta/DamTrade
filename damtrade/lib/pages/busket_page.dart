@@ -39,6 +39,11 @@ class _PortfolioPageState extends State<_PortfolioPage> {
 
   void _startFetchingStockData() async {
     _timer = Timer.periodic(Duration(seconds: 30), (timer) async {
+      // Check if the widget is still mounted
+      if (!mounted) {
+        _timer?.cancel();
+        return;
+      }
       await _updateStockData();
     });
   }
@@ -55,9 +60,12 @@ class _PortfolioPageState extends State<_PortfolioPage> {
       }
       updatedStockData.add(stockInfo);
 
-      setState(() {
-        stockData = updatedStockData;
-      });
+      // Check if the widget is still mounted
+      if (mounted) {
+        setState(() {
+          stockData = updatedStockData;
+        });
+      }
     } catch (e) {
       print('Error updating stock data: $e');
     }
@@ -67,25 +75,27 @@ class _PortfolioPageState extends State<_PortfolioPage> {
     setState(() {
       watchlist!.protfollio[userId]!.removeAt(index);
       orderType = [];
-      _updateStockData();
       _updateProfitLoss();
     });
   }
-  void _updateProfitLoss() {
-      double investedAmount = 0.0;
-      double currentValue = 0.0;
-      double profitLoss = 0.0;
 
-      for (var item in watchlist!.protfollio[userId]!) {
-        investedAmount += item['investedAmount'];
-        currentValue += item['currentPrice'] * item['quantity'];
-      }
-      profitLoss = currentValue - investedAmount;
+  void _updateProfitLoss() {
+    double investedAmount = 0.0;
+    double currentValue = 0.0;
+    double profitLoss = 0.0;
+
+    for (var item in watchlist!.protfollio[userId]!) {
+      investedAmount += item['investedAmount'];
+      currentValue += item['currentPrice'] * item['quantity'];
+    }
+    profitLoss = currentValue - investedAmount;
+
+    if (mounted) {
       setState(() {
         // No need to save these, just using for display
       });
+    }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -97,6 +107,7 @@ class _PortfolioPageState extends State<_PortfolioPage> {
     if (watchlist!.protfollio.isNotEmpty) {
       int i = 0;
       plAmount = [];
+      orderType = [];
       for (Map<String, dynamic> item in watchlist!.protfollio[userId]!) {
         investedAmount += item["investedAmount"];
         if (stockData.isNotEmpty) {
@@ -105,15 +116,15 @@ class _PortfolioPageState extends State<_PortfolioPage> {
           if (item["orderType"] == "Buy") {
             plAmount.add((item['currentPrice'] * item['quantity']) -
                 item["investedAmount"]);
-            profitLoss += (item['currentPrice'] - item['investedAmount']);
+            profitLoss += ((item['quantity'] * item['currentPrice']) - item['investedAmount']);
           } else {
             plAmount.add(item["investedAmount"] -
                 (item['currentPrice'] * item['quantity']));
-            profitLoss += (item['investedAmount'] - item['currentPrice']);
+            profitLoss += (item['investedAmount'] - (item['currentPrice'] * item['quantity']));
           }
           watchlist!.protfollio[userId]![i]["currentPrice"] =
               item['currentPrice'];
-          
+
           watchlist!.protfollio[userId]![i]['plAmount'] = plAmount[i];
         } else {
           plAmount.add(item['plAmount']);
@@ -122,7 +133,9 @@ class _PortfolioPageState extends State<_PortfolioPage> {
         orderType.add(item["orderType"]);
         i += 1;
       }
-      profitLossPercentage = (profitLoss / investedAmount) * 100;
+      if (profitLoss > 0.0){
+        profitLossPercentage = (profitLoss / investedAmount) * 100;
+      }
     }
 
     return Scaffold(
@@ -195,14 +208,16 @@ class _PortfolioPageState extends State<_PortfolioPage> {
         RichText(
           text: TextSpan(
             children: [
-              ((label != "Invested") & (label != "Current")) ?
-                  TextSpan(
-                    text: "₹ ${value.toStringAsFixed(2)}",
-                    style: TextStyle(
-                        fontSize: 18, color: isProfit ? Colors.green : Colors.red),
-                  ): TextSpan(text: "₹ ${value.toStringAsFixed(2)}",
-                    style: TextStyle(
-                        fontSize: 18, color:Colors.black)),
+              ((label != "Invested") & (label != "Current"))
+                  ? TextSpan(
+                      text: "₹ ${value.toStringAsFixed(2)}",
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: isProfit ? Colors.green : Colors.red),
+                    )
+                  : TextSpan(
+                      text: "₹ ${value.toStringAsFixed(2)}",
+                      style: TextStyle(fontSize: 18, color: Colors.black)),
               if (percentage != null)
                 TextSpan(
                   text: " (${percentage.toStringAsFixed(2)}%)",
