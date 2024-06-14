@@ -1,11 +1,17 @@
 
 
 
+import 'dart:math';
+import 'package:damtrade/pages/home.dart';
+import 'package:flutter/material.dart';
+import 'package:damtrade/main.dart';
+
 class WatchlistItem {
   String? uuid;
   Map<String,Map<String,List>> data = {}; 
   Map<String,List<Map<String,dynamic>>> protfollio = {};
   Map<String,double> amountHave = {};
+  Map<String,List<List>> amountAddHistory = {};
   WatchlistItem(this.uuid){
     addData(uuid!);
     protfollio[uuid!] = [
@@ -20,6 +26,7 @@ class WatchlistItem {
       // },
     ];
     amountHave[uuid!] = 3000000.0;
+    amountAddHistory[uuid!] = [];
   }
   
 
@@ -33,6 +40,10 @@ class WatchlistItem {
     // ["jio","reliance","tata"]
     ]
     };
+  }
+
+  void addHistory(Icons icon , String label, String date, String amount, {String color= "S0xFF70E5A0"}){
+    watchlist!.amountAddHistory[userId]!.add([icon,label,date,amount,color]);
   }
 
   void addProtfolio(String uuid, String stockName,String orederType,int quantity,double avgPrice,double invPrice,double currPrice,double plAmount){
@@ -58,6 +69,12 @@ class WatchlistItem {
    
   }
 
+  void decrasePrice(String uuid, double amount){
+    watchlist!.amountHave[uuid] = watchlist!.amountHave[uuid]! - amount;
+  }
+  void incrasePrice(String uuid,double amount){
+    watchlist!.amountHave[uuid] = watchlist!.amountHave[uuid]! + amount;
+  }
   bool ifHaveStock(String uuid, int index, String stockAndExchange){
     for (String stock in data["data"]![uuid]![index]){
       if (stock == stockAndExchange){

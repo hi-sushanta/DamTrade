@@ -8,6 +8,7 @@ import 'dart:async';
 import 'search_bar_desgine.dart';
 import  'busket_page.dart';
 import 'stock_buy.dart';
+import 'fund_page.dart';
 
 final userId = FirebaseAuth.instance.currentUser!.uid;
 
@@ -62,12 +63,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
     //String? user = FirebaseAuth.instance.currentUser!.email ?? FirebaseAuth.instance.currentUser!.displayName;
   int _selectedIndex = 0; // Track the selected index for the navigation bar
-
   final List<Widget> _pages = [
     BaseHome(), // Replace with your content widget for Home
     SecondPageContent(), // Replace with your content widget for second tab
     ThirdPageContent(), // Replace with your content widget for third tab
-    FourthPageContent(), // Replace with your content widget for fourth tab
+    FundsPage(), // Replace with your content widget for fourth tab
   ];
   
   

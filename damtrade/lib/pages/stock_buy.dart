@@ -47,8 +47,16 @@ class _StockBuyPageState extends State<StockBuyPage> {
     // Navigate back to the home screen.
     if (_quantityController.text.isNotEmpty){
       if (int.tryParse(_quantityController.text)! > 0){
-        watchlist!.addProtfolio(userId, widget.stockName,"Buy", int.tryParse(_quantityController.text)!, widget.livePrice, double.parse(_priceController.text)
-                                ,widget.livePrice,0);
+          
+          if (watchlist!.amountHave[userId]! > double.parse(_priceController.text)){
+
+              watchlist!.addProtfolio(userId, widget.stockName,"Buy", int.tryParse(_quantityController.text)!, widget.livePrice, double.parse(_priceController.text)
+                                      ,widget.livePrice,0);
+              watchlist!.decrasePrice(userId, double.parse(_priceController.text));
+
+          } else{
+            debugPrint("Not enough money have in your wallet");
+          }
       }
     }
     Navigator.pop(context);

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_swipe_button/flutter_swipe_button.dart';
 import 'dart:async';
-import '../main.dart';
+import 'package:damtrade/main.dart';
 import 'stock_service.dart';
 import 'home.dart';
 
@@ -71,11 +71,13 @@ class _PortfolioPageState extends State<_PortfolioPage> {
     }
   }
 
-  void _handleSwipeAction(int index) {
+  void _handleSwipeAction(int index,double amount) {
     setState(() {
-      watchlist!.protfollio[userId]!.removeAt(index);
-      orderType = [];
-      _updateProfitLoss();
+        watchlist!.incrasePrice(userId, amount);
+        watchlist!.protfollio[userId]!.removeAt(index);
+        orderType = [];
+        _updateProfitLoss();
+      
     });
   }
 
@@ -274,7 +276,7 @@ class _PortfolioPageState extends State<_PortfolioPage> {
                       activeThumbColor: orderType[index] == 'Buy'
                           ? Colors.red[300]
                           : Colors.blue[300],
-                      onSwipe: () => _handleSwipeAction(index),
+                      onSwipe: () => _handleSwipeAction(index,(holding['investedAmount']+(holding['plAmount']))),
                       borderRadius: BorderRadius.circular(30.0),
                       height: 60.0,
                       child: Text(
