@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swipe_button/flutter_swipe_button.dart';
 import 'dart:async';
@@ -6,6 +7,8 @@ import 'stock_service.dart';
 import 'home.dart';
 
 class SecondPageContent extends StatelessWidget {
+  const SecondPageContent({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -38,7 +41,7 @@ class _PortfolioPageState extends State<_PortfolioPage> {
   }
 
   void _startFetchingStockData() async {
-    _timer = Timer.periodic(Duration(seconds: 30), (timer) async {
+    _timer = Timer.periodic(const Duration(seconds: 30), (timer) async {
       // Check if the widget is still mounted
       if (!mounted) {
         _timer?.cancel();
@@ -67,7 +70,9 @@ class _PortfolioPageState extends State<_PortfolioPage> {
         });
       }
     } catch (e) {
-      print('Error updating stock data: $e');
+      if (kDebugMode) {
+        print('Error updating stock data: $e');
+      }
     }
   }
 
@@ -170,11 +175,11 @@ class _PortfolioPageState extends State<_PortfolioPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             "Holdings",
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Container(
             decoration: BoxDecoration(
               color: Colors.grey[200],
@@ -185,9 +190,9 @@ class _PortfolioPageState extends State<_PortfolioPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildSummaryRow("Invested", invested),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 _buildSummaryRow("Current", current),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 _buildSummaryRow("P&L", profitLoss,
                     isProfit: profitLoss >= 0, percentage: profitLossPercentage),
               ],
@@ -205,7 +210,7 @@ class _PortfolioPageState extends State<_PortfolioPage> {
       children: [
         Text(
           label,
-          style: TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18),
         ),
         RichText(
           text: TextSpan(
@@ -253,7 +258,7 @@ class _PortfolioPageState extends State<_PortfolioPage> {
                     holding['name'],
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text("Quantity: ${holding['quantity']}"),
                   Text("Average Price: ₹${holding['averagePrice']}"),
                   Text("Invested Amount: ₹${holding['investedAmount']}"),

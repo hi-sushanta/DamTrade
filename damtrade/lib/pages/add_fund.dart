@@ -5,11 +5,13 @@ import 'home.dart';
 class InputPage extends StatelessWidget {
   final TextEditingController _controller = TextEditingController();
 
+  InputPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Add Funds',
           style: TextStyle(
             color: Colors.white,
@@ -23,7 +25,7 @@ class InputPage extends StatelessWidget {
         ),
       ),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [Color(0xFFA5D6A7), Color(0xFF66BB6A)],
             begin: Alignment.topCenter,
@@ -44,7 +46,7 @@ class InputPage extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text(
+                    const Text(
                       'Enter Amount',
                       style: TextStyle(
                         fontSize: 24,
@@ -53,7 +55,7 @@ class InputPage extends StatelessWidget {
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     TextField(
                       controller: _controller,
                       keyboardType: TextInputType.number,
@@ -65,7 +67,7 @@ class InputPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: 24),
+                    const SizedBox(height: 24),
                     ElevatedButton(
                       onPressed: () {
                         double amount = double.tryParse(_controller.text) ?? 0.0;
@@ -82,7 +84,7 @@ class InputPage extends StatelessWidget {
                       ),
                       child: Ink(
                         decoration: BoxDecoration(
-                          gradient: LinearGradient(
+                          gradient: const LinearGradient(
                             colors: [Color(0xFF66BB6A), Color(0xFF43A047)],
                             begin: Alignment.centerLeft,
                             end: Alignment.centerRight,
@@ -92,7 +94,7 @@ class InputPage extends StatelessWidget {
                         child: Container(
                           padding: EdgeInsets.symmetric(vertical: 15),
                           alignment: Alignment.center,
-                          child: Text(
+                          child: const Text(
                             'Submit',
                             style: TextStyle(fontSize: 18, color: Colors.white),
                           ),

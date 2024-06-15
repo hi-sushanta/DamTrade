@@ -39,28 +39,37 @@ class _StockSellPageState extends State<StockSellPage> {
     final totalPrice = widget.livePrice * quantity;
     _priceController.text = totalPrice.toStringAsFixed(2);
   }
-
+  
   void _handleSwipeToSell() {
     // Implement your sell logic here.
+    try{
     if (_quantityController.text.isNotEmpty) {
-      int quantityToSell = int.tryParse(_quantityController.text) ?? 1;
+      int quantityToSell = int.tryParse(_quantityController.text)!;
       if (quantityToSell > 0) {
         // Add selling information to the portfolio
         if (watchlist!.amountHave[userId]!.value > double.parse(_priceController.text)){
               watchlist!.addProtfolio(userId, widget.stockName, "Sell", quantityToSell, widget.livePrice, double.parse(_priceController.text), widget.livePrice, 0);
               watchlist!.decrasePrice(userId, double.parse(_priceController.text));
+              Navigator.pop(context);
+
         } else{
-          debugPrint("not enough money have in your wallet");
+          ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('not enough money have in your wallet',style: TextStyle(color:Color.fromARGB(255, 255, 255, 255)),),backgroundColor: Color.fromARGB(255, 247, 62, 11),));
         }
         // Navigate back to the home screen
-        Navigator.pop(context);
       } else {
         // Show an error message for invalid quantity
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Quantity must be greater than zero.')),
-        );
+          const SnackBar(content: Text('Quantity must be greater than zero.',style: TextStyle(color:Color.fromARGB(255, 255, 254, 254)),),backgroundColor: Color.fromARGB(255, 247, 62, 11),));
       }
+    } else{
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please Fill The Input Box',style: TextStyle(color:Color.fromARGB(255, 255, 255, 255)),),backgroundColor: Color.fromARGB(255, 247, 62, 11),));
     }
+    } catch(e){
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Invalid Value Entered.',style: TextStyle(color:Color.fromARGB(255, 255, 255, 255)),),backgroundColor: Color.fromARGB(255, 247, 62, 11),));
+    } 
   }
 
   @override
@@ -124,7 +133,7 @@ class _StockSellPageState extends State<StockSellPage> {
         onSwipe: _handleSwipeToSell,
         borderRadius: BorderRadius.circular(30.0),
         height: 60.0,
-        child: Text(
+        child: const Text(
           "SWIPE TO SELL",
           style: TextStyle(fontSize: 16, color: Colors.white),
         ),
