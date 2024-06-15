@@ -70,9 +70,24 @@ class InputPage extends StatelessWidget {
                     const SizedBox(height: 24),
                     ElevatedButton(
                       onPressed: () {
-                        double amount = double.tryParse(_controller.text) ?? 0.0;
-                        watchlist!.addFund(userId, amount);
-                        Navigator.pop(context, true);
+                        try{
+                          if (_controller.text.isNotEmpty){
+                            if (double.tryParse(_controller.text)! > 0.0){
+                              double amount = double.tryParse(_controller.text)!;
+                              watchlist!.addFund(userId, amount);
+                              Navigator.pop(context, true);
+                            } else{
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Amount must be greater than zero.',style: TextStyle(color:Color.fromARGB(255, 255, 254, 254)),),backgroundColor: Color(0xFF388E3C),));
+                            }
+                          } else{
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text("Amount Is Empty!",style: TextStyle(color:Color.fromARGB(255, 255, 254, 254)),),backgroundColor: Color(0xFF388E3C)));
+                          }
+                        }catch(e){
+                           ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Invelid Value Entered.',style: TextStyle(color:Color.fromARGB(255, 255, 254, 254)),),backgroundColor: Color(0xFF388E3C)));
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent,
