@@ -126,7 +126,6 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
 
   final TextEditingController _searchController = TextEditingController();
   // var titles = ["watchlist1","watchlist2","watchlist3","watchlist4","watchlist5","watchlist6","watchlist7","watchlist8",'watchlist9',"watchlist10"];
-  List<String>price_info = ["7.10","0.53%","^","1337.50"];
   List<Map<String,Map<String,String>>> stockData = [];
   late Map<String,List<String>> watchListItem;
     // Define a method to refresh the state
