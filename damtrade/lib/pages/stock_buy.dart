@@ -60,7 +60,7 @@ class _StockBuyPageState extends State<StockBuyPage> {
             } else{
               ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Not Enough Money Have In Your Wallet!',style: TextStyle(color:Colors.black),),backgroundColor: Color.fromARGB(255, 165, 247, 24),),
-                );
+              );
             }
         } else {
           ScaffoldMessenger.of(context).showSnackBar(

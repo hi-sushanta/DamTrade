@@ -15,7 +15,7 @@ class FundsPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black, // Background color
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Funds',
           style: TextStyle(
             color: Colors.black,
@@ -25,10 +25,7 @@ class FundsPage extends StatelessWidget {
         backgroundColor: Color(0xFF8ED2FC),
         elevation: 0,
         centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
