@@ -47,7 +47,7 @@ class FundsPage extends StatelessWidget {
                   valueListenable: watchlist!.amountHave[userId]!,
                   builder: (context, value, child) {
                     return Text(
-                      '$value',
+                      value.toStringAsFixed(2),
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
