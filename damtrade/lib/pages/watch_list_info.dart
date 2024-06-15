@@ -1,32 +1,20 @@
 
-
-
-import 'dart:math';
-import 'package:damtrade/pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:damtrade/main.dart';
+import 'dart:core';
+import 'package:intl/intl.dart';
 
 class WatchlistItem {
   String? uuid;
   Map<String,Map<String,List>> data = {}; 
   Map<String,List<Map<String,dynamic>>> protfollio = {};
-  Map<String,double> amountHave = {};
-  Map<String,List<List>> amountAddHistory = {};
+  Map<String,ValueNotifier<double>> amountHave = {};
+  Map<String,ValueNotifier<List<List>>> amountAddHistory = {};
   WatchlistItem(this.uuid){
     addData(uuid!);
-    protfollio[uuid!] = [
-      // {
-      //   "name": "AAPL",
-      //   "quantity": 7,
-      //   "averagePrice": 10.15,
-      //   "investedAmount": 71.05,
-      //   "currentPrice": 8.90,
-      //   // "plPercentage": 1.14,
-      //   "plAmount": -8.75,
-      // },
-    ];
-    amountHave[uuid!] = 3000000.0;
-    amountAddHistory[uuid!] = [];
+    protfollio[uuid!] = [];
+    amountHave[uuid!] = ValueNotifier<double>(3000000.0);
+    amountAddHistory[uuid!] = ValueNotifier<List<List>>([]);
   }
   
 
@@ -37,13 +25,13 @@ class WatchlistItem {
     ["AAPL+NYSE","IBM+NYSE","TSLA+NYSE"],
     [],
     [],
-    // ["jio","reliance","tata"]
     ]
     };
   }
 
-  void addHistory(Icons icon , String label, String date, String amount, {String color= "S0xFF70E5A0"}){
-    watchlist!.amountAddHistory[userId]!.add([icon,label,date,amount,color]);
+  void addHistory(String uuid,String amount,String date){
+    var history = [Icons.add, "Add Money", date, amount, Color(0xFF70E5A0)];
+    watchlist!.amountAddHistory[uuid]!.value = List.from(amountAddHistory[uuid]!.value)..add(history); // Notify listeners
   }
 
   void addProtfolio(String uuid, String stockName,String orederType,int quantity,double avgPrice,double invPrice,double currPrice,double plAmount){
@@ -70,10 +58,16 @@ class WatchlistItem {
   }
 
   void decrasePrice(String uuid, double amount){
-    watchlist!.amountHave[uuid] = watchlist!.amountHave[uuid]! - amount;
+    watchlist!.amountHave[uuid]!.value = watchlist!.amountHave[uuid]!.value - amount;
   }
   void incrasePrice(String uuid,double amount){
-    watchlist!.amountHave[uuid] = watchlist!.amountHave[uuid]! + amount;
+    watchlist!.amountHave[uuid]!.value = watchlist!.amountHave[uuid]!.value + amount;
+  }
+
+  void addFund(String uuid, double amount){
+    String liveDate = DateFormat('dd MMMM, yyyy').format(DateTime.now());
+    watchlist!.amountHave[uuid]!.value = watchlist!.amountHave[uuid]!.value + amount;
+    watchlist!.addHistory(uuid,"$amount",liveDate);
   }
   bool ifHaveStock(String uuid, int index, String stockAndExchange){
     for (String stock in data["data"]![uuid]![index]){

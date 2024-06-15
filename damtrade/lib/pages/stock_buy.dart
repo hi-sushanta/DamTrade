@@ -48,7 +48,7 @@ class _StockBuyPageState extends State<StockBuyPage> {
     if (_quantityController.text.isNotEmpty){
       if (int.tryParse(_quantityController.text)! > 0){
           
-          if (watchlist!.amountHave[userId]! > double.parse(_priceController.text)){
+          if (watchlist!.amountHave[userId]!.value > double.parse(_priceController.text)){
 
               watchlist!.addProtfolio(userId, widget.stockName,"Buy", int.tryParse(_quantityController.text)!, widget.livePrice, double.parse(_priceController.text)
                                       ,widget.livePrice,0);

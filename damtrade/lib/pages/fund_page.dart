@@ -1,6 +1,7 @@
 import 'package:damtrade/pages/home.dart';
 import 'package:flutter/material.dart';
 import '../main.dart';
+import 'add_fund.dart';
 
 class FundsPage extends StatelessWidget {
 
@@ -42,15 +43,24 @@ class FundsPage extends StatelessWidget {
                   style: TextStyle(fontSize: 16, color: const Color.fromARGB(255, 52, 52, 52)),
                 ),
                 SizedBox(height: 4),
-                Text(
-                  '${watchlist!.amountHave[userId]}',
-                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.black),
+                ValueListenableBuilder<double>(
+                  valueListenable: watchlist!.amountHave[userId]!,
+                  builder: (context, value, child) {
+                    return Text(
+                      '$value',
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black
+                      ),
+                    );
+                  },
                 ),
                 SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildActionButton(Icons.add, 'Add Money', Color(0xFF70E5A0)),
+                    _buildActionButton(context,Icons.add, 'Add Money', Color(0xFF70E5A0)),
                     // SizedBox(width: 16),
                     // _buildActionButton(Icons.remove, 'Withdraw', Color(0xFFFFAB91)),
                   ],
@@ -74,86 +84,48 @@ class FundsPage extends StatelessWidget {
             ),
           ),
             Expanded(
-              child:  (watchlist!.amountAddHistory[userId]!.isNotEmpty) ? 
-                      ListView(
-                        children: [
-                          _buildTransactionItem(
-                            icon: Icons.add,
-                            label: 'Add Money',
-                            date: '12 June, 2023',
-                            amount: '+2,000',
-                            color: Color(0xFF70E5A0),
-                          ),
-                          _buildTransactionItem(
-                            icon: Icons.add,
-                            label: 'Add Money',
-                            date: '02 June, 2023',
-                            amount: '+4,000',
-                            color: Color(0xFF70E5A0),
-                          ),
-                          _buildTransactionItem(
-                            icon: Icons.add,
-                            label: 'Add Money',
-                            date: '20 May, 2023',
-                            amount: '+7,000',
-                            color: Color(0xFF70E5A0),
-                          ),
-                          _buildTransactionItem(
-                            icon: Icons.add,
-                            label: 'Add Money',
-                            date: '07 April, 2023',
-                            amount: '+1,000',
-                            color: Color(0xFF70E5A0),
-                          ),
-                          _buildTransactionItem(
-                            icon: Icons.add,
-                            label: 'Add Money',
-                            date: '07 April, 2023',
-                            amount: '+1,000',
-                            color: Color(0xFF70E5A0),
-                          ),
-                          _buildTransactionItem(
-                            icon: Icons.add,
-                            label: 'Add Money',
-                            date: '07 April, 2023',
-                            amount: '+1,000',
-                            color: Color(0xFF70E5A0),
-                          ),
-                          _buildTransactionItem(
-                            icon: Icons.add,
-                            label: 'Add Money',
-                            date: '07 April, 2023',
-                            amount: '+1,000',
-                            color: Color(0xFF70E5A0),
-                          ),
-                          _buildTransactionItem(
-                            icon: Icons.add,
-                            label: 'Add Money',
-                            date: '07 April, 2023',
-                            amount: '+1,000',
-                            color: Color(0xFF70E5A0),
-                          ),
-                          _buildTransactionItem(
-                            icon: Icons.add,
-                            label: 'Add Money',
-                            date: '07 April, 2023',
-                            amount: '+1,000',
-                            color: Color(0xFF70E5A0),
-                          ),
-                        ],
-                  )
-                  :const Center(
-                  child: Text("Hello you don't have any transaction"),
-                  ),
-              )
+            child: ValueListenableBuilder<List<List>>(
+              valueListenable: watchlist!.amountAddHistory[userId]!,
+              builder: (context, history, child) {
+                if (history.isNotEmpty) {
+                  return ListView(
+                    children: [
+                      for (var item in history)
+                        _buildTransactionItem(
+                          icon: item[0],
+                          label: item[1],
+                          date: item[2],
+                          amount: item[3],
+                          color: item[4],
+                        ),
+                    ],
+                  );
+                } else {
+                  return const Center(
+                    child: Text(
+                      "Hello you don't have any transaction",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  );
+                }
+              },
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildActionButton(IconData icon, String label, Color color) {
+  Widget _buildActionButton(BuildContext context,IconData icon, String label, Color color) {
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => InputPage(),
+        ),
+      );
+          },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.black, // Button background color
         shape: RoundedRectangleBorder(
