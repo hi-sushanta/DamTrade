@@ -561,7 +561,7 @@ void addStock(int index,String suggestion,String exchange){
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => StockAlert(stockName: stockName),
+              builder: (context) => StockAlert(stockName: stockName,exchangeName: exchange,currentPrice:currentPrice),
             ),
           );
         },

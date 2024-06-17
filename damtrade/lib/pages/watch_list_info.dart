@@ -1,27 +1,45 @@
 
+import 'package:damtrade/pages/stock_alart_page.dart';
 import 'package:flutter/material.dart';
 import 'package:damtrade/main.dart';
 import 'dart:core';
 import 'package:intl/intl.dart';
+import 'stock_service.dart';
+import 'dart:async';
 
 class WatchlistItem {
   String? uuid;
-  Map<String,Map<String,List>> data = {}; 
-  Map<String,List<Map<String,dynamic>>> protfollio = {};
-  Map<String,ValueNotifier<double>> amountHave = {};
-  Map<String,ValueNotifier<List<List>>> amountAddHistory = {};
-  Map<String,List<List>> alartList = {};
+  Map<String, Map<String, List>> data = {};
+  Map<String, List<Map<String, dynamic>>> protfollio = {};
+  Map<String, ValueNotifier<double>> amountHave = {};
+  Map<String, ValueNotifier<List<List>>> amountAddHistory = {};
+  Map<String, ValueNotifier<List<StockAlertStore>>> stockAlertStore = {}; // Changed
 
-  WatchlistItem(this.uuid){
+  WatchlistItem(this.uuid) {
     addData(uuid!);
     protfollio[uuid!] = [];
     amountHave[uuid!] = ValueNotifier<double>(3000000.0);
     amountAddHistory[uuid!] = ValueNotifier<List<List>>([]);
+    stockAlertStore[uuid!] = ValueNotifier<List<StockAlertStore>>([]); // Changed
   }
-  
 
-  void setAlart(String uuid,String stockName, double alartPrice){
-
+  void setAlert(String uuid, String stockName, String exchangeName, double currentPrice,double alertPrice) {
+    StockAlertStore alert = StockAlertStore(
+      exchangeName: exchangeName, // Replace with actual exchange
+      stockName: stockName,
+      currentPrice: currentPrice,
+      alertPrice: alertPrice,
+    );
+    stockAlertStore[uuid]!.value = List.from(stockAlertStore[uuid]!.value)..add(alert);
+  }
+  void startUpdatingPrices(String uuid) {
+    Timer.periodic(Duration(seconds: 10), (timer) async {
+      for (var alert in stockAlertStore[uuid]!.value) {
+        final stockData = await fetchStockData(alert.stockName);
+        alert.currentPrice = double.parse(stockData["currentPrice"]!);
+      }
+      stockAlertStore[uuid]!.notifyListeners();
+    });
   }
 
   void addData(String uuid){
@@ -82,4 +100,18 @@ class WatchlistItem {
     }
     return true;
   }
+}
+
+class StockAlertStore {
+  String exchangeName;
+  String stockName;
+  double currentPrice;
+  double alertPrice;
+
+  StockAlertStore({
+    required this.exchangeName,
+    required this.stockName,
+    required this.currentPrice,
+    required this.alertPrice,
+  });
 }

@@ -1,9 +1,14 @@
+import 'package:damtrade/main.dart';
+import 'package:damtrade/pages/home.dart';
 import 'package:flutter/material.dart';
+import 'watch_list_info.dart';
 
 class StockAlert extends StatelessWidget {
   final String stockName;
+  final String exchangeName;
+  final String currentPrice;
 
-  StockAlert({super.key, required this.stockName});
+  StockAlert({super.key, required this.stockName, required this.exchangeName, required this.currentPrice});
 
   final TextEditingController _priceController = TextEditingController();
 
@@ -77,10 +82,21 @@ class StockAlert extends StatelessWidget {
                   ),
                   onPressed: () {
                     // Implement the logic to save the alert
-                    final alertPrice = _priceController.text;
-                    // Use alertPrice to set the alert
-                    // ...
-                    Navigator.pop(context); // Close the page after setting the alert
+                    try{
+                      final alertPrice = double.parse(_priceController.text);
+                      if (alertPrice > 0.0){
+                          watchlist!.setAlert(userId, stockName,exchangeName ,double.parse(currentPrice),alertPrice);
+                        // Use alertPrice to set the alert
+                          // ...
+                          Navigator.pop(context); // Close the page after setting the alert
+                      } else{
+                        ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Alert Price Must Be Grater Than 0',style: TextStyle(color:Color.fromARGB(255, 255, 255, 255)),),backgroundColor: Color.fromARGB(255, 247, 62, 11),));
+                      }
+                    } catch (e){
+                               ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Invelid Value Enterd.',style: TextStyle(color:Color.fromARGB(255, 255, 255, 255)),),backgroundColor: Color.fromARGB(255, 247, 62, 11),));
+                    }
                   },
                 ),
               ),
