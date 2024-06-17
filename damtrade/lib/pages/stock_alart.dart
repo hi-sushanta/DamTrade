@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class StockAlertPage extends StatelessWidget {
+class StockAlert extends StatelessWidget {
   final String stockName;
 
-  StockAlertPage({required this.stockName});
+  StockAlert({super.key, required this.stockName});
 
   final TextEditingController _priceController = TextEditingController();
 

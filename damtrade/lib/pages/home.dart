@@ -10,6 +10,7 @@ import  'busket_page.dart';
 import 'stock_buy.dart';
 import 'fund_page.dart';
 import 'stock_alart.dart';
+import 'stock_alart_page.dart';
 
 final userId = FirebaseAuth.instance.currentUser!.uid;
 
@@ -67,7 +68,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   final List<Widget> _pages = [
     BaseHome(), // Replace with your content widget for Home
     SecondPageContent(), // Replace with your content widget for second tab
-    ThirdPageContent(), // Replace with your content widget for third tab
+    StockAlertPage(), // Replace with your content widget for third tab
     FundsPage(), // Replace with your content widget for fourth tab
   ];
   
@@ -560,7 +561,7 @@ void addStock(int index,String suggestion,String exchange){
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => StockAlertPage(stockName: stockName),
+              builder: (context) => StockAlert(stockName: stockName),
             ),
           );
         },
@@ -620,13 +621,6 @@ class ThirdPageContent extends StatelessWidget {
   }
 }
 
-class FourthPageContent extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('Fourth Page Content'));
-  }
-
-}
 
 class StockDetailSheet extends StatelessWidget {
   final String stockName;
