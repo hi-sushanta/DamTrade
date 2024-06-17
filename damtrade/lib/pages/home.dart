@@ -9,6 +9,7 @@ import 'search_bar_desgine.dart';
 import  'busket_page.dart';
 import 'stock_buy.dart';
 import 'fund_page.dart';
+import 'stock_alart.dart';
 
 final userId = FirebaseAuth.instance.currentUser!.uid;
 
@@ -556,10 +557,14 @@ void addStock(int index,String suggestion,String exchange){
           onSetAlert: () {
             // Implement Set Alert action
             Navigator.pop(context); // Close the bottom sheet
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Alert set for $stockName')),
-            );
-          },
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => StockAlertPage(stockName: stockName),
+            ),
+          );
+        },
+
         );
       },
     );

@@ -10,6 +10,8 @@ class WatchlistItem {
   Map<String,List<Map<String,dynamic>>> protfollio = {};
   Map<String,ValueNotifier<double>> amountHave = {};
   Map<String,ValueNotifier<List<List>>> amountAddHistory = {};
+  Map<String,List<List>> alartList = {};
+
   WatchlistItem(this.uuid){
     addData(uuid!);
     protfollio[uuid!] = [];
@@ -18,7 +20,10 @@ class WatchlistItem {
   }
   
 
- 
+  void setAlart(String uuid,String stockName, double alartPrice){
+
+  }
+
   void addData(String uuid){
     data["data"] = {uuid:[
      ["watchlist1","watchlist2","watchlist3"],
