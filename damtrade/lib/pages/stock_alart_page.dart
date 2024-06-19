@@ -4,6 +4,18 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'watch_list_info.dart';
 import 'package:damtrade/main.dart';
 import 'home.dart';
+import 'stock_service.dart';
+import 'dart:async';
+
+
+import 'package:flutter/material.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'watch_list_info.dart';
+import 'package:damtrade/main.dart';
+import 'home.dart';
+import 'stock_service.dart';
+import 'dart:async';
 
 class StockAlertPage extends StatefulWidget {
   @override
@@ -11,86 +23,16 @@ class StockAlertPage extends StatefulWidget {
 }
 
 class _StockAlertPageState extends State<StockAlertPage> {
-  Set<StockAlertStore> notifiedAlerts = {};
-  FlutterLocalNotificationsPlugin? flutterLocalNotificationsPlugin;
-
   @override
   void initState() {
     super.initState();
-    watchlist!.startUpdatingPrices(userId);
-    initializeNotifications();
+    _updateAlerts();
   }
 
-  void initializeNotifications() {
-    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-
-    const InitializationSettings initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-    );
-
-    flutterLocalNotificationsPlugin!.initialize(initializationSettings);
-  }
-
-  Future<void> showNotification(StockAlertStore alert) async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-      'stock_alerts_channel',
-      'Stock Alerts',
-      importance: Importance.high,
-      priority: Priority.high,
-      playSound: true,
-    );
-
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(
-      android: androidPlatformChannelSpecifics,
-    );
-
-    await flutterLocalNotificationsPlugin!.show(
-      0, // Notification ID
-      'Stock Alert: ${alert.stockName}',
-      'Current price \$${alert.currentPrice.toStringAsFixed(2)} has reached or exceeded your alert price \$${alert.alertPrice.toStringAsFixed(2)}',
-      platformChannelSpecifics,
-      payload: 'Stock Alert', // Payload can be used to pass additional information
-    );
-  }
-
-  void checkAlerts(List<StockAlertStore> alerts) {
-    // Create a list to hold indices of alerts to be removed
-    List<int> indicesToRemove = [];
-    int index = 0;
-
-    for (var alert in alerts) {
-      if (alert.currentPrice >= alert.alertPrice && !notifiedAlerts.contains(alert)) {
-        print("Index: $index");
-        FlutterRingtonePlayer().play(
-          android: AndroidSounds.notification,
-          ios: IosSounds.glass,
-          looping: false,
-          volume: 0.5,
-          asAlarm: false,
-        );
-
-        notifiedAlerts.add(alert);
-        showNotification(alert);
-        
-        // Add index to list of indices to remove later
-        indicesToRemove.add(index);
-      }
-      index += 1;
-    }
-
-    // Remove alerts by index, from last to first to avoid index shifting issues
-    for (var i = indicesToRemove.length - 1; i >= 0; i--) {
-      watchlist!.removeAlartStock(userId, indicesToRemove[i]);
-    }
-  }
-
-  void deleteAlert(StockAlertStore alert) {
-    watchlist!.removeAlartStock(userId, watchlist!.stockAlertStore[userId]!.value.indexOf(alert));
-    setState(() {});
+  void _updateAlerts() async {
+    var stockAlerts = watchlist!.stockAlertStore[userId]!.value;
+    await StockAlertService().checkForAlerts(stockAlerts);
+    watchlist!.stockAlertStore[userId]!.notifyListeners(); // Notify listeners to refresh UI
   }
 
   @override
@@ -103,9 +45,6 @@ class _StockAlertPageState extends State<StockAlertPage> {
       body: ValueListenableBuilder<List<StockAlertStore>>(
         valueListenable: watchlist!.stockAlertStore[userId]!,
         builder: (context, stockAlerts, _) {
-          // This ensures notifications only play when stock prices match the alert prices
-          checkAlerts(stockAlerts);
-
           return stockAlerts.isNotEmpty
               ? Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -115,7 +54,10 @@ class _StockAlertPageState extends State<StockAlertPage> {
                       final alert = stockAlerts[index];
                       return StockAlertCard(
                         alert: alert,
-                        onDelete: () => deleteAlert(alert),
+                        onDelete: () {
+                          watchlist!.removeAlartStock(userId, index);
+                          _updateAlerts(); // Update alerts on delete
+                        },
                       );
                     },
                   ),
@@ -128,7 +70,6 @@ class _StockAlertPageState extends State<StockAlertPage> {
     );
   }
 }
-
 
 class StockAlertCard extends StatelessWidget {
   final StockAlertStore alert;
@@ -151,22 +92,13 @@ class StockAlertCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  alert.stockName,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.teal[900],
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.delete, color: Colors.red),
-                  onPressed: onDelete,
-                ),
-              ],
+            Text(
+              alert.stockName,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.teal[900],
+              ),
             ),
             SizedBox(height: 4),
             Text(
@@ -224,6 +156,10 @@ class StockAlertCard extends StatelessWidget {
                     ),
                   ],
                 ),
+                IconButton(
+                  icon: Icon(Icons.delete, color: Colors.red),
+                  onPressed: onDelete,
+                ),
               ],
             ),
           ],
@@ -232,3 +168,70 @@ class StockAlertCard extends StatelessWidget {
     );
   }
 }
+
+class StockAlertService {
+  static final StockAlertService _singleton = StockAlertService._internal();
+  factory StockAlertService() => _singleton;
+  StockAlertService._internal();
+
+  final _notifiedAlerts = <String>{}; // Track notified alerts
+  FlutterLocalNotificationsPlugin? _flutterLocalNotificationsPlugin;
+
+  void initializeNotifications() {
+    _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    const InitializationSettings initializationSettings = InitializationSettings(
+      android: initializationSettingsAndroid,
+    );
+
+    _flutterLocalNotificationsPlugin!.initialize(initializationSettings);
+  }
+
+  Future<void> showNotification(StockAlertStore alert) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'stock_alerts_channel',
+      'Stock Alerts',
+      channelDescription: 'Notifications for stock alerts',
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'ticker',
+    );
+
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+    );
+
+    await _flutterLocalNotificationsPlugin!.show(
+      alert.stockName.hashCode,
+      'Price Alert for ${alert.stockName}',
+      'Current price is \$${alert.currentPrice.toStringAsFixed(2)}, Alert set at \$${alert.alertPrice.toStringAsFixed(2)}',
+      platformChannelSpecifics,
+    );
+
+    FlutterRingtonePlayer().playNotification();
+  }
+
+  Future<void> checkForAlerts(List<StockAlertStore> alerts) async {
+    List<StockAlertStore> alertsToRemove = [];
+    for (var alert in alerts) {
+      var stockData = await fetchStockData(alert.stockName);
+      var latestPrice = double.parse(stockData['currentPrice']!); // Adjust based on actual key
+      alert.currentPrice = latestPrice;
+      if (latestPrice == alert.alertPrice) {
+        _notifiedAlerts.add(alert.stockName);
+        await showNotification(alert);
+        alertsToRemove.add(alert); // Mark alert for removal
+      }
+    }
+
+    // Remove alerts that have been notified
+    for (var alert in alertsToRemove) {
+      alerts.remove(alert);
+    }
+  }
+}
+

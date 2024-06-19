@@ -5,6 +5,7 @@ import 'dart:core';
 import 'package:intl/intl.dart';
 import 'stock_service.dart';
 import 'dart:async';
+import 'stock_alart_page.dart';
 
 class WatchlistItem {
   String? uuid;
@@ -32,9 +33,16 @@ class WatchlistItem {
     stockAlertStore[uuid]!.value = List.from(stockAlertStore[uuid]!.value)..add(alert);
   }
 
-  void removeAlartStock(String uuid, int index){
+  // void removeAlartStock(String uuid, int index){
+  //   stockAlertStore[uuid]!.value.removeAt(index);
+  // }
+
+
+  void removeAlartStock(String uuid, int index) {
     stockAlertStore[uuid]!.value.removeAt(index);
+    stockAlertStore[uuid]!.notifyListeners(); // Notify listeners after removing the alert
   }
+
   void startUpdatingPrices(String uuid) {
     Timer.periodic(Duration(seconds: 10), (timer) async {
       for (var alert in stockAlertStore[uuid]!.value) {

@@ -120,6 +120,8 @@ class BaseHome extends StatefulWidget {
 }
 
 class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
+  Timer? _alertCheckTimer;
+
   late TabController _tabController;
   late List? item;
   int index = 0;
@@ -139,7 +141,9 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
       // debugPrint("Hellow It's done");
       _tabController = TabController(length: watchlist!.data['data']![userId]![0].length, vsync: this);
       
-      _updateStockData().then((_) => _startFetchingStockData());
+    _updateStockData().then((_) => _startFetchingStockData());
+    StockAlertService().initializeNotifications();
+    _startCheckingAlerts(); // Start checking alerts
 
   }
 
@@ -151,6 +155,7 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
   void dispose() {
     _tabController.dispose();
     _timer?.cancel();
+    _alertCheckTimer?.cancel();
 
     super.dispose();
 
@@ -177,6 +182,12 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
     return stock;
   }
 
+   void _startCheckingAlerts() {
+      _alertCheckTimer = Timer.periodic(Duration(seconds: 30), (timer) async {
+      var stockAlerts = watchlist!.stockAlertStore[userId]!.value;
+      await StockAlertService().checkForAlerts(stockAlerts);
+    });
+  }
 
   void _startFetchingStockData() async {
     _timer = Timer.periodic(Duration(seconds: 30), (timer) async {
