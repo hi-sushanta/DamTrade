@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:damtrade/main.dart';
 import 'stock_service.dart';
 import 'home.dart';
+import 'stock_alart_page.dart';
 
 class SecondPageContent extends StatelessWidget {
   const SecondPageContent({super.key});
@@ -24,6 +25,8 @@ class _PortfolioPage extends StatefulWidget {
 
 class _PortfolioPageState extends State<_PortfolioPage> {
   Timer? _timer;
+  Timer? _alertCheckTimer;
+
   List<Map<String, Map<String, String>>> stockData = [];
   List<double> plAmount = [];
   List<String> orderType = [];
@@ -32,13 +35,26 @@ class _PortfolioPageState extends State<_PortfolioPage> {
   void initState() {
     super.initState();
     _updateStockData().then((_) => _startFetchingStockData());
+    StockAlertService().initializeNotifications();
+    _startCheckingAlerts(); // Start checking alerts
+
   }
 
   @override
   void dispose() {
     _timer?.cancel();
     super.dispose();
+    _alertCheckTimer?.cancel();
+
   }
+
+  void _startCheckingAlerts() {
+      _alertCheckTimer = Timer.periodic(Duration(seconds: 30), (timer) async {
+      var stockAlerts = watchlist!.stockAlertStore[userId]!.value;
+      await StockAlertService().checkForAlerts(stockAlerts);
+    });
+  }
+
 
   void _startFetchingStockData() async {
     _timer = Timer.periodic(const Duration(seconds: 30), (timer) async {
