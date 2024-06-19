@@ -1,5 +1,4 @@
 
-import 'package:damtrade/pages/stock_alart_page.dart';
 import 'package:flutter/material.dart';
 import 'package:damtrade/main.dart';
 import 'dart:core';
@@ -31,6 +30,10 @@ class WatchlistItem {
       alertPrice: alertPrice,
     );
     stockAlertStore[uuid]!.value = List.from(stockAlertStore[uuid]!.value)..add(alert);
+  }
+
+  void removeAlartStock(String uuid, int index){
+    stockAlertStore[uuid]!.value.removeAt(index);
   }
   void startUpdatingPrices(String uuid) {
     Timer.periodic(Duration(seconds: 10), (timer) async {

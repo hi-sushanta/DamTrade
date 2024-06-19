@@ -9,8 +9,7 @@ const apiKey = '99772cd07c144e08a855af9fe47be083';
 
 Future<Map<String, String>> fetchStockData(String symbol) async {
   // Replace with your Twelve Data API key
-  final url =
-      'https://api.twelvedata.com/time_series?symbol=$symbol&interval=1min&apikey=$apiKey';
+  final url = 'https://api.twelvedata.com/time_series?symbol=$symbol&interval=1min&apikey=$apiKey';
 
   final response = await http.get(Uri.parse(url));
   if (response.statusCode == 200) {

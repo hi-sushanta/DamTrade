@@ -1,7 +1,6 @@
 import 'package:damtrade/main.dart';
 import 'package:damtrade/pages/home.dart';
 import 'package:flutter/material.dart';
-import 'watch_list_info.dart';
 
 class StockAlert extends StatelessWidget {
   final String stockName;
