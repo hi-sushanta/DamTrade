@@ -2,13 +2,39 @@ import 'package:damtrade/pages/home.dart';
 import 'package:flutter/material.dart';
 import '../main.dart';
 import 'add_fund.dart';
+import 'dart:async';
+import 'stock_alart_page.dart';
 
-class FundsPage extends StatelessWidget {
+class FundsPage extends StatefulWidget {
+   @override
+  _FundPageState createState() => _FundPageState();
+}
+  // FundsPage({super.key});
 
 
-  FundsPage({super.key});
+class _FundPageState extends State<FundsPage>{
+  Timer? _alertCheckTimer;
 
+  @override
+  void initState(){
+    super.initState();
+    StockAlertService().initializeNotifications();
+    _startCheckingAlerts(); // Start checking alerts
+  }
 
+  @override
+  void dispose() {
+    _alertCheckTimer?.cancel();
+    super.dispose();
+
+  }
+
+  void _startCheckingAlerts() {
+      _alertCheckTimer = Timer.periodic(Duration(seconds: 30), (timer) async {
+      var stockAlerts = watchlist!.stockAlertStore[userId]!.value;
+      await StockAlertService().checkForAlerts(stockAlerts);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

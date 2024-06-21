@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:damtrade/pages/stock_sell.dart';
 import "package:firebase_auth/firebase_auth.dart";
 import 'package:flutter/material.dart';
@@ -11,6 +13,8 @@ import 'stock_buy.dart';
 import 'fund_page.dart';
 import 'stock_alart.dart';
 import 'stock_alart_page.dart';
+import 'package:permission_handler/permission_handler.dart'; // Ensure this import works
+
 
 final userId = FirebaseAuth.instance.currentUser!.uid;
 
@@ -140,12 +144,19 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
       watchListItem = getItem();
       // debugPrint("Hellow It's done");
       _tabController = TabController(length: watchlist!.data['data']![userId]![0].length, vsync: this);
-      
+    _requestNotificationPermissions();
     _updateStockData().then((_) => _startFetchingStockData());
     StockAlertService().initializeNotifications();
     _startCheckingAlerts(); // Start checking alerts
 
   }
+
+  Future<void> _requestNotificationPermissions() async {
+    if (Platform.isAndroid && await Permission.notification.isDenied) {
+      await Permission.notification.request();
+    }
+  }
+
 
 
   int get tabControllerLength => watchlist!.data["data"]![userId]![0].length;

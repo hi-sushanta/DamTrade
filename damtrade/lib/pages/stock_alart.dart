@@ -1,21 +1,43 @@
+import 'dart:io';
+
 import 'package:damtrade/main.dart';
 import 'package:damtrade/pages/home.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 
-class StockAlert extends StatelessWidget {
+class StockAlert extends StatefulWidget {
   final String stockName;
   final String exchangeName;
   final String currentPrice;
 
   StockAlert({super.key, required this.stockName, required this.exchangeName, required this.currentPrice});
+  
+  @override
+  _StockAlert createState() => _StockAlert();
+}
 
+class _StockAlert extends State<StockAlert>{
+  
   final TextEditingController _priceController = TextEditingController();
+
+  
+  @override
+  void initState(){
+    super.initState();
+    _requestNotificationPermissions();
+
+  }
+  Future<void> _requestNotificationPermissions() async {
+    if (Platform.isAndroid && await Permission.notification.isDenied) {
+      await Permission.notification.request();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Set Alert for $stockName'),
+        title: Text('Set Alert for ${widget.stockName}'),
         backgroundColor: Colors.green.shade700,
         elevation: 0,
       ),
@@ -26,7 +48,7 @@ class StockAlert extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Set an alert price for $stockName',
+                'Set an alert price for ${widget.stockName}',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -84,7 +106,7 @@ class StockAlert extends StatelessWidget {
                     try{
                       final alertPrice = double.parse(_priceController.text);
                       if (alertPrice > 0.0){
-                          watchlist!.setAlert(userId, stockName,exchangeName ,double.parse(currentPrice),alertPrice);
+                          watchlist!.setAlert(userId, widget.stockName,widget.exchangeName ,double.parse(widget.currentPrice),alertPrice);
                         // Use alertPrice to set the alert
                           // ...
                           Navigator.pop(context); // Close the page after setting the alert

@@ -1,21 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:permission_handler/permission_handler.dart'; // Ensure this import works
 import 'watch_list_info.dart';
 import 'package:damtrade/main.dart';
 import 'home.dart';
 import 'stock_service.dart';
 import 'dart:async';
-
-
-import 'package:flutter/material.dart';
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'watch_list_info.dart';
-import 'package:damtrade/main.dart';
-import 'home.dart';
-import 'stock_service.dart';
-import 'dart:async';
+import 'dart:io';
 
 class StockAlertPage extends StatefulWidget {
   @override
@@ -26,13 +18,21 @@ class _StockAlertPageState extends State<StockAlertPage> {
   @override
   void initState() {
     super.initState();
+    _requestNotificationPermissions();
+    StockAlertService().initializeNotifications();
     _updateAlerts();
+  }
+
+  Future<void> _requestNotificationPermissions() async {
+    if (Platform.isAndroid && await Permission.notification.isDenied) {
+      await Permission.notification.request();
+    }
   }
 
   void _updateAlerts() async {
     var stockAlerts = watchlist!.stockAlertStore[userId]!.value;
     await StockAlertService().checkForAlerts(stockAlerts);
-    watchlist!.stockAlertStore[userId]!.notifyListeners(); // Notify listeners to refresh UI
+    setState(() {}); // Ensure UI updates after alert check
   }
 
   @override
@@ -187,7 +187,14 @@ class StockAlertService {
       android: initializationSettingsAndroid,
     );
 
-    _flutterLocalNotificationsPlugin!.initialize(initializationSettings);
+    _flutterLocalNotificationsPlugin!.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: _onNotificationResponse,
+    );
+  }
+
+  Future<void> _onNotificationResponse(NotificationResponse response) async {
+    // Handle notification tap here
   }
 
   Future<void> showNotification(StockAlertStore alert) async {
@@ -212,7 +219,6 @@ class StockAlertService {
       platformChannelSpecifics,
     );
 
-    FlutterRingtonePlayer().playNotification();
   }
 
   Future<void> checkForAlerts(List<StockAlertStore> alerts) async {
@@ -232,6 +238,9 @@ class StockAlertService {
     for (var alert in alertsToRemove) {
       alerts.remove(alert);
     }
+
+    // Ensure UI updates
+    watchlist!.stockAlertStore[userId]!.value = alerts;
+    watchlist!.stockAlertStore[userId]!.notifyListeners();
   }
 }
-
