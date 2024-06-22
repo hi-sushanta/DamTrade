@@ -39,8 +39,11 @@ class _StockAlertPageState extends State<StockAlertPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Stock Alerts'),
-        backgroundColor: Colors.teal,
+        title: Center(
+          child:Text('Stock Alerts',
+          style: TextStyle(color:Colors.green.shade600,fontWeight: FontWeight.bold),),
+        ),
+        // backgroundColor: Colors.lime,
       ),
       body: ValueListenableBuilder<List<StockAlertStore>>(
         valueListenable: watchlist!.stockAlertStore[userId]!,

@@ -73,7 +73,8 @@ class _SearchState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Search & Stock"),
+        title:  Text("Search Stock", style:TextStyle(color:Colors.green.shade600,fontWeight: FontWeight.bold),
+        ),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

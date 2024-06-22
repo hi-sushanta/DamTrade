@@ -37,8 +37,8 @@ class _StockAlert extends State<StockAlert>{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Set Alert for ${widget.stockName}'),
-        backgroundColor: Colors.green.shade700,
+        title: Text('Alert',style: TextStyle(color:Colors.green.shade600,fontWeight: FontWeight.bold)),
+        // backgroundColor: Colors.green.shade700,
         elevation: 0,
       ),
       body: SingleChildScrollView(

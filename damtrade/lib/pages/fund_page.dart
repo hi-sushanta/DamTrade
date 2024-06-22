@@ -46,11 +46,11 @@ class _FundPageState extends State<FundsPage>{
           'Funds',
           style: TextStyle(
             color: Colors.black,
-            fontSize: 18,
+            fontWeight: FontWeight.bold
           ),
         ),
         ),
-        backgroundColor: Color(0xFF8ED2FC),
+        backgroundColor: Colors.lime,
         elevation: 0,
         centerTitle: true,
         
@@ -60,7 +60,7 @@ class _FundPageState extends State<FundsPage>{
         children: [
           Container(
             padding: EdgeInsets.symmetric(vertical: 16),
-            color: Color(0xFF8ED2FC), // Light blue color
+            color: Colors.lime, // Light blue color
             child: Column(
               children: [
                 Text(

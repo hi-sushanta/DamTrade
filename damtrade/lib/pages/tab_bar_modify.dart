@@ -22,7 +22,10 @@ class TabBarDesging extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text("Edit Watchlist"),
+          title: Center( child:Text("Edit Watchlist", style: TextStyle(
+              color: Colors.green.shade600,
+              fontWeight: FontWeight.bold,
+            ),)),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
@@ -126,13 +129,13 @@ class _TabBarState extends State<TabPage> with TickerProviderStateMixin{
                                                 Padding(
                                                   padding: EdgeInsets.all(8.0),
                                           
-                                                  child: Text(watchlist!.data["data"]![userId]![this.index! + 1][i]),
+                                                  child: Text(watchlist!.data["data"]![userId]![this.index! + 1][i].split("+")[0]),
                                                 ),
 
                                                 Padding(
                                                   padding: const EdgeInsets.all(8.0), // Adjust padding as needed
                                                   child: Text(
-                                                    watchlist!.data["data"]![userId]![this.index! + 1][i] ,
+                                                    watchlist!.data["data"]![userId]![this.index! + 1][i].split("+")[1] ,
                                                     style: const TextStyle(fontSize: 12.0, color: Colors.grey), // Adjust description style
                                                   ),
                                                 ),
@@ -150,7 +153,8 @@ class _TabBarState extends State<TabPage> with TickerProviderStateMixin{
                                               children: [
                                                 IconButton(onPressed: (){
                                                   setState(() {
-                                                      watchlist!.data['data']![userId]![this.index!+1].removeAt(i);
+                                                    watchlist!.removeWatchListItem(this.index!+1, i);
+                                                      // watchlist!.data['data']![userId]![this.index!+1].removeAt(i);
                                                   });
 
                                                 }, icon: Icon(Icons.delete))

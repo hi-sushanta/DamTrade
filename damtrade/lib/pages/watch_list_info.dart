@@ -75,7 +75,7 @@ class WatchlistItem {
       amountAddHistory[uuid!]!.value = histories.map((h) => h.cast<dynamic>()).toList();
     }
   }
-
+  
   void _setupListeners() {
     if (uuid != null) {
       // Listen to alert changes
@@ -205,6 +205,9 @@ class WatchlistItem {
     }
   }
 
+  void removeWatchListItem(int listIndex, int itemIndex){
+      watchlist!.data['data']![uuid]![listIndex].removeAt(itemIndex);
+  }
   void addProtfolio(String uuid, String stockName, String orderType, int quantity, double avgPrice, double invPrice, double currPrice, double plAmount) {    
     
 
