@@ -41,12 +41,14 @@ class _FundPageState extends State<FundsPage>{
     return Scaffold(
       backgroundColor: Colors.black, // Background color
       appBar: AppBar(
-        title: const Text(
+        title: Center(
+          child: const Text(
           'Funds',
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
           ),
+        ),
         ),
         backgroundColor: Color(0xFF8ED2FC),
         elevation: 0,

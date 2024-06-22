@@ -93,10 +93,10 @@ class _PortfolioPageState extends State<_PortfolioPage> {
     }
   }
 
-  void _handleSwipeAction(int index,double amount) {
+  void _handleSwipeAction(int index,double amount, String StockName,int stockIndex) {
     setState(() {
         watchlist!.incrasePrice(userId, amount);
-        watchlist!.protfollio[userId]!.removeAt(index);
+        watchlist!.removeProtfollio(userId,index,stockIndex);//protfollio[userId]!.removeAt(index);
         orderType = [];
         _updateProfitLoss();
       
@@ -298,7 +298,7 @@ class _PortfolioPageState extends State<_PortfolioPage> {
                       activeThumbColor: orderType[index] == 'Buy'
                           ? Colors.red[300]
                           : Colors.blue[300],
-                      onSwipe: () => _handleSwipeAction(index,(holding['investedAmount']+(holding['plAmount']))),
+                      onSwipe: () => _handleSwipeAction(index,(holding['investedAmount']+(holding['plAmount'])), holding['name'],holding['index']),
                       borderRadius: BorderRadius.circular(30.0),
                       height: 60.0,
                       child: Text(

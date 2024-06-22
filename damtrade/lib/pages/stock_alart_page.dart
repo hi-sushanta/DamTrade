@@ -223,6 +223,7 @@ class StockAlertService {
 
   Future<void> checkForAlerts(List<StockAlertStore> alerts) async {
     List<StockAlertStore> alertsToRemove = [];
+    int i = 0;
     for (var alert in alerts) {
       var stockData = await fetchStockData(alert.stockName);
       var latestPrice = double.parse(stockData['currentPrice']!); // Adjust based on actual key
@@ -231,7 +232,9 @@ class StockAlertService {
         _notifiedAlerts.add(alert.stockName);
         await showNotification(alert);
         alertsToRemove.add(alert); // Mark alert for removal
+        watchlist!.removeAlartStock(userId, i);
       }
+      i += 1;
     }
 
     // Remove alerts that have been notified
