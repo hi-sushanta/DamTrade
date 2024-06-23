@@ -195,14 +195,14 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
   }
 
    void _startCheckingAlerts() {
-      _alertCheckTimer = Timer.periodic(Duration(seconds: 30), (timer) async {
+      _alertCheckTimer = Timer.periodic(Duration(seconds: 02), (timer) async {
       var stockAlerts = watchlist!.stockAlertStore[userId]!.value;
       await StockAlertService().checkForAlerts(stockAlerts);
     });
   }
 
   void _startFetchingStockData() async {
-    _timer = Timer.periodic(Duration(seconds: 30), (timer) async {
+    _timer = Timer.periodic(Duration(seconds: 02), (timer) async {
         await _updateStockData();
     });
   }
@@ -648,14 +648,6 @@ void addStock(int index,String suggestion,String exchange){
 }
 
 
-
-
-class ThirdPageContent extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('Third Page Content'));
-  }
-}
 
 
 class StockDetailSheet extends StatelessWidget {
