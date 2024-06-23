@@ -255,7 +255,7 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
 
   void updateTabName(int index, String newName){
     setState(() {
-      watchlist!.data["data"]![userId]![0][index] = newName;
+      watchlist!.updateTabName(index, newName);
       item = nameWatchlist(); // Update the local list
       _tabController = TabController(length: item!.length, vsync: this); // Reset TabController
       _tabController.index = index;

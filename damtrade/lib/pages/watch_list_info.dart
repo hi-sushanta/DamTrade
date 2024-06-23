@@ -320,6 +320,10 @@ class WatchlistItem {
     watchlist!.data['data']![uuid]![index].add("$suggestion+$exchange");
   }
 
+  void updateTabName(int index, String newName){
+      watchlist!.data["data"]![uuid]![0][index] = newName;
+  }
+
   void addHistory(String uuid, String amount, String date) {
     if (amountAddHistory[uuid]!.value.isNotEmpty){
       for (var item in amountAddHistory[uuid]!.value){
