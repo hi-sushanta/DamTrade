@@ -12,6 +12,7 @@ class WatchlistItem {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   int pindex = 0;
   int aindex = 0;
+  int hindex = 0;
   Map<String, Map<String, List>> data = {};
   Map<String, List<Map<String, dynamic>>> protfollio = {};
   Map<String, ValueNotifier<double>> amountHave = {};
@@ -30,6 +31,8 @@ class WatchlistItem {
     // Set up real-time listeners
     _setupListeners();
   }
+
+  
 
   Future<void> _loadDataFromFirestore() async {
     if (uuid != null) {
@@ -69,10 +72,22 @@ class WatchlistItem {
           .collection('users')
           .doc(uuid)
           .collection('amountAddHistory')
+          .orderBy('timestamp')
           .get();
 
-      var histories = historySnapshot.docs.map((doc) => doc.data()['history'] as List<dynamic>).toList();
-      amountAddHistory[uuid!]!.value = histories.map((h) => h.cast<dynamic>()).toList();
+      var histories = historySnapshot.docs.map((doc) {
+        var data = doc.data();
+        return [
+          Icons.add,
+          "Add Money",
+          DateFormat('dd MMMM, yyyy').format((data['timestamp'] as Timestamp).toDate()),
+          data['amount'],
+          Color(0xFF70E5A0),
+          data['hindex'],
+        ];
+      }).toList();
+
+      amountAddHistory[uuid!]!.value = histories;
     }
   }
   
@@ -101,13 +116,54 @@ class WatchlistItem {
         }
       });
 
+      // // Listen to amountAddHistory changes
+      // _firestore.collection('users').doc(uuid).collection('amountAddHistory').snapshots().listen((snapshot) {
+      //   var histories = snapshot.docs.map((doc) => doc.data()['history'] as List<dynamic>).toList();
+      //   amountAddHistory[uuid!]!.value = histories.map((h) => h.cast<dynamic>()).toList();
+      // });
+
       // Listen to amountAddHistory changes
       _firestore.collection('users').doc(uuid).collection('amountAddHistory').snapshots().listen((snapshot) {
-        var histories = snapshot.docs.map((doc) => doc.data()['history'] as List<dynamic>).toList();
-        amountAddHistory[uuid!]!.value = histories.map((h) => h.cast<dynamic>()).toList();
+      var histories = snapshot.docs.map((doc) {
+        var data = doc.data();
+        var timestamp = data['timestamp'] as Timestamp?;
+        // Use current time if timestamp is null
+        var date = timestamp != null 
+          ? DateFormat('dd MMMM, yyyy').format(timestamp.toDate()) 
+          : DateFormat('dd MMMM, yyyy').format(DateTime.now());
+
+        return [
+          Icons.add,
+          "Add Money",
+          date,
+          data['amount'],
+          Color(0xFF70E5A0),
+          data['hindex']
+        ];
+      }).toList();
+
+      amountAddHistory[uuid!]!.value = histories;
+    });
+    }
+  }
+
+  Future<void> _saveAmountAddHistoryToFirestore(List newHistory,int index) async {
+    if (uuid != null) {
+      var historyCollection = _firestore
+          .collection('users')
+          .doc(uuid)
+          .collection('amountAddHistory')
+          .doc(index.toString());
+
+      // var docRef = historyCollection.doc(); // Create new document with random ID
+      await historyCollection.set({
+        'amount': newHistory[3],
+        'timestamp': FieldValue.serverTimestamp(),
+        "hindex": index,
       });
     }
   }
+
 
   Future<void> _saveAlertToFirestore(StockAlertStore alert,String index) async {
     if (uuid != null) {
@@ -244,21 +300,6 @@ class WatchlistItem {
     }
   }
 
-  Future<void> _saveAmountAddHistoryToFirestore() async {
-    if (uuid != null) {
-      var historyCollection = _firestore
-          .collection('users')
-          .doc(uuid)
-          .collection('amountAddHistory');
-
-      for (var history in amountAddHistory[uuid]!.value) {
-        var docRef = historyCollection.doc(); // Create new document with random ID
-        await docRef.set({
-          'history': history,
-        });
-      }
-    }
-  }
 
   void addData(String uuid) {
     data["data"] = {
@@ -272,11 +313,19 @@ class WatchlistItem {
   }
 
   void addHistory(String uuid, String amount, String date) {
-    var history = [Icons.add, "Add Money", date, amount, Color(0xFF70E5A0)];
+    if (amountAddHistory[uuid]!.value.isNotEmpty){
+      for (var item in amountAddHistory[uuid]!.value){
+        hindex = item[5] + 1;
+      }
+    } else{
+      hindex = 0;
+    }
+    var history = [Icons.add, "Add Money", date, amount, Color(0xFF70E5A0),hindex];
     amountAddHistory[uuid]!.value = List.from(amountAddHistory[uuid]!.value)..add(history);
 
-    // Save to Firestore
-    _saveAmountAddHistoryToFirestore();
+    // Save only the new history entry to Firestore
+    _saveAmountAddHistoryToFirestore(history,hindex);
+
   }
 
   bool ifHaveUuid(String uuid) {

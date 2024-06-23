@@ -245,11 +245,11 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
     });
   }
 
-void deleteWatchListItem(int tabIndex, int itemIndex) {
-    setState(() {
-      watchlist!.data["data"]![userId]![tabIndex].removeAt(itemIndex);
-    });
-  }
+// void deleteWatchListItem(int tabIndex, int itemIndex) {
+//     setState(() {
+//       watchlist!.data["data"]![userId]![tabIndex].removeAt(itemIndex);
+//     });
+//   }
 
 
   void updateTabName(int index, String newName){
