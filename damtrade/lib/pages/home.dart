@@ -16,7 +16,7 @@ import 'stock_alart.dart';
 import 'stock_alart_page.dart';
 import 'package:permission_handler/permission_handler.dart'; // Ensure this import works
 
-
+int oneTime = 1;
 final userId = FirebaseAuth.instance.currentUser!.uid;
 
 
@@ -195,14 +195,14 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
   }
 
    void _startCheckingAlerts() {
-      _alertCheckTimer = Timer.periodic(Duration(seconds: 02), (timer) async {
+      _alertCheckTimer = Timer.periodic(Duration(seconds: 5), (timer) async {
       var stockAlerts = watchlist!.stockAlertStore[userId]!.value;
       await StockAlertService().checkForAlerts(stockAlerts);
     });
   }
 
   void _startFetchingStockData() async {
-    _timer = Timer.periodic(Duration(seconds: 02), (timer) async {
+    _timer = Timer.periodic(Duration(seconds: 5), (timer) async {
         await _updateStockData();
     });
   }
@@ -363,10 +363,14 @@ void addStock(int index,String suggestion,String exchange){
         if (isLoading) {
           return Center(child: CircularProgressIndicator());
         } else {
-          item = nameWatchlist();
-          watchListItem = getItem();
-          // debugPrint("Hellow It's done");
-          _tabController = TabController(length: watchlist!.data['data']![userId]![0].length, vsync: this);
+          if (oneTime == 1){
+              item = nameWatchlist();
+              watchListItem = getItem();
+              // debugPrint("Hellow It's done");
+              _tabController = TabController(length: watchlist!.data['data']![userId]![0].length, vsync: this);
+              oneTime += 1;
+          } 
+         
           // Replace with your actual watchlist display logic
           return  Scaffold(
       appBar: AppBar(

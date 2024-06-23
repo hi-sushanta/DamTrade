@@ -39,6 +39,7 @@ dependencies:
   flutter_ringtone_player: ^4.0.0+3
   flutter_local_notifications: ^14.0.0
   permission_handler: ^11.3.1
+  beautiful_soup_dart: ^0.3.0
 
 
 
