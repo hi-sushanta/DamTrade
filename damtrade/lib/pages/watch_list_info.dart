@@ -365,7 +365,6 @@ class WatchlistItem {
         [],
       ]
     };
-    _saveDataToFirestore();
   }
 
   void addStock(int index, String suggestion, String exchange){
