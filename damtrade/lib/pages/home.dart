@@ -140,6 +140,7 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
     // Define a method to refresh the state
   @override
   void initState() {
+    super.initState();
       item = nameWatchlist();
       watchListItem = getItem();
       // debugPrint("Hellow It's done");
