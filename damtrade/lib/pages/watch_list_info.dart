@@ -262,11 +262,11 @@ class WatchlistItem {
   }
 
   void updateWatchListItem(int newIndex, int index,dynamic moveItem){
-        watchlist!.data["data"]![uuid]![index].insert(newIndex, moveItem);
+        data["data"]![uuid]![index].insert(newIndex, moveItem);
   }
 
   void removeWatchListItem(int listIndex, int itemIndex){
-      watchlist!.data['data']![uuid]![listIndex].removeAt(itemIndex);
+      data['data']![uuid]![listIndex].removeAt(itemIndex);
   }
   void addProtfolio(String uuid, String stockName, String orderType, int quantity, double avgPrice, double invPrice, double currPrice, double plAmount) {    
     
@@ -316,11 +316,11 @@ class WatchlistItem {
   }
 
   void addStock(int index, String suggestion, String exchange){
-    watchlist!.data['data']![uuid]![index].add("$suggestion+$exchange");
+    data['data']![uuid]![index].add("$suggestion+$exchange");
   }
 
   void updateTabName(int index, String newName){
-      watchlist!.data["data"]![uuid]![0][index] = newName;
+      data["data"]![uuid]![0][index] = newName;
   }
 
   void addHistory(String uuid, String amount, String date) {
