@@ -140,7 +140,6 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
     // Define a method to refresh the state
   @override
   void initState() {
-    super.initState();
       item = nameWatchlist();
       watchListItem = getItem();
       // debugPrint("Hellow It's done");
@@ -160,7 +159,7 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
 
 
 
-  int get tabControllerLength => watchlist!.data["data"]![userId]![0].length;
+  // int get tabControllerLength => watchlist!.data["data"]![userId]![0].length;
 
   
   @override
@@ -357,7 +356,18 @@ void addStock(int index,String suggestion,String exchange){
   @override
   Widget build(BuildContext context)  {
     final Color oddItemColor = Colors.lime.shade100;
-   return  Scaffold(
+   return ValueListenableBuilder<bool>(
+      valueListenable: watchlist!.isLoading,
+      builder: (context, isLoading, _) {
+        if (isLoading) {
+          return Center(child: CircularProgressIndicator());
+        } else {
+          item = nameWatchlist();
+          watchListItem = getItem();
+          // debugPrint("Hellow It's done");
+          _tabController = TabController(length: watchlist!.data['data']![userId]![0].length, vsync: this);
+          // Replace with your actual watchlist display logic
+          return  Scaffold(
       appBar: AppBar(
         title: Center(
           child:Text("Dam Trade",
@@ -419,7 +429,7 @@ void addStock(int index,String suggestion,String exchange){
                       controller: _tabController,
 
                       children: [
-                      for (int i=0; i < tabControllerLength; i++ )
+                      for (int i=0; i < watchlist!.data["data"]![userId]![0].length; i++ )
                             // SingleChildScrollView(
                               
                                ReorderableListView(
@@ -524,6 +534,10 @@ void addStock(int index,String suggestion,String exchange){
         ],
       ),
         ),
+   );
+  }
+
+      },
    );
   }
   // Widget _buildValueRow(String value) {

@@ -18,19 +18,28 @@ class WatchlistItem {
   Map<String, ValueNotifier<double>> amountHave = {};
   Map<String, ValueNotifier<List<List>>> amountAddHistory = {};
   Map<String, ValueNotifier<List<StockAlertStore>>> stockAlertStore = {};
+  ValueNotifier<bool> isLoading = ValueNotifier<bool>(true); // To track loading state
 
   WatchlistItem(this.uuid) {
-    addData(uuid!);
+    // addData(uuid!);
+    data['data'] = {uuid!:[[],[],[],[]]};
     protfollio[uuid!] = [];
     amountHave[uuid!] = ValueNotifier<double>(3000000.0);
     amountAddHistory[uuid!] = ValueNotifier<List<List>>([]);
     stockAlertStore[uuid!] = ValueNotifier<List<StockAlertStore>>([]);
 
-    // Load initial data from Firestore
-    _loadDataFromFirestore();
-    // Set up real-time listeners
-    _setupListeners();
+    // // Load initial data from Firestore
+    // _loadDataFromFirestore();
+    // // Set up real-time listeners
+    // _setupListeners();
+    _initializeData();
+
   }
+  Future<void> _initializeData() async {
+      await _loadDataFromFirestore();
+      _setupListeners();
+      isLoading.value = false; // Mark loading as complete
+    }
 
   
   
@@ -75,6 +84,8 @@ class WatchlistItem {
       if (docSnapshot.exists && docSnapshot.data()!.containsKey('data')) {
         List<Map<String, dynamic>> flattenedData = List<Map<String, dynamic>>.from(docSnapshot.data()!['data']);
         data["data"]![uuid!] = _unflattenData(flattenedData);
+      } else{
+        addData(uuid!);
       }
 
       // Load alerts
@@ -165,11 +176,6 @@ class WatchlistItem {
         }
       });
 
-      // // Listen to amountAddHistory changes
-      // _firestore.collection('users').doc(uuid).collection('amountAddHistory').snapshots().listen((snapshot) {
-      //   var histories = snapshot.docs.map((doc) => doc.data()['history'] as List<dynamic>).toList();
-      //   amountAddHistory[uuid!]!.value = histories.map((h) => h.cast<dynamic>()).toList();
-      // });
 
       // Listen to amountAddHistory changes
       _firestore.collection('users').doc(uuid).collection('amountAddHistory').snapshots().listen((snapshot) {
@@ -355,16 +361,20 @@ class WatchlistItem {
   }
 
 
-  void addData(String uuid) {
-
+  void addData(String uuid) async {
     data["data"] = {
-      uuid: [
-        ["watchlist1", "watchlist2", "watchlist3"],
-        ["AAPL+NYSE", "IBM+NYSE", "TSLA+NYSE"],
-        [],
-        [],
-      ]
-    };
+            uuid: [
+              ["watchlist1", "watchlist2", "watchlist3"],
+              ["AAPL+NYSE", "IBM+NYSE", "TSLA+NYSE"],
+              [],
+              [],
+            ]
+          };
+        
+          
+
+      
+    _saveDataToFirestore();
   }
 
   void addStock(int index, String suggestion, String exchange){

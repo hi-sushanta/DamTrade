@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 
-const apiKey = '99772cd07c144e08a855af9fe47be083'; // iworkhiwhy@gmail.com
-// const apiKey = "433d75198c9b4bdf84253a11b3226409"; //hiwhywork@gmail.com
+// const apiKey = '99772cd07c144e08a855af9fe47be083'; // iworkhiwhy@gmail.com
+const apiKey = "433d75198c9b4bdf84253a11b3226409"; //hiwhywork@gmail.com
 
 Future<Map<String, String>> fetchStockData(String symbol) async {
   // Replace with your Twelve Data API key
