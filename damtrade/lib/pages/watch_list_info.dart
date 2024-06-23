@@ -272,7 +272,6 @@ class WatchlistItem {
     
 
     if (protfollio[uuid]!.isNotEmpty){
-      int index = 0;
       for (var item in protfollio[uuid]!){
         pindex = item['index'] + 1;
       }
