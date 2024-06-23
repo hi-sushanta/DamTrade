@@ -13,7 +13,8 @@ class TabBarDesging extends StatelessWidget {
 
   final int index;
   final Function(String) onSave;
-  TabBarDesging(this.index, {Key? key, required this.onSave}) : super(key: key);
+  final Function ( int, int) deleteWatchListItem;
+  TabBarDesging(this.index, {Key? key, required this.onSave, required this.deleteWatchListItem}) : super(key: key);
 
   
   
@@ -45,7 +46,7 @@ class TabBarDesging extends StatelessWidget {
           ],
           
         ),
-        body: TabPage(index), // Replace with your actual class name
+        body: TabPage(index,this.deleteWatchListItem), // Replace with your actual class name
       ),
     );
   }
@@ -56,17 +57,18 @@ class TabBarDesging extends StatelessWidget {
 class TabPage extends StatefulWidget {
 
   int? index;
-  TabPage(this.index);
+  final Function(int, int) deleteWatchListItem;
+  TabPage(this.index,this.deleteWatchListItem);
 
   @override
-  _TabBarState createState() => _TabBarState(index);
+  _TabBarState createState() => _TabBarState(index,this.deleteWatchListItem);
 }
 
 class _TabBarState extends State<TabPage> with TickerProviderStateMixin{
   // ignore: recursive_getters
     int? index;
-
-    _TabBarState(this.index);
+    final Function(int, int) deleteWatchListItem;
+    _TabBarState(this.index, this.deleteWatchListItem);
     //String? user = FirebaseAuth.instance.currentUser!.email ?? FirebaseAuth.instance.currentUser!.displayName;
   
   @override
@@ -153,8 +155,8 @@ class _TabBarState extends State<TabPage> with TickerProviderStateMixin{
                                               children: [
                                                 IconButton(onPressed: (){
                                                   setState(() {
-                                                    watchlist!.removeWatchListItem(this.index!+1, i);
-                                                      // watchlist!.data['data']![userId]![this.index!+1].removeAt(i);
+                                                    this.deleteWatchListItem(this.index!+1, i);
+                                                    
                                                   });
 
                                                 }, icon: Icon(Icons.delete))

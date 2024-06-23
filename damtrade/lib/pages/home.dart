@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:damtrade/pages/stock_sell.dart';
+import 'package:damtrade/pages/watch_list_info.dart';
 import "package:firebase_auth/firebase_auth.dart";
 import 'package:flutter/material.dart';
 import "tab_bar_modify.dart";
@@ -241,15 +242,15 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
       final demoitem = watchlist!.data["data"]![userId]![index].removeAt(oldIndex);
 
       // place the list are new position
-      watchlist!.data["data"]![userId]![index].insert(newIndex, demoitem);
+      watchlist!.updateWatchListItem(newIndex, index, demoitem);
     });
   }
 
-// void deleteWatchListItem(int tabIndex, int itemIndex) {
-//     setState(() {
-//       watchlist!.data["data"]![userId]![tabIndex].removeAt(itemIndex);
-//     });
-//   }
+  void deleteWatchListItem(int tabIndex, int itemIndex) {
+      setState(() {
+        watchlist!.removeWatchListItem(tabIndex, itemIndex);
+      });
+    }
 
 
   void updateTabName(int index, String newName){
@@ -623,7 +624,8 @@ void addStock(int index,String suggestion,String exchange){
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => TabBarDesging(index,
-          onSave: (newName) => updateTabName(index, newName))), // Pass title as data
+          onSave: (newName) => updateTabName(index, newName),
+          deleteWatchListItem:(tabIndex, itemIndex) => deleteWatchListItem(tabIndex,itemIndex))), // Pass title as data
         );
       },
       child: Tab(

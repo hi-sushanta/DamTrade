@@ -261,6 +261,10 @@ class WatchlistItem {
     }
   }
 
+  void updateWatchListItem(int newIndex, int index,dynamic moveItem){
+        watchlist!.data["data"]![uuid]![index].insert(newIndex, moveItem);
+  }
+
   void removeWatchListItem(int listIndex, int itemIndex){
       watchlist!.data['data']![uuid]![listIndex].removeAt(itemIndex);
   }
