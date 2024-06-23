@@ -316,6 +316,10 @@ class WatchlistItem {
     };
   }
 
+  void addStock(int index, String suggestion, String exchange){
+    watchlist!.data['data']![uuid]![index].add("$suggestion+$exchange");
+  }
+
   void addHistory(String uuid, String amount, String date) {
     if (amountAddHistory[uuid]!.value.isNotEmpty){
       for (var item in amountAddHistory[uuid]!.value){

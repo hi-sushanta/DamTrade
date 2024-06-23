@@ -337,7 +337,7 @@ void addStock(int index,String suggestion,String exchange){
     setState(() {
 
       if (watchlist!.ifHaveStock(userId, index, "$suggestion+$exchange")){
-          watchlist!.data['data']![userId]![index].add("$suggestion+$exchange");
+          watchlist!.addStock(index,suggestion,exchange);
           item = nameWatchlist();
           watchListItem = getItem();
           _updateSingleStockData(index - 1, "$suggestion+$exchange"); // Fetch data immediately for the new stock
@@ -345,11 +345,8 @@ void addStock(int index,String suggestion,String exchange){
       else{
         _showMyDialog();
       }
-      // debugPrint("$watchListItem");
-      // _tabController = TabController(length: item!.length, vsync: this);
       _tabController.index = index - 1;
 
-      // _startFetchingStockData();
     });
   }
 
