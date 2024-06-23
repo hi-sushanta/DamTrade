@@ -33,9 +33,50 @@ class WatchlistItem {
   }
 
   
+  
+  Future<void> _saveDataToFirestore() async {
+      if (uuid != null) {
+        List<dynamic>? nestedData = data["data"]![uuid];
+        if (nestedData != null) {
+          var flattenedData = _flattenData(nestedData);
+          await _firestore.collection('users').doc(uuid).set({
+            'data': flattenedData,
+          }, SetOptions(merge: true));
+        }
+      }
+    }
+
+
+    List<Map<String, dynamic>> _flattenData(List<dynamic>? nestedData) {
+      if (nestedData == null) return [];
+      return nestedData.asMap().entries.map((entry) {
+        return {
+          'index': entry.key,
+          'value': entry.value,
+        };
+      }).toList();
+    }
+
+
+    // Helper method to unflatten data
+    List<List<dynamic>> _unflattenData(List<Map<String, dynamic>> flattenedData) {
+      List<List<dynamic>> nestedData = List.generate(flattenedData.length, (_) => []);
+      for (var entry in flattenedData) {
+        nestedData[entry['index']] = List<dynamic>.from(entry['value']);
+      }
+      return nestedData;
+    }
 
   Future<void> _loadDataFromFirestore() async {
     if (uuid != null) {
+
+       // Load data variable
+      var docSnapshot = await _firestore.collection('users').doc(uuid).get();
+      if (docSnapshot.exists && docSnapshot.data()!.containsKey('data')) {
+        List<Map<String, dynamic>> flattenedData = List<Map<String, dynamic>>.from(docSnapshot.data()!['data']);
+        data["data"]![uuid!] = _unflattenData(flattenedData);
+      }
+
       // Load alerts
       var alertSnapshot = await _firestore
           .collection('users')
@@ -93,6 +134,14 @@ class WatchlistItem {
   
   void _setupListeners() {
     if (uuid != null) {
+
+      // Listen to data variable changes
+      _firestore.collection('users').doc(uuid).snapshots().listen((snapshot) {
+        if (snapshot.exists && snapshot.data()!.containsKey('data')) {
+          List<Map<String, dynamic>> flattenedData = List<Map<String, dynamic>>.from(snapshot.data()!['data']);
+          data["data"]![uuid!] = _unflattenData(flattenedData);
+        }
+      });
       // Listen to alert changes
       _firestore.collection('users').doc(uuid).collection('alerts').snapshots().listen((snapshot) {
         var alerts = snapshot.docs.map((doc) {
@@ -263,10 +312,12 @@ class WatchlistItem {
 
   void updateWatchListItem(int newIndex, int index,dynamic moveItem){
         data["data"]![uuid]![index].insert(newIndex, moveItem);
+        _saveDataToFirestore();
   }
 
   void removeWatchListItem(int listIndex, int itemIndex){
       data['data']![uuid]![listIndex].removeAt(itemIndex);
+      _saveDataToFirestore();
   }
   void addProtfolio(String uuid, String stockName, String orderType, int quantity, double avgPrice, double invPrice, double currPrice, double plAmount) {    
     
@@ -305,6 +356,7 @@ class WatchlistItem {
 
 
   void addData(String uuid) {
+
     data["data"] = {
       uuid: [
         ["watchlist1", "watchlist2", "watchlist3"],
@@ -313,14 +365,17 @@ class WatchlistItem {
         [],
       ]
     };
+    _saveDataToFirestore();
   }
 
   void addStock(int index, String suggestion, String exchange){
     data['data']![uuid]![index].add("$suggestion+$exchange");
+    _saveDataToFirestore();
   }
 
   void updateTabName(int index, String newName){
       data["data"]![uuid]![0][index] = newName;
+      _saveDataToFirestore();
   }
 
   void addHistory(String uuid, String amount, String date) {
