@@ -44,13 +44,13 @@ class _PortfolioPageState extends State<_PortfolioPage> {
   @override
   void dispose() {
     _timer?.cancel();
-    super.dispose();
     _alertCheckTimer?.cancel();
+    super.dispose();
 
   }
 
   void _startCheckingAlerts() {
-      _alertCheckTimer = Timer.periodic(Duration(seconds: 30), (timer) async {
+      _alertCheckTimer = Timer.periodic(Duration(seconds: 03), (timer) async {
       var stockAlerts = watchlist!.stockAlertStore[userId]!.value;
       await StockAlertService().checkForAlerts(stockAlerts);
     });
@@ -75,7 +75,7 @@ class _PortfolioPageState extends State<_PortfolioPage> {
       Map<String, Map<String, String>> stockInfo = {};
       for (var item in watchlist!.protfollio[userId]!) {
         String istock = item['name'];
-        Map<String, String> data = await fetchStockData(istock);
+        Map<String, String> data = await fetchStockData(istock,item['exchange_name']);
         stockInfo[istock] = data;
       }
       updatedStockData.add(stockInfo);

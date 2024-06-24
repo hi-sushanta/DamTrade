@@ -228,7 +228,7 @@ class StockAlertService {
     List<StockAlertStore> alertsToRemove = [];
     int i = 0;
     for (var alert in alerts) {
-      var stockData = await fetchStockData(alert.stockName);
+      var stockData = await fetchStockData(alert.stockName,alert.exchangeName);
       var latestPrice = double.parse(stockData['currentPrice']!); // Adjust based on actual key
       alert.currentPrice = latestPrice;
       if (latestPrice == alert.alertPrice) {

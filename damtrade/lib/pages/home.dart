@@ -141,10 +141,10 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
   @override
   void initState() {
     super.initState();
-      item = nameWatchlist();
-      watchListItem = getItem();
+    item = nameWatchlist();
+    watchListItem = getItem();
       // debugPrint("Hellow It's done");
-      _tabController = TabController(length: watchlist!.data['data']![userId]![0].length, vsync: this);
+    _tabController = TabController(length: watchlist!.data['data']![userId]![0].length, vsync: this);
     _requestNotificationPermissions();
     _updateStockData().then((_) => _startFetchingStockData());
     StockAlertService().initializeNotifications();
@@ -168,9 +168,7 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
     _tabController.dispose();
     _timer?.cancel();
     _alertCheckTimer?.cancel();
-
     super.dispose();
-
   }
   
   List nameWatchlist(){
@@ -195,18 +193,25 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
   }
 
    void _startCheckingAlerts() {
-      _alertCheckTimer = Timer.periodic(Duration(seconds: 5), (timer) async {
-      var stockAlerts = watchlist!.stockAlertStore[userId]!.value;
-      await StockAlertService().checkForAlerts(stockAlerts);
+    _alertCheckTimer = Timer.periodic(Duration(seconds: 5), (timer) async {
+      if (mounted) {
+        var stockAlerts = watchlist!.stockAlertStore[userId]!.value;
+        await StockAlertService().checkForAlerts(stockAlerts);
+      } else {
+        timer.cancel();
+      }
     });
   }
 
-  void _startFetchingStockData() async {
-    _timer = Timer.periodic(Duration(seconds: 5), (timer) async {
+void _startFetchingStockData() async {
+    _timer = Timer.periodic(Duration(seconds: 2), (timer) async {
+      if (mounted) {
         await _updateStockData();
+      } else {
+        timer.cancel();
+      }
     });
   }
-
   Future<void> _updateStockData() async {
     List<Map<String,Map<String,String>>> updatedStockData = [];
 
@@ -214,8 +219,9 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
       for (var watchName in watchListItem.keys) {
         Map<String,Map<String,String>>stockInfo = {};
         for (var stock in watchListItem[watchName]!) {
-          String istock = stock.split("+")[0];
-          Map<String,String> data = await fetchStockData(istock);
+          // String istock = stock.split("+")[0];
+          // String iexchange = stock.split("+")[1];
+          Map<String,String> data = await fetchStockData(stock.split("+")[0],stock.split("+")[1]);
           stockInfo[stock]= data;
         }
         updatedStockData.add(stockInfo);
@@ -264,9 +270,10 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
 
   Future<void> _updateSingleStockData(int watchIndex, String stock) async {
   try {
-    String stockSymbol = stock.split("+")[0];
-    debugPrint("Fetching data for $stockSymbol");
-    Map<String, String> data = await fetchStockData(stockSymbol);
+    // String stockSymbol = stock.split("+")[0];
+    // String stockExchange = stock.split("+")[1];
+    // debugPrint("Fetching data for $stockSymbol");
+    Map<String, String> data = await fetchStockData(stock.split("+")[0],stock.split("+")[1]);
 
     setState(() {
       // Find the index for the watchlist
@@ -370,7 +377,6 @@ void addStock(int index,String suggestion,String exchange){
               _tabController = TabController(length: watchlist!.data['data']![userId]![0].length, vsync: this);
               oneTime += 1;
           } 
-         
           // Replace with your actual watchlist display logic
           return  Scaffold(
       appBar: AppBar(
@@ -580,6 +586,7 @@ void addStock(int index,String suggestion,String exchange){
             MaterialPageRoute(
               builder: (context) =>  StockBuyPage(
                   stockName: stockName,
+                  exchangeName: exchange,
                   livePrice: double.parse(currentPrice), // Example, use actual BSE price
                 ),
 
@@ -591,7 +598,7 @@ void addStock(int index,String suggestion,String exchange){
             Navigator.pop(context);
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => StockSellPage(stockName: stockName, livePrice: double.parse(currentPrice)))
+              MaterialPageRoute(builder: (context) => StockSellPage(stockName: stockName, exchangeName: exchange,livePrice: double.parse(currentPrice)))
             );
           },
           onSetAlert: () {

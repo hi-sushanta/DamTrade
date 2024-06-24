@@ -1,12 +1,12 @@
 // import 'package:puppeteer/puppeteer.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
-
+import 'package:html/parser.dart' as parser;
+import 'dart:math';
 // const apiKey = '99772cd07c144e08a855af9fe47be083'; // iworkhiwhy@gmail.com
 const apiKey = "433d75198c9b4bdf84253a11b3226409"; //hiwhywork@gmail.com
 
-Future<Map<String, String>> fetchStockData(String symbol) async {
+Future<Map<String, String>> fetchStockData(String symbol,String exchangeName) async {
   // Replace with your Twelve Data API key
   final url = 'https://api.twelvedata.com/time_series?symbol=$symbol&interval=1min&apikey=$apiKey';
   final response = await http.get(Uri.parse(url));
@@ -47,7 +47,7 @@ Future<Map<String, String>> fetchStockData(String symbol) async {
 class TwelveDataService {
 
   Future<Map<String,List<String>>> fetchStockSuggestions(String query) async {
-    Map<String,List<String>> final_data = {};
+    Map<String,List<String>> finalData = {};
     final url = 'https://api.twelvedata.com/symbol_search?symbol=$query&apikey=$apiKey';
 
     final response = await http.get(Uri.parse(url));
@@ -66,18 +66,60 @@ class TwelveDataService {
               .map((item) => item["exchange"] as String)
               .toList();
 
-        final_data["suggestion"] = suggestions;
-        final_data["fullName"] = fullName;
-        final_data['exchange'] = exchangeName;
-        return final_data;
+        finalData["suggestion"] = suggestions;
+        finalData["fullName"] = fullName;
+        finalData['exchange'] = exchangeName;
+        return finalData;
       } else {
-        return final_data;
+        return finalData;
       }
     } else {
       throw Exception('Failed to fetch stock suggestions');
     }
   }
 }
+
+
+// void main() async {
+//   String ticker = 'RELIANCE';
+//   Map<String, dynamic> stockData = await _fetchStockData(ticker);
+//   print(stockData);
+// }
+
+// Future<Map<String, String>> fetchStockData(String symbol, String exchange) async {
+//   String url = 'https://www.google.com/finance/quote/$symbol:NASDAQ'; //$exchange';
+  
+//   var response = await http.get(Uri.parse(url));
+  
+//   if (response.statusCode == 200) {
+//     var document = parser.parse(response.body);
+    
+//     // Fetch current price
+//     var priceElement = document.querySelector('.YMlKec.fxKbKc');
+//     if (priceElement == null) {
+//       throw Exception('Current price element not found');
+//     }
+//     double price = double.parse(priceElement.text.trim().substring(1).replaceAll(',', ''));
+    
+//     // Fetch previous price
+//     var prevPriceElement = document.querySelector('.P6K39c');
+//     if (prevPriceElement == null) {
+//       throw Exception('Previous price element not found');
+//     }
+//     double prevPrice = double.parse(prevPriceElement.text.trim().substring(1).replaceAll(',', ''));
+    
+//     double amountChange = price - prevPrice;
+//     double percentageChange = (amountChange / prevPrice) * 100;
+//     Map<String,String> finalData = {
+//       "currentPrice": price.toString(),
+//       "amountChange": amountChange.toStringAsFixed(2),
+//       "percentageChange": "${percentageChange.toStringAsFixed(2)}%",
+//     };
+//     return finalData;
+//   } else {
+//     throw Exception('Failed to load stock data');
+//   }
+// }
 
 // void main() async {
 //   const symbol = "AAPL";

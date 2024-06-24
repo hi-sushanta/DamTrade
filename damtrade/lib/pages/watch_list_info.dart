@@ -265,7 +265,6 @@ class WatchlistItem {
     } else{
       aindex = 0;
     }
-
     StockAlertStore alert = StockAlertStore(
       exchangeName: exchangeName,
       stockName: stockName,
@@ -273,6 +272,7 @@ class WatchlistItem {
       alertPrice: alertPrice,
       aindex: aindex
     );
+
     stockAlertStore[uuid]!.value = List.from(stockAlertStore[uuid]!.value)..add(alert);
 
     // Save to Firestore
@@ -289,9 +289,9 @@ class WatchlistItem {
   }
 
   void startUpdatingPrices(String uuid) {
-    Timer.periodic(Duration(seconds: 10), (timer) async {
+    Timer.periodic(Duration(seconds: 3), (timer) async {
       for (var alert in stockAlertStore[uuid]!.value) {
-        final stockData = await fetchStockData(alert.stockName);
+        final stockData = await fetchStockData(alert.stockName,alert.exchangeName);
         alert.currentPrice = double.parse(stockData["currentPrice"]!);
         // Update Firestore with the new current price
         _saveAlertToFirestore(alert,alert.aindex.toString());
@@ -325,7 +325,7 @@ class WatchlistItem {
       data['data']![uuid]![listIndex].removeAt(itemIndex);
       _saveDataToFirestore();
   }
-  void addProtfolio(String uuid, String stockName, String orderType, int quantity, double avgPrice, double invPrice, double currPrice, double plAmount) {    
+  void addProtfolio(String uuid, String stockName, String exchangeName,String orderType, int quantity, double avgPrice, double invPrice, double currPrice, double plAmount) {    
     
 
     if (protfollio[uuid]!.isNotEmpty){
@@ -338,6 +338,7 @@ class WatchlistItem {
 
     var stock = {
       "name": stockName,
+      'exchange_name':exchangeName,
       "orderType": orderType,
       "quantity": quantity,
       "averagePrice": avgPrice,
@@ -365,7 +366,7 @@ class WatchlistItem {
     data["data"] = {
             uuid: [
               ["watchlist1", "watchlist2", "watchlist3"],
-              ["AAPL+NYSE", "IBM+NYSE", "TSLA+NYSE"],
+              ["AAPL+NYSE", "NVDA+NYSE", "TSLA+NYSE"],
               [],
               [],
             ]
