@@ -23,6 +23,11 @@ class _StockAlertPageState extends State<StockAlertPage> {
     _updateAlerts();
   }
 
+  @override 
+  void dispose(){
+    super.dispose();
+  }
+
   Future<void> _requestNotificationPermissions() async {
     if (Platform.isAndroid && await Permission.notification.isDenied) {
       await Permission.notification.request();

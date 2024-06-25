@@ -46,7 +46,6 @@ class _PortfolioPageState extends State<_PortfolioPage> {
     _timer?.cancel();
     _alertCheckTimer?.cancel();
     super.dispose();
-
   }
 
   void _startCheckingAlerts() {

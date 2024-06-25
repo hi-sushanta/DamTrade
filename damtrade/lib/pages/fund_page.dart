@@ -120,7 +120,7 @@ class _FundPageState extends State<FundsPage>{
                           icon: item[0],
                           label: item[1],
                           date: item[2],
-                          amount: item[3],
+                          amount: item[3].toString(),
                           color: item[4],
                         ),
                     ],

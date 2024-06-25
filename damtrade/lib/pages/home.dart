@@ -16,7 +16,6 @@ import 'stock_alart.dart';
 import 'stock_alart_page.dart';
 import 'package:permission_handler/permission_handler.dart'; // Ensure this import works
 
-int oneTime = 1;
 final userId = FirebaseAuth.instance.currentUser!.uid;
 
 
@@ -370,13 +369,11 @@ void addStock(int index,String suggestion,String exchange){
         if (isLoading) {
           return Center(child: CircularProgressIndicator());
         } else {
-          if (oneTime == 1){
+          
               item = nameWatchlist();
               watchListItem = getItem();
-              // debugPrint("Hellow It's done");
               _tabController = TabController(length: watchlist!.data['data']![userId]![0].length, vsync: this);
-              oneTime += 1;
-          } 
+          
           // Replace with your actual watchlist display logic
           return  Scaffold(
       appBar: AppBar(
@@ -607,7 +604,7 @@ void addStock(int index,String suggestion,String exchange){
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => StockAlert(stockName: stockName,exchangeName: exchange,currentPrice:currentPrice),
+              builder: (context) => StockAlert(stockName: stockName,exchangeName: exchange, currentPrice:currentPrice),
             ),
           );
         },
