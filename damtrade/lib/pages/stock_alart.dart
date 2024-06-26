@@ -9,8 +9,8 @@ class StockAlert extends StatefulWidget {
   final String stockName;
   final String exchangeName;
   final String currentPrice;
-
-  StockAlert({super.key, required this.stockName, required this.exchangeName, required this.currentPrice});
+  final String instrumentKey;
+  StockAlert({super.key, required this.stockName, required this.exchangeName,required this.instrumentKey, required this.currentPrice});
   
   @override
   _StockAlert createState() => _StockAlert();
@@ -106,7 +106,7 @@ class _StockAlert extends State<StockAlert>{
                     try{
                       final alertPrice = double.parse(_priceController.text);
                       if (alertPrice > 0.0){
-                          watchlist!.setAlert(userId, widget.stockName,widget.exchangeName ,double.parse(widget.currentPrice),alertPrice);
+                          watchlist!.setAlert(userId, widget.stockName,widget.exchangeName ,widget.instrumentKey,double.parse(widget.currentPrice),alertPrice);
                         // Use alertPrice to set the alert
                           // ...
                           Navigator.pop(context); // Close the page after setting the alert

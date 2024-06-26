@@ -1,4 +1,5 @@
 
+import 'package:damtrade/pages/json_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swipe_button/flutter_swipe_button.dart';
@@ -31,6 +32,8 @@ class _PortfolioPageState extends State<_PortfolioPage> {
   List<Map<String, Map<String, String>>> stockData = [];
   List<double> plAmount = [];
   List<String> orderType = [];
+  final UpstoxService _upstoxService = UpstoxService(JsonService());
+
 
   @override
   void initState() {
@@ -49,7 +52,7 @@ class _PortfolioPageState extends State<_PortfolioPage> {
   }
 
   void _startCheckingAlerts() {
-      _alertCheckTimer = Timer.periodic(Duration(seconds: 03), (timer) async {
+      _alertCheckTimer = Timer.periodic(Duration(seconds: 30), (timer) async {
       var stockAlerts = watchlist!.stockAlertStore[userId]!.value;
       await StockAlertService().checkForAlerts(stockAlerts);
     });
@@ -57,7 +60,7 @@ class _PortfolioPageState extends State<_PortfolioPage> {
 
 
   void _startFetchingStockData() async {
-    _timer = Timer.periodic(const Duration(seconds: 30), (timer) async {
+    _timer = Timer.periodic(const Duration(seconds: 20), (timer) async {
       // Check if the widget is still mounted
       if (!mounted) {
         _timer?.cancel();
@@ -74,7 +77,7 @@ class _PortfolioPageState extends State<_PortfolioPage> {
       Map<String, Map<String, String>> stockInfo = {};
       for (var item in watchlist!.protfollio[userId]!) {
         String istock = item['name'];
-        Map<String, String> data = await fetchStockData(istock,item['exchange_name']);
+        Map<String, String> data = await _upstoxService.fetchStockData(item['instrumentKey'],istock);
         stockInfo[istock] = data;
       }
       updatedStockData.add(stockInfo);

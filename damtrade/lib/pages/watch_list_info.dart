@@ -256,7 +256,7 @@ class WatchlistItem {
     }
   }
 
-  void setAlert(String uuid, String stockName, String exchangeName, double currentPrice, double alertPrice) {
+  void setAlert(String uuid, String stockName, String exchangeName, String instrumentKey, double currentPrice, double alertPrice) {
     
     if (stockAlertStore[uuid]!.value.isNotEmpty){
        for (var alert in stockAlertStore[uuid]!.value){
@@ -268,6 +268,7 @@ class WatchlistItem {
     StockAlertStore alert = StockAlertStore(
       exchangeName: exchangeName,
       stockName: stockName,
+      instrumentKey: instrumentKey,
       currentPrice: currentPrice,
       alertPrice: alertPrice,
       aindex: aindex
@@ -325,7 +326,7 @@ class WatchlistItem {
       data['data']![uuid]![listIndex].removeAt(itemIndex);
       _saveDataToFirestore();
   }
-  void addProtfolio(String uuid, String stockName, String exchangeName,String orderType, int quantity, double avgPrice, double invPrice, double currPrice, double plAmount) {    
+  void addProtfolio(String uuid, String stockName, String exchangeName,String instrumentKey,String orderType, int quantity, double avgPrice, double invPrice, double currPrice, double plAmount) {    
     
 
     if (protfollio[uuid]!.isNotEmpty){
@@ -339,6 +340,7 @@ class WatchlistItem {
     var stock = {
       "name": stockName,
       'exchange_name':exchangeName,
+      'instrument_key':instrumentKey,
       "orderType": orderType,
       "quantity": quantity,
       "averagePrice": avgPrice,
@@ -366,7 +368,7 @@ class WatchlistItem {
     data["data"] = {
             uuid: [
               ["watchlist1", "watchlist2", "watchlist3"],
-              ["AAPL+NYSE", "NVDA+NYSE", "TSLA+NYSE"],
+              ["RELIANCE+NSE+NSE_EQ|INE002A01018", "TCS+NSE+NSE_EQ|INE467B01029", "MARUTI+NSE+NSE_EQ|INE585B01010"],
               [],
               [],
             ]
@@ -378,8 +380,8 @@ class WatchlistItem {
     _saveDataToFirestore();
   }
 
-  void addStock(int index, String suggestion, String exchange){
-    data['data']![uuid]![index].add("$suggestion+$exchange");
+  void addStock(int index, String suggestion, String exchange, String instrumentKey){
+    data['data']![uuid]![index].add("$suggestion+$exchange+$instrumentKey");
     _saveDataToFirestore();
   }
 
@@ -453,12 +455,14 @@ class WatchlistItem {
 class StockAlertStore {
   String exchangeName;
   String stockName;
+  String instrumentKey;
   double currentPrice;
   double alertPrice;
   int aindex;
   StockAlertStore({
     required this.exchangeName,
     required this.stockName,
+    required this.instrumentKey,
     required this.currentPrice,
     required this.alertPrice,
     required this.aindex
@@ -468,6 +472,7 @@ class StockAlertStore {
     return {
       'exchangeName': exchangeName,
       'stockName': stockName,
+      "instrumentKey":instrumentKey,
       'currentPrice': currentPrice,
       'alertPrice': alertPrice,
       'aindex':aindex
@@ -478,6 +483,7 @@ class StockAlertStore {
     return StockAlertStore(
       exchangeName: map['exchangeName'],
       stockName: map['stockName'],
+      instrumentKey: map['instrumentKey'],
       currentPrice: map['currentPrice'],
       alertPrice: map['alertPrice'],
       aindex: map['aindex']

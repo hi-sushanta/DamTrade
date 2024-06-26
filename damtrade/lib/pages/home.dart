@@ -15,9 +15,10 @@ import 'fund_page.dart';
 import 'stock_alart.dart';
 import 'stock_alart_page.dart';
 import 'package:permission_handler/permission_handler.dart'; // Ensure this import works
+import 'json_service.dart';
 
 final userId = FirebaseAuth.instance.currentUser!.uid;
-
+int oneTime = 1;
 
 // final WatchlistItem watchlist = WatchlistItem(userId);
 
@@ -136,6 +137,8 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
   // var titles = ["watchlist1","watchlist2","watchlist3","watchlist4","watchlist5","watchlist6","watchlist7","watchlist8",'watchlist9',"watchlist10"];
   List<Map<String,Map<String,String>>> stockData = [];
   late Map<String,List<String>> watchListItem;
+  final UpstoxService _upstoxService = UpstoxService(JsonService());
+
     // Define a method to refresh the state
   @override
   void initState() {
@@ -192,7 +195,7 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
   }
 
    void _startCheckingAlerts() {
-    _alertCheckTimer = Timer.periodic(Duration(seconds: 5), (timer) async {
+    _alertCheckTimer = Timer.periodic(Duration(seconds: 30), (timer) async {
       if (mounted) {
         var stockAlerts = watchlist!.stockAlertStore[userId]!.value;
         await StockAlertService().checkForAlerts(stockAlerts);
@@ -203,7 +206,7 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
   }
 
 void _startFetchingStockData() async {
-    _timer = Timer.periodic(Duration(seconds: 2), (timer) async {
+    _timer = Timer.periodic(Duration(seconds: 30), (timer) async {
       if (mounted) {
         await _updateStockData();
       } else {
@@ -218,10 +221,14 @@ void _startFetchingStockData() async {
       for (var watchName in watchListItem.keys) {
         Map<String,Map<String,String>>stockInfo = {};
         for (var stock in watchListItem[watchName]!) {
-          // String istock = stock.split("+")[0];
+          String istock = stock.split("+")[0];
           // String iexchange = stock.split("+")[1];
-          Map<String,String> data = await fetchStockData(stock.split("+")[0],stock.split("+")[1]);
-          stockInfo[stock]= data;
+          // Map<String,String> data = await fetchStockData(stock.split("+")[0],stock.split("+")[1]);
+            // final instrumentKey = await _upstoxService.getInstrumentKey(istock);
+            debugPrint("Stock $istock");
+            var data = await _upstoxService.fetchStockData(stock.split("+")[2],istock);
+            // print("$instrumentKey stockSymbol: $istock");
+           stockInfo[stock]= data;
         }
         updatedStockData.add(stockInfo);
       }
@@ -272,7 +279,7 @@ void _startFetchingStockData() async {
     // String stockSymbol = stock.split("+")[0];
     // String stockExchange = stock.split("+")[1];
     // debugPrint("Fetching data for $stockSymbol");
-    Map<String, String> data = await fetchStockData(stock.split("+")[0],stock.split("+")[1]);
+    Map<String, String> data = await _upstoxService.fetchStockData(stock.split("+")[2],stock.split("+")[0]);
 
     setState(() {
       // Find the index for the watchlist
@@ -339,14 +346,15 @@ Future<void> _showDialog() async {
   );
 }
 
-void addStock(int index,String suggestion,String exchange){
-    setState(() {
+void addStock(int index,String suggestion,String exchange) async {
+    final instrumentKey = await _upstoxService.getInstrumentKey(suggestion);
+    setState(()  {
 
       if (watchlist!.ifHaveStock(userId, index, "$suggestion+$exchange")){
-          watchlist!.addStock(index,suggestion,exchange);
+          watchlist!.addStock(index,suggestion,exchange,instrumentKey!);
           item = nameWatchlist();
           watchListItem = getItem();
-          _updateSingleStockData(index - 1, "$suggestion+$exchange"); // Fetch data immediately for the new stock
+          _updateSingleStockData(index - 1, "$suggestion+$exchange+$instrumentKey"); // Fetch data immediately for the new stock
       }
       else{
         _showMyDialog();
@@ -369,10 +377,16 @@ void addStock(int index,String suggestion,String exchange){
         if (isLoading) {
           return Center(child: CircularProgressIndicator());
         } else {
-          
+          if (oneTime == 1){
               item = nameWatchlist();
               watchListItem = getItem();
+              // debugPrint("Hellow It's done");
               _tabController = TabController(length: watchlist!.data['data']![userId]![0].length, vsync: this);
+              oneTime += 1;
+          } 
+              // item = nameWatchlist();
+              // watchListItem = getItem();
+              // _tabController = TabController(length: watchlist!.data['data']![userId]![0].length, vsync: this);
           
           // Replace with your actual watchlist display logic
           return  Scaffold(
@@ -562,6 +576,7 @@ void addStock(int index,String suggestion,String exchange){
     final stockData = stock.split("+");
     final stockName = stockData[0];
     final exchange = stockData[1];
+    final instrumentKey = stockData[2];
     
     showModalBottomSheet(
       context: context,
@@ -584,6 +599,7 @@ void addStock(int index,String suggestion,String exchange){
               builder: (context) =>  StockBuyPage(
                   stockName: stockName,
                   exchangeName: exchange,
+                  instrumentKey: instrumentKey,
                   livePrice: double.parse(currentPrice), // Example, use actual BSE price
                 ),
 
@@ -595,7 +611,7 @@ void addStock(int index,String suggestion,String exchange){
             Navigator.pop(context);
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => StockSellPage(stockName: stockName, exchangeName: exchange,livePrice: double.parse(currentPrice)))
+              MaterialPageRoute(builder: (context) => StockSellPage(stockName: stockName, exchangeName: exchange,instrumentKey: instrumentKey, livePrice: double.parse(currentPrice)))
             );
           },
           onSetAlert: () {
@@ -604,7 +620,7 @@ void addStock(int index,String suggestion,String exchange){
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => StockAlert(stockName: stockName,exchangeName: exchange, currentPrice:currentPrice),
+              builder: (context) => StockAlert(stockName: stockName,exchangeName: exchange,instrumentKey: instrumentKey, currentPrice:currentPrice),
             ),
           );
         },

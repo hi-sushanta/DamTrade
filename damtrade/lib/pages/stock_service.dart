@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parser;
 import 'dart:math';
+import 'json_service.dart';
 // const apiKey = '99772cd07c144e08a855af9fe47be083'; // iworkhiwhy@gmail.com
 const apiKey = "433d75198c9b4bdf84253a11b3226409"; //hiwhywork@gmail.com
 
@@ -78,6 +79,79 @@ class TwelveDataService {
     }
   }
 }
+
+
+
+class UpstoxService {
+  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjdjMTJjZTNjOGJhNDE5NWJhMzQ0OWIiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzE5NDA3MzEwLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MTk0MzkyMDB9.36gF6p5cH2BRtW1Gh1GS0u8JULeQ5QzEL_hzSNincFc';
+  final JsonService jsonService;
+
+  UpstoxService(this.jsonService);
+
+
+    Future<String?> getInstrumentKey(String tradingSymbol) async {
+    try {
+      final List<dynamic> data = await jsonService.loadJsonData();
+      for (var item in data) {
+        if (item['trading_symbol'] == tradingSymbol) {
+          return item['instrument_key'];
+        }
+      }
+      return 'null'; // Return null if no match is found
+    } catch (e) {
+      print("Error finding instrument key: $e");
+      return 'null';
+    }
+  }
+
+
+  Future<Map<String, String>> fetchStockData(String instrumentKey,String symbol) async {
+    final url = Uri.parse('https://api.upstox.com/v2/market-quote/quotes?instrument_key=$instrumentKey');
+    final headers = {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $accessToken',
+    };
+
+    final response = await http.get(url, headers: headers);
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      Map<String,String> extractData =  formatData(data['data']["NSE_EQ:$symbol"]);
+      return extractData;
+    } else {
+      throw Exception('No data available');
+    }
+  }
+
+  Map<String, String> formatData(var data) {
+    double open = data['ohlc']!['open'];
+    String close = data['ohlc']!['close'].toString();
+    double netChange = data['net_change'];
+    String percentageChange = ((netChange/open)*100).toStringAsFixed(2);
+
+    return  {
+      "currentPrice":close,
+      "percentageChange":"$percentageChange%",
+      "amountChange":netChange.toString(),
+    };
+  }
+}
+
+
+
+// void main() async {
+//   String symbol = "RELIANCE";
+//   String access_token = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjdjMTJjZTNjOGJhNDE5NWJhMzQ0OWIiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzE5NDA3MzEwLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MTk0MzkyMDB9.36gF6p5cH2BRtW1Gh1GS0u8JULeQ5QzEL_hzSNincFc';
+//   UpstoxService stock_instrument = UpstoxService(JsonService());
+//   String instrument_key = stock_instrument.getInstrumentKey(symbol) as String;
+//   if (instrument_key != 'null'){
+//     var data = await stock_instrument.fetchStockData(instrument_key);
+//     print(data);
+//   } else{
+//     print("please double chack symbol");
+//   }
+  
+// }
 
 
 // void main() async {

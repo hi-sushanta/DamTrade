@@ -1,3 +1,4 @@
+import 'package:damtrade/pages/json_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -15,16 +16,21 @@ class StockAlertPage extends StatefulWidget {
 }
 
 class _StockAlertPageState extends State<StockAlertPage> {
+
+  Timer? _alertCheckTimer;
+
   @override
   void initState() {
     super.initState();
     _requestNotificationPermissions();
     StockAlertService().initializeNotifications();
-    _updateAlerts();
+    _startCheckingAlerts();
+    // _updateAlerts();
   }
 
   @override 
   void dispose(){
+    _alertCheckTimer?.cancel();
     super.dispose();
   }
 
@@ -32,6 +38,16 @@ class _StockAlertPageState extends State<StockAlertPage> {
     if (Platform.isAndroid && await Permission.notification.isDenied) {
       await Permission.notification.request();
     }
+  }
+
+  void _startCheckingAlerts() {
+      _alertCheckTimer = Timer.periodic(Duration(seconds: 30), (timer) async {
+      var stockAlerts = watchlist!.stockAlertStore[userId]!.value;
+      await StockAlertService().checkForAlerts(stockAlerts);
+      setState(() {
+        
+      });
+    });
   }
 
   void _updateAlerts() async {
@@ -178,6 +194,8 @@ class StockAlertCard extends StatelessWidget {
 }
 
 class StockAlertService {
+  final UpstoxService _upstoxService = UpstoxService(JsonService());
+
   static final StockAlertService _singleton = StockAlertService._internal();
   factory StockAlertService() => _singleton;
   StockAlertService._internal();
@@ -232,8 +250,9 @@ class StockAlertService {
   Future<void> checkForAlerts(List<StockAlertStore> alerts) async {
     List<StockAlertStore> alertsToRemove = [];
     int i = 0;
+    List<int> removeAlertIndex = [];
     for (var alert in alerts) {
-      var stockData = await fetchStockData(alert.stockName,alert.exchangeName);
+      var stockData = await _upstoxService.fetchStockData(alert.instrumentKey,alert.stockName);
       var latestPrice = double.parse(stockData['currentPrice']!); // Adjust based on actual key
       alert.currentPrice = latestPrice;
       if (latestPrice == alert.alertPrice) {
@@ -241,6 +260,7 @@ class StockAlertService {
         await showNotification(alert);
         alertsToRemove.add(alert); // Mark alert for removal
         watchlist!.removeAlartStock(userId, i);
+
       }
       i += 1;
     }
