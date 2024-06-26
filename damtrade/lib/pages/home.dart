@@ -225,7 +225,6 @@ void _startFetchingStockData() async {
           // String iexchange = stock.split("+")[1];
           // Map<String,String> data = await fetchStockData(stock.split("+")[0],stock.split("+")[1]);
             // final instrumentKey = await _upstoxService.getInstrumentKey(istock);
-            debugPrint("Stock $istock");
             var data = await _upstoxService.fetchStockData(stock.split("+")[2],istock);
             // print("$instrumentKey stockSymbol: $istock");
            stockInfo[stock]= data;
@@ -378,6 +377,7 @@ void addStock(int index,String suggestion,String exchange) async {
           return Center(child: CircularProgressIndicator());
         } else {
           if (oneTime == 1){
+              //  _updateStockData();
               item = nameWatchlist();
               watchListItem = getItem();
               // debugPrint("Hellow It's done");

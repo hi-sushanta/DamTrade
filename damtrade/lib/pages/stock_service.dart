@@ -113,7 +113,7 @@ class UpstoxService {
     };
 
     final response = await http.get(url, headers: headers);
-    print(response.statusCode);
+    // print(response.statusCode);
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       Map<String,String> extractData =  formatData(data['data']["NSE_EQ:$symbol"]);
