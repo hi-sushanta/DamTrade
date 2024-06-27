@@ -83,7 +83,7 @@ class TwelveDataService {
 
 
 class UpstoxService {
-  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjdjMTJjZTNjOGJhNDE5NWJhMzQ0OWIiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzE5NDA3MzEwLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MTk0MzkyMDB9.36gF6p5cH2BRtW1Gh1GS0u8JULeQ5QzEL_hzSNincFc';
+  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjdkNTUzZDcyNTIyZjMzYTAwZjFhZGMiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzE5NDg5ODUzLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MTk1MjU2MDB9.gSxj3minZ2OQzdY7mmpXL6BpF4gYZ6Ra_-rpaXsZvzE';
   final JsonService jsonService;
 
   UpstoxService(this.jsonService);
@@ -114,6 +114,7 @@ class UpstoxService {
 
     final response = await http.get(url, headers: headers);
     // print(response.statusCode);
+    // print("${response.statusCode}");
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       Map<String,String> extractData =  formatData(data['data']["NSE_EQ:$symbol"]);

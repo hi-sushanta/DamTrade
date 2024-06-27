@@ -60,7 +60,7 @@ class _PortfolioPageState extends State<_PortfolioPage> {
 
 
   void _startFetchingStockData() async {
-    _timer = Timer.periodic(const Duration(seconds: 20), (timer) async {
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) async {
       // Check if the widget is still mounted
       if (!mounted) {
         _timer?.cancel();

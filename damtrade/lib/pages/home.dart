@@ -206,7 +206,7 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
   }
 
 void _startFetchingStockData() async {
-    _timer = Timer.periodic(Duration(seconds: 30), (timer) async {
+    _timer = Timer.periodic(Duration(seconds: 5), (timer) async {
       if (mounted) {
         await _updateStockData();
       } else {
