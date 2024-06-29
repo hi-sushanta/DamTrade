@@ -1,8 +1,13 @@
 // import 'package:puppeteer/puppeteer.dart';
+import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/gestures.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parser;
 import 'dart:math';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:web_socket_channel/status.dart' as status;
+
 import 'json_service.dart';
 // const apiKey = '99772cd07c144e08a855af9fe47be083'; // iworkhiwhy@gmail.com
 const apiKey = "433d75198c9b4bdf84253a11b3226409"; //hiwhywork@gmail.com
@@ -83,7 +88,7 @@ class TwelveDataService {
 
 
 class UpstoxService {
-  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjdkNTUzZDcyNTIyZjMzYTAwZjFhZGMiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzE5NDg5ODUzLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MTk1MjU2MDB9.gSxj3minZ2OQzdY7mmpXL6BpF4gYZ6Ra_-rpaXsZvzE';
+  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjdmZjlkNDJiZGVlOTI3NzcwYTM3NjciLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzE5NjYzMDYwLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MTk2OTg0MDB9.x2dtZCLQjsI_aszEgtdh4VdAYu7JWMWnqijSFE5os-4';
   final JsonService jsonService;
 
   UpstoxService(this.jsonService);
@@ -137,6 +142,107 @@ class UpstoxService {
     };
   }
 }
+
+
+class StreamUpstoxService {
+  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjdmZjlkNDJiZGVlOTI3NzcwYTM3NjciLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzE5NjYzMDYwLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MTk2OTg0MDB9.x2dtZCLQjsI_aszEgtdh4VdAYu7JWMWnqijSFE5os-4';
+  final JsonService jsonService;
+  late WebSocketChannel _channel;
+  late StreamController<Map<String, String>>  _broadcastStream;
+
+  StreamUpstoxService(this.jsonService){
+    _broadcastStream = StreamController<Map<String, String>>.broadcast();
+  }
+
+   void connectWebSocket(String symbol) async {
+    try {
+      _channel = WebSocketChannel.connect(
+        Uri.parse('wss://api.upstox.com/v2/feed/market-data-feed/'),
+        protocols: ['Bearer $accessToken'],
+      );
+
+      
+
+      // Correct the message format
+    _channel.sink.add(jsonEncode({
+      "guid": "someguid",
+      "method": "sub",
+      "data": {
+        "mode": "full",
+        "instrumentKeys": ["NSE_INDEX|Nifty Bank"]
+      }
+    }));
+
+    _channel.stream.listen(
+        (message) => handleWebSocketMessage(message, symbol),
+    
+      // _broadcastStream = _channel!.stream.asBroadcastStream();
+       onError: (error) {
+        print('WebSocket stream error: $error');
+        reconnectWebSocket(symbol);
+      }, onDone: () {
+        print('WebSocket connection closed.');
+        reconnectWebSocket(symbol);
+      });
+    } catch (e) {
+      print('WebSocket connection error: $e');
+      reconnectWebSocket(symbol);
+    }
+  }
+
+  Stream<Map<String, String>> get dataStream => _broadcastStream.stream;
+
+  void handleWebSocketMessage(dynamic message, String symbol) {
+    print("Symbol: $symbol");
+    try {
+      final decodedMessage = jsonDecode(message);
+
+      if (decodedMessage['type'] == 'data') {
+        var data = decodedMessage['data'];
+        var formattedData = formatData(data["NSE_EQ:$symbol"]);
+        print(formattedData);
+        // Do something with the formatted data
+      } else {
+        print('Unexpected message: $decodedMessage');
+      }
+    } catch (e) {
+      print('Error handling WebSocket message: $e');
+    }
+  }
+
+  Future<void> disconnectWebSocket() async {
+    try {
+      await _channel?.sink.close(status.goingAway);
+    } catch (e) {
+      print('Error disconnecting from WebSocket: $e');
+    }
+  }
+
+  void reconnectWebSocket(String symbol) {
+    Future.delayed(Duration(seconds: 5), () {
+      print('Reconnecting to WebSocket...');
+      connectWebSocket(symbol);
+    });
+  }
+
+  Map<String, String> formatData(var data) {
+    if (data == null) {
+      throw Exception('No data available');
+    }
+
+    double open = data['ohlc']!['open'];
+    String close = data['ohlc']!['close'].toString();
+    double netChange = data['net_change'];
+    String percentageChange = ((netChange / open) * 100).toStringAsFixed(2);
+
+    return {
+      "currentPrice": close,
+      "percentageChange": "$percentageChange%",
+      "amountChange": netChange.toString(),
+    };
+  }
+}
+
 
 
 

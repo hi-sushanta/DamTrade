@@ -4,6 +4,7 @@ import 'package:damtrade/pages/stock_sell.dart';
 import 'package:damtrade/pages/watch_list_info.dart';
 import "package:firebase_auth/firebase_auth.dart";
 import 'package:flutter/material.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 import "tab_bar_modify.dart";
 import '../main.dart';
 import 'stock_service.dart';
@@ -138,7 +139,6 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
   List<Map<String,Map<String,String>>> stockData = [];
   late Map<String,List<String>> watchListItem;
   final UpstoxService _upstoxService = UpstoxService(JsonService());
-
     // Define a method to refresh the state
   @override
   void initState() {
