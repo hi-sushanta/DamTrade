@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+message MarketData {
+  string instrument_key = 1;
+  double last_trade_price = 2;
+  // Define other fields based on the actual proto file
+}
