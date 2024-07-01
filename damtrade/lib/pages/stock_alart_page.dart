@@ -252,7 +252,7 @@ class StockAlertService {
     int i = 0;
     List<int> removeAlertIndex = [];
     for (var alert in alerts) {
-      var stockData = await _upstoxService.fetchStockData(alert.instrumentKey,alert.stockName);
+      var stockData = await _upstoxService.fetchStockData(alert.instrumentKey,alert.stockName,alert.instrumentKey.split("|")[0]);
       var latestPrice = double.parse(stockData['currentPrice']!); // Adjust based on actual key
       alert.currentPrice = latestPrice;
       if (latestPrice == alert.alertPrice) {

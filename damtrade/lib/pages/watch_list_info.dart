@@ -1,5 +1,6 @@
 
 import 'package:damtrade/main.dart';
+import 'package:damtrade/pages/json_service.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
@@ -19,6 +20,7 @@ class WatchlistItem {
   Map<String, ValueNotifier<List<List>>> amountAddHistory = {};
   Map<String, ValueNotifier<List<StockAlertStore>>> stockAlertStore = {};
   ValueNotifier<bool> isLoading = ValueNotifier<bool>(true); // To track loading state
+  final UpstoxService _upstoxService = UpstoxService(JsonService());
 
   WatchlistItem(this.uuid) {
     // addData(uuid!);
@@ -292,7 +294,7 @@ class WatchlistItem {
   void startUpdatingPrices(String uuid) {
     Timer.periodic(Duration(seconds: 3), (timer) async {
       for (var alert in stockAlertStore[uuid]!.value) {
-        final stockData = await fetchStockData(alert.stockName,alert.exchangeName);
+        final stockData = await _upstoxService.fetchStockData(alert.stockName,alert.exchangeName,alert.instrumentKey.split("|")[0]);
         alert.currentPrice = double.parse(stockData["currentPrice"]!);
         // Update Firestore with the new current price
         _saveAlertToFirestore(alert,alert.aindex.toString());
@@ -442,9 +444,9 @@ class WatchlistItem {
     _saveAmountHaveToFirestore();
   }
 
-  bool ifHaveStock(String uuid, int index, String stockAndExchange) {
-    for (String stock in data["data"]![uuid]![index]) {
-      if (stock == stockAndExchange) {
+  bool ifHaveStock(String uuid, int index, String stockExchangeInstrument){
+    for (String stockAndExchangeInstrument in data["data"]![uuid]![index]) {
+      if (stockAndExchangeInstrument == stockExchangeInstrument) {
         return false;
       }
     }

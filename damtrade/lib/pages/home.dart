@@ -222,10 +222,11 @@ void _startFetchingStockData() async {
         Map<String,Map<String,String>>stockInfo = {};
         for (var stock in watchListItem[watchName]!) {
           String istock = stock.split("+")[0];
+          String categories = stock.split("+")[2].split("|")[0];
           // String iexchange = stock.split("+")[1];
           // Map<String,String> data = await fetchStockData(stock.split("+")[0],stock.split("+")[1]);
             // final instrumentKey = await _upstoxService.getInstrumentKey(istock);
-            var data = await _upstoxService.fetchStockData(stock.split("+")[2],istock);
+            var data = await _upstoxService.fetchStockData(stock.split("+")[2],istock,categories);
             // print("$instrumentKey stockSymbol: $istock");
            stockInfo[stock]= data;
         }
@@ -278,7 +279,8 @@ void _startFetchingStockData() async {
     // String stockSymbol = stock.split("+")[0];
     // String stockExchange = stock.split("+")[1];
     // debugPrint("Fetching data for $stockSymbol");
-    Map<String, String> data = await _upstoxService.fetchStockData(stock.split("+")[2],stock.split("+")[0]);
+    String instrumentKey = stock.split("+")[2]; 
+    Map<String, String> data = await _upstoxService.fetchStockData(instrumentKey,stock.split("+")[0],instrumentKey.split("|")[0]);
 
     setState(() {
       // Find the index for the watchlist
@@ -345,12 +347,13 @@ Future<void> _showDialog() async {
   );
 }
 
-void addStock(int index,String suggestion,String exchange) async {
-    final instrumentKey = await _upstoxService.getInstrumentKey(suggestion);
+void addStock(int index,String suggestion,String exchange,String instrumentKey)async {
+    // final instrumentKey = await _upstoxService.getInstrumentKey(suggestion);
+    // debugPrint("StockExchangeAndInstrumentKey: $suggestion+$exchange+$instrumentKey");
+    // debugPrint("If haveStock: ${watchlist!.ifHaveStock(uuid, index, "$suggestion+$exchange+")}")
     setState(()  {
-
-      if (watchlist!.ifHaveStock(userId, index, "$suggestion+$exchange")){
-          watchlist!.addStock(index,suggestion,exchange,instrumentKey!);
+      if (watchlist!.ifHaveStock(userId, index, "$suggestion+$exchange+$instrumentKey")){
+          watchlist!.addStock(index,suggestion,exchange,instrumentKey);
           item = nameWatchlist();
           watchListItem = getItem();
           _updateSingleStockData(index - 1, "$suggestion+$exchange+$instrumentKey"); // Fetch data immediately for the new stock
@@ -434,7 +437,7 @@ void addStock(int index,String suggestion,String exchange) async {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => SearchPage(_tabController.index,
-                    addStock: (index,suggestion,exchange) => addStock(index, suggestion, exchange))), // Pass title as data
+                    addStock: (index,suggestion,exchange,instrumentKey) => addStock(index, suggestion, exchange,instrumentKey))), // Pass title as data
                   );
                   
                              

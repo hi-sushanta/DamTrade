@@ -77,7 +77,7 @@ class _PortfolioPageState extends State<_PortfolioPage> {
       Map<String, Map<String, String>> stockInfo = {};
       for (var item in watchlist!.protfollio[userId]!) {
         String istock = item['name'];
-        Map<String, String> data = await _upstoxService.fetchStockData(item['instrument_key'],istock);
+        Map<String, String> data = await _upstoxService.fetchStockData(item['instrument_key'],istock,item['instrument_key'].split("|")[0]);
         stockInfo[istock] = data;
       }
       updatedStockData.add(stockInfo);
