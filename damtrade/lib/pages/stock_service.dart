@@ -11,7 +11,7 @@ import 'json_service.dart';
 
 
 class UpstoxService {
-  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjgyMjkxYjkxMTM1ZTQ4MmNmODVmYWMiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzE5ODA2MjM1LCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MTk4NzEyMDB9.GojtFqfDcmcBx6sbQlhDwrwSByLNXxx9r7H6mpcO_fQ';
+  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2Njg1NDAyN2JiZmVjODczMGQ4Zjk1M2IiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzIwMDA4NzQzLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MjAwNDQwMDB9.lPbKIbUOWyNio3nncmRkUAViW1SvhsyEexg3JtomsLI';
   final JsonService jsonService;
 
   UpstoxService(this.jsonService);
@@ -34,23 +34,48 @@ class UpstoxService {
 
 
   Future<Map<String, String>> fetchStockData(String instrumentKey,String symbol,String categories) async {
-    final url = Uri.parse('https://api.upstox.com/v2/market-quote/quotes?instrument_key=$instrumentKey');
-    final headers = {
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $accessToken',
-    };
-
-    final response = await http.get(url, headers: headers);
-    // print(response.statusCode);
-    // print("${response.statusCode}");
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      Map<String,String> extractData =  formatData(data['data']["$categories:$symbol"]);
-      return extractData;
-    } else {
-      throw Exception('No data available');
-    }
+   
+          Map<String,String> extractData = {};
+          final url = Uri.parse('https://api.upstox.com/v2/market-quote/quotes?instrument_key=$instrumentKey');
+          final headers = {
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $accessToken',
+          };
+          final response = await http.get(url, headers: headers);
+          // print(response.statusCode);
+          // print("${response.statusCode}");
+          if (response.statusCode == 200) {
+            var data = jsonDecode(response.body);
+            if (categories  == 'NSE_FO'){
+              // print("$categories:${data['data'].keys.toList()[0]}: ${data['data']["${data['data'].keys.toList()[0]}"]}");
+              // print("Data: ${data['data'][data['data'].keys.toList()[0]]}");
+              extractData = formatOptionData(data['data']["${data['data'].keys.toList()[0]}"]);
+              print("Extracted Data: $extractData");
+            } else{
+                  extractData =  formatData(data['data']["$categories:$symbol"]);
+            }
+            return extractData;
+          } else {
+            throw Exception('No data available');
+          }
+    
   }
+
+  Map<String, String> formatOptionData(var data) {
+    double open = data['ohlc']!['open'];
+    String close = data['ohlc']!['close'].toString();
+    double netChange = data['net_change'];
+    String percentageChange = ((netChange/open)*100).toStringAsFixed(2);
+    String defaultQuantity = data['depth']['buy'][0]['quantity'].toString();
+    return  {
+      "currentPrice":close,
+      "percentageChange":"$percentageChange%",
+      "amountChange":netChange.toString(),
+      'defaultQuanity':defaultQuantity,
+    };
+  }
+
+    
 
   Map<String, String> formatData(var data) {
     double open = data['ohlc']!['open'];
@@ -64,16 +89,21 @@ class UpstoxService {
       "amountChange":netChange.toString(),
     };
   }
+
 }
+
+    
+
+
 
 class UpstoxNSEService {
   final JsonService nseJsonFilePath;
+  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjgzNWI5MmE3NTNhNTIyZjBkNmNkMTAiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzE5ODg0NjkwLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MTk5NTc2MDB9.4xNBOIGmzE1NXsp5i7NbQZbJOSVzheZ6mJk1_Sce7Cs';
 
   UpstoxNSEService(this.nseJsonFilePath);
 
   Future<Map<String, List<String>>> fetchStockSuggestions(String query) async {
     Map<String, List<String>> finalData = {};
-
     try {
       print("Query :${query}");
       // Read the local JSON file
@@ -109,7 +139,7 @@ class UpstoxNSEService {
 
 
 class StreamUpstoxService {
-  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjgyMjkxYjkxMTM1ZTQ4MmNmODVmYWMiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzE5ODA2MjM1LCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MTk4NzEyMDB9.GojtFqfDcmcBx6sbQlhDwrwSByLNXxx9r7H6mpcO_fQ';
+  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjgzNWI5MmE3NTNhNTIyZjBkNmNkMTAiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzE5ODg0NjkwLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MTk5NTc2MDB9.4xNBOIGmzE1NXsp5i7NbQZbJOSVzheZ6mJk1_Sce7Cs';
   WebSocketChannel? channel;
 
   Future<void> connectWebSocket() async {
@@ -156,6 +186,21 @@ class StreamUpstoxService {
       channel?.sink.add(request);
     }
 }
+
+// void main() async {
+//   String symbol = "RELIANCE";
+//   String access_token = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjdjMTJjZTNjOGJhNDE5NWJhMzQ0OWIiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzE5NDA3MzEwLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MTk0MzkyMDB9.36gF6p5cH2BRtW1Gh1GS0u8JULeQ5QzEL_hzSNincFc';
+//   UpstoxService stock_instrument = UpstoxService(JsonService());
+//   String instrument_key = stock_instrument.getInstrumentKey(symbol) as String;
+//   if (instrument_key != 'null'){
+//     var data = await stock_instrument.fetchStockData(instrument_key);
+//     print(data);
+//   } else{
+//     print("please double chack symbol");
+//   }
+  
+// }
+
 
 
 // class StockService {

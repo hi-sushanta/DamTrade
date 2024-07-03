@@ -1,5 +1,7 @@
 import 'package:damtrade/main.dart';
 import 'package:damtrade/pages/home.dart';
+import 'package:damtrade/pages/json_service.dart';
+import 'package:damtrade/pages/stock_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swipe_button/flutter_swipe_button.dart';
 
@@ -8,7 +10,6 @@ class StockBuyPage extends StatefulWidget {
   final double livePrice;
   final String exchangeName;
   final String instrumentKey;
-
   StockBuyPage({
     required this.stockName,
     required this.exchangeName,
@@ -21,15 +22,25 @@ class StockBuyPage extends StatefulWidget {
 }
 
 class _StockBuyPageState extends State<StockBuyPage> {
-  
   final TextEditingController _quantityController = TextEditingController(text: '1');
   final TextEditingController _priceController = TextEditingController();
+  final UpstoxService _upstoxService = UpstoxService(JsonService());
+
 
   @override
   void initState() {
     super.initState();
+    setQuantity();
     _updatePrice();
     _quantityController.addListener(_updatePrice);
+  }
+
+  void setQuantity() async {
+        Map<String,String> data = await _upstoxService.fetchStockData(widget.instrumentKey, widget.stockName, widget.instrumentKey.split("|")[0]);
+      
+      setState(() {
+        _quantityController.text = (widget.instrumentKey.split("|")[0] == "NSE_EQ") ? '1' : "${data['defaultQuanity']}";
+      });
   }
 
   @override
