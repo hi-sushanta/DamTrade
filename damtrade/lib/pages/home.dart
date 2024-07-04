@@ -347,16 +347,16 @@ Future<void> _showDialog() async {
   );
 }
 
-void addStock(int index,String suggestion,String exchange,String instrumentKey)async {
+void addStock(int index,String suggestion,String exchange,String instrumentKey, String instrumentType)async {
     // final instrumentKey = await _upstoxService.getInstrumentKey(suggestion);
     // debugPrint("StockExchangeAndInstrumentKey: $suggestion+$exchange+$instrumentKey");
     // debugPrint("If haveStock: ${watchlist!.ifHaveStock(uuid, index, "$suggestion+$exchange+")}")
     setState(()  {
-      if (watchlist!.ifHaveStock(userId, index, "$suggestion+$exchange+$instrumentKey")){
-          watchlist!.addStock(index,suggestion,exchange,instrumentKey);
+      if (watchlist!.ifHaveStock(userId, index, "$suggestion+$exchange+$instrumentKey+$instrumentType")){
+          watchlist!.addStock(index,suggestion,exchange,instrumentKey,instrumentType);
           item = nameWatchlist();
           watchListItem = getItem();
-          _updateSingleStockData(index - 1, "$suggestion+$exchange+$instrumentKey"); // Fetch data immediately for the new stock
+          _updateSingleStockData(index - 1, "$suggestion+$exchange+$instrumentKey+$instrumentType"); // Fetch data immediately for the new stock
       }
       else{
         _showMyDialog();
@@ -437,7 +437,7 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey)a
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => SearchPage(_tabController.index,
-                    addStock: (index,suggestion,exchange,instrumentKey) => addStock(index, suggestion, exchange,instrumentKey))), // Pass title as data
+                    addStock: (index,suggestion,exchange,instrumentKey,instrumentType) => addStock(index, suggestion, exchange,instrumentKey,instrumentType))), // Pass title as data
                   );
                   
                              

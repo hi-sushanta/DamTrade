@@ -382,8 +382,8 @@ class WatchlistItem {
     _saveDataToFirestore();
   }
 
-  void addStock(int index, String suggestion, String exchange, String instrumentKey){
-    data['data']![uuid]![index].add("$suggestion+$exchange+$instrumentKey");
+  void addStock(int index, String suggestion, String exchange, String instrumentKey,String instrumentType){
+    data['data']![uuid]![index].add("$suggestion+$exchange+$instrumentKey+$instrumentType");
     _saveDataToFirestore();
   }
 

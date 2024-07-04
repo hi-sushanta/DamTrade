@@ -11,7 +11,7 @@ import 'json_service.dart';
 
 
 class UpstoxService {
-  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2Njg1NDAyN2JiZmVjODczMGQ4Zjk1M2IiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzIwMDA4NzQzLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MjAwNDQwMDB9.lPbKIbUOWyNio3nncmRkUAViW1SvhsyEexg3JtomsLI';
+  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2Njg2OGVhMWI4MWE1ZjY2MjYxOWNkNmUiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzIwMDk0MzY5LCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MjAxMzA0MDB9.Z5Ghzgw-p2lh1mierd8MuzoUdHZerzf72ifMOhEHxYs';
   final JsonService jsonService;
 
   UpstoxService(this.jsonService);
@@ -46,11 +46,13 @@ class UpstoxService {
           // print("${response.statusCode}");
           if (response.statusCode == 200) {
             var data = jsonDecode(response.body);
+            // print('Data: ${data['data']}');
+
             if (categories  == 'NSE_FO'){
               // print("$categories:${data['data'].keys.toList()[0]}: ${data['data']["${data['data'].keys.toList()[0]}"]}");
-              // print("Data: ${data['data'][data['data'].keys.toList()[0]]}");
+              // print("Data: ${data['data']}");
               extractData = formatOptionData(data['data']["${data['data'].keys.toList()[0]}"]);
-              print("Extracted Data: $extractData");
+              // print("Extracted Data: $extractData");
             } else{
                   extractData =  formatData(data['data']["$categories:$symbol"]);
             }
@@ -105,7 +107,7 @@ class UpstoxNSEService {
   Future<Map<String, List<String>>> fetchStockSuggestions(String query) async {
     Map<String, List<String>> finalData = {};
     try {
-      print("Query :${query}");
+      // print("Query :${query}");
       // Read the local JSON file
       // final file = File(nseJsonFilePath);
       // final jsonString = await file.readAsString();
@@ -124,11 +126,13 @@ class UpstoxNSEService {
       final fullName = matchingStocks.map((item) => item['name'] as String).toList();
       final exchangeName = matchingStocks.map((item) => item['exchange'] as String).toList();
       final instrumentKey = matchingStocks.map((item) => item['instrument_key'] as String).toList();
+      final instrumentType = matchingStocks.map((item) => item['instrument_type'] as String).toList();
 
       finalData["suggestion"] = suggestions;
       finalData["fullName"] = fullName;
       finalData['exchange'] = exchangeName;
       finalData['instrumentKey'] = instrumentKey;
+      finalData['instrumentType'] = instrumentType;
     } catch (e) {
       throw Exception('Failed to fetch stock suggestions: $e');
     }

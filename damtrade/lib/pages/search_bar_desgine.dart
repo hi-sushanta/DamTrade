@@ -5,7 +5,7 @@ import 'stock_service.dart'; // Ensure you have this file properly set up
 
 class SearchPage extends StatefulWidget {
   final int index;
-  final Function(int,String,String,String) addStock;
+  final Function(int,String,String,String,String) addStock;
 
   const SearchPage(this.index,{Key? key, required this.addStock}) : super(key: key);
 
@@ -15,7 +15,7 @@ class SearchPage extends StatefulWidget {
 
 class _SearchState extends State<SearchPage> {
   final int index;
-  final Function(int,String,String,String) addStock;
+  final Function(int,String,String,String,String) addStock;
   _SearchState(this.index,this.addStock);
   // final TwelveDataService _twelveDataService = TwelveDataService();
   final UpstoxNSEService _upstoxNSEService = UpstoxNSEService(JsonService());
@@ -23,6 +23,7 @@ class _SearchState extends State<SearchPage> {
   List<String> _fullName = [];
   List<String> _exchangeName = [];
   List<String> _instrumentKey = [];
+  List<String> _instrumentType = [];
 
   Timer? _timer;
   final TextEditingController _searchController = TextEditingController();
@@ -57,6 +58,7 @@ class _SearchState extends State<SearchPage> {
           _fullName = finalData["fullName"] ?? [];
           _exchangeName = finalData["exchange"] ?? [];
           _instrumentKey = finalData['instrumentKey'] ?? [];
+          _instrumentType = finalData['instrumentType'] ?? [];
         });
       } else {
         setState(() {
@@ -64,13 +66,14 @@ class _SearchState extends State<SearchPage> {
           _fullName = [];
           _exchangeName = [];
           _instrumentKey = [];
+          _instrumentType = [];
         });
       }
     });
   }
 
-  void _onSuggestionSelected(int index , String suggestion,String exchangeName,String instrumentKey) {
-    this.addStock(index+1,suggestion,exchangeName,instrumentKey);
+  void _onSuggestionSelected(int index , String suggestion,String exchangeName,String instrumentKey,String instrumentType) {
+    this.addStock(index+1,suggestion,exchangeName,instrumentKey,instrumentType);
     // watchlist!.data['data']![userId]![index+1].add("$suggestion+$exchangeName");
     // debugPrint("${watchlist!.data['data']![userId]![index+1]}");
     Navigator.pop(context);
@@ -110,6 +113,7 @@ class _SearchState extends State<SearchPage> {
                   final fullName = _fullName[index];
                   final exchangeName = _exchangeName[index];
                   final instrumentKey = _instrumentKey[index];
+                  final instrumentType = _instrumentType[index];
                   return ListTile(
                     splashColor: Colors.amber,
                     leading: Container(
@@ -146,10 +150,10 @@ class _SearchState extends State<SearchPage> {
                       highlightColor: Colors.amber,
                       onPressed: () {
                         // Implement add functionality
-                        _onSuggestionSelected(this.index,suggestion,exchangeName,instrumentKey);
+                        _onSuggestionSelected(this.index,suggestion,exchangeName,instrumentKey,instrumentType);
                       },
                     ),
-                    onTap: () => _onSuggestionSelected(this.index,suggestion,exchangeName,instrumentKey),
+                    onTap: () => _onSuggestionSelected(this.index,suggestion,exchangeName,instrumentKey,instrumentType),
 
                   );
                 },
