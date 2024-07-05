@@ -8,12 +8,14 @@ class StockSellPage extends StatefulWidget {
   final String exchangeName;
   final double livePrice;
   final String instrumentKey;
+  final String instrumentType;
 
   StockSellPage({
     required this.stockName,
     required this.exchangeName,
     required this.livePrice,
-    required this.instrumentKey
+    required this.instrumentKey,
+    required this.instrumentType
   });
 
   @override
@@ -52,7 +54,7 @@ class _StockSellPageState extends State<StockSellPage> {
       if (quantityToSell > 0) {
         // Add selling information to the portfolio
         if (watchlist!.amountHave[userId]!.value > double.parse(_priceController.text)){
-              watchlist!.addProtfolio(userId, widget.stockName,widget.exchangeName,widget.instrumentKey, "Sell", quantityToSell, widget.livePrice, double.parse(_priceController.text), widget.livePrice, 0);
+              watchlist!.addProtfolio(userId, widget.stockName,widget.exchangeName,widget.instrumentKey, widget.instrumentType,"Sell", quantityToSell, widget.livePrice, double.parse(_priceController.text), widget.livePrice, 0);
               watchlist!.decrasePrice(userId, double.parse(_priceController.text));
               Navigator.pop(context);
 

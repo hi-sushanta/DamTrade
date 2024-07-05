@@ -328,7 +328,7 @@ class WatchlistItem {
       data['data']![uuid]![listIndex].removeAt(itemIndex);
       _saveDataToFirestore();
   }
-  void addProtfolio(String uuid, String stockName, String exchangeName,String instrumentKey,String orderType, int quantity, double avgPrice, double invPrice, double currPrice, double plAmount) {    
+  void addProtfolio(String uuid, String stockName, String exchangeName,String instrumentKey,String instrumentType ,String orderType, int quantity, double avgPrice, double invPrice, double currPrice, double plAmount) {    
     
 
     if (protfollio[uuid]!.isNotEmpty){
@@ -343,6 +343,7 @@ class WatchlistItem {
       "name": stockName,
       'exchange_name':exchangeName,
       'instrument_key':instrumentKey,
+      'instrument_type':instrumentType,
       "orderType": orderType,
       "quantity": quantity,
       "averagePrice": avgPrice,

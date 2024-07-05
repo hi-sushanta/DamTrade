@@ -11,7 +11,7 @@ import 'json_service.dart';
 
 
 class UpstoxService {
-  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2Njg2OGVhMWI4MWE1ZjY2MjYxOWNkNmUiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzIwMDk0MzY5LCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MjAxMzA0MDB9.Z5Ghzgw-p2lh1mierd8MuzoUdHZerzf72ifMOhEHxYs';
+  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2Njg3NzYzZjhlNjIxOTEzYWNkY2JmMTkiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzIwMTUzNjYzLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MjAyMTY4MDB9.3c_o35AXUF1caIdiebqdsjMPAJd6S8WFcmaJIE21Uuw';
   final JsonService jsonService;
 
   UpstoxService(this.jsonService);
@@ -47,11 +47,14 @@ class UpstoxService {
           if (response.statusCode == 200) {
             var data = jsonDecode(response.body);
             // print('Data: ${data['data']}');
-
+            // print("InstrumentKey:$instrumentKey,Symbol:$symbol , Categories: $categories");
+            // print('Data: ${data['data']}');
             if (categories  == 'NSE_FO'){
+              print("InstrumentKey:$instrumentKey,Symbol:$symbol , Categories: $categories");
+
               // print("$categories:${data['data'].keys.toList()[0]}: ${data['data']["${data['data'].keys.toList()[0]}"]}");
-              // print("Data: ${data['data']}");
-              extractData = formatOptionData(data['data']["${data['data'].keys.toList()[0]}"]);
+              print("Data: ${data['data']}");
+              extractData = formatOptionData(data['data']["${data['data'].keys.toList()[0]}"],symbol.split(" ")[0]);
               // print("Extracted Data: $extractData");
             } else{
                   extractData =  formatData(data['data']["$categories:$symbol"]);
@@ -63,12 +66,21 @@ class UpstoxService {
     
   }
 
-  Map<String, String> formatOptionData(var data) {
+  Map<String, String> formatOptionData(var data, String symbol) {
     double open = data['ohlc']!['open'];
     String close = data['ohlc']!['close'].toString();
     double netChange = data['net_change'];
     String percentageChange = ((netChange/open)*100).toStringAsFixed(2);
-    String defaultQuantity = data['depth']['buy'][0]['quantity'].toString();
+    String defaultQuantity = '0';
+    if (symbol == "NIFTY"){
+      defaultQuantity = '25';
+    }
+    else if(symbol == "BANKNIFTY"){
+      defaultQuantity = '15';
+    }
+    else{
+      defaultQuantity = data['depth']['buy'][0]['quantity'].toString();
+    }
     return  {
       "currentPrice":close,
       "percentageChange":"$percentageChange%",
@@ -100,7 +112,7 @@ class UpstoxService {
 
 class UpstoxNSEService {
   final JsonService nseJsonFilePath;
-  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjgzNWI5MmE3NTNhNTIyZjBkNmNkMTAiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzE5ODg0NjkwLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MTk5NTc2MDB9.4xNBOIGmzE1NXsp5i7NbQZbJOSVzheZ6mJk1_Sce7Cs';
+  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2Njg3NzYzZjhlNjIxOTEzYWNkY2JmMTkiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzIwMTUzNjYzLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MjAyMTY4MDB9.3c_o35AXUF1caIdiebqdsjMPAJd6S8WFcmaJIE21Uuw';
 
   UpstoxNSEService(this.nseJsonFilePath);
 
@@ -143,7 +155,7 @@ class UpstoxNSEService {
 
 
 class StreamUpstoxService {
-  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjgzNWI5MmE3NTNhNTIyZjBkNmNkMTAiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzE5ODg0NjkwLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MTk5NTc2MDB9.4xNBOIGmzE1NXsp5i7NbQZbJOSVzheZ6mJk1_Sce7Cs';
+  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2Njg3NzYzZjhlNjIxOTEzYWNkY2JmMTkiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzIwMTUzNjYzLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MjAyMTY4MDB9.3c_o35AXUF1caIdiebqdsjMPAJd6S8WFcmaJIE21Uuw';
   WebSocketChannel? channel;
 
   Future<void> connectWebSocket() async {

@@ -580,7 +580,8 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
     final stockName = stockData[0];
     final exchange = stockData[1];
     final instrumentKey = stockData[2];
-    
+    final instrumentType = stockData[3];
+
     showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -603,6 +604,7 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
                   stockName: stockName,
                   exchangeName: exchange,
                   instrumentKey: instrumentKey,
+                  instrumentType: instrumentType,
                   livePrice: double.parse(currentPrice), // Example, use actual BSE price
                 ),
 
@@ -614,7 +616,12 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
             Navigator.pop(context);
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => StockSellPage(stockName: stockName, exchangeName: exchange,instrumentKey: instrumentKey, livePrice: double.parse(currentPrice)))
+              MaterialPageRoute(builder: (context) => StockSellPage(
+                stockName: stockName, 
+                exchangeName: exchange,
+                instrumentKey: instrumentKey,
+                instrumentType: instrumentType, 
+                livePrice: double.parse(currentPrice)))
             );
           },
           onSetAlert: () {

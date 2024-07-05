@@ -140,9 +140,23 @@ class _PortfolioPageState extends State<_PortfolioPage> {
           item["currentPrice"] =
               double.parse(stockData[0][item["name"]]!['currentPrice']!);
           if (item["orderType"] == "Buy") {
-            plAmount.add((item['currentPrice'] * item['quantity']) -
+            if (item['instrumentType'] == 'CE'){
+              plAmount.add((item['currentPrice'] * item['quantity']) -
                 item["investedAmount"]);
-            profitLoss += ((item['quantity'] * item['currentPrice']) - item['investedAmount']);
+              profitLoss += ((item['quantity'] * item['currentPrice']) - item['investedAmount']);
+            } else if(item['instrumentType'] == "PE"){
+              plAmount.add(item["investedAmount"] -
+                (item['currentPrice'] * item['quantity']));
+              profitLoss += (item['investedAmount'] - (item['currentPrice'] * item['quantity']));
+            } else{
+                plAmount.add((item['currentPrice'] * item['quantity']) -
+                item["investedAmount"]);
+               profitLoss += ((item['quantity'] * item['currentPrice']) - item['investedAmount']);
+
+            }
+            // plAmount.add((item['currentPrice'] * item['quantity']) -
+            //     item["investedAmount"]);
+            // profitLoss += ((item['quantity'] * item['currentPrice']) - item['investedAmount']);
           } else {
             plAmount.add(item["investedAmount"] -
                 (item['currentPrice'] * item['quantity']));
