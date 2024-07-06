@@ -68,9 +68,14 @@ class _StockBuyPageState extends State<StockBuyPage> {
         if (int.tryParse(_quantityController.text)! > 0){
             
             if (watchlist!.amountHave[userId]!.value > double.parse(_priceController.text)){
-
-                watchlist!.addProtfolio(userId, widget.stockName,widget.exchangeName,widget.instrumentKey,widget.instrumentType,"Buy", int.tryParse(_quantityController.text)!, widget.livePrice, double.parse(_priceController.text)
-                                        ,widget.livePrice,0);
+                if(widget.instrumentKey.split("|")[0] == "NSE_FO"){
+                   watchlist!.addProtfolio(userId, widget.stockName,widget.exchangeName,widget.instrumentKey,widget.instrumentType,"Buy", int.tryParse(_quantityController.text)!, widget.livePrice, double.parse(_priceController.text)
+                                        ,widget.livePrice,0,double.parse(widget.stockName.split(" ")[1]));
+                } else{
+                   watchlist!.addProtfolio(userId, widget.stockName,widget.exchangeName,widget.instrumentKey,widget.instrumentType,"Buy", int.tryParse(_quantityController.text)!, widget.livePrice, double.parse(_priceController.text)
+                                        ,widget.livePrice,0,0);
+                                      
+                }
                 watchlist!.decrasePrice(userId, double.parse(_priceController.text));
                 Navigator.pop(context);
 

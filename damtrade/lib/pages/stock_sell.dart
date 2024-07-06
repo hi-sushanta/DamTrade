@@ -1,3 +1,5 @@
+import 'package:damtrade/pages/json_service.dart';
+import 'package:damtrade/pages/stock_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swipe_button/flutter_swipe_button.dart';
 import 'home.dart';
@@ -25,10 +27,12 @@ class StockSellPage extends StatefulWidget {
 class _StockSellPageState extends State<StockSellPage> {
   final TextEditingController _quantityController = TextEditingController(text: '1');
   final TextEditingController _priceController = TextEditingController();
+  final UpstoxService _upstoxService = UpstoxService(JsonService());
 
   @override
   void initState() {
     super.initState();
+    setQuantity();
     _updatePrice();
     _quantityController.addListener(_updatePrice);
   }
@@ -45,7 +49,13 @@ class _StockSellPageState extends State<StockSellPage> {
     final totalPrice = widget.livePrice * quantity;
     _priceController.text = totalPrice.toStringAsFixed(2);
   }
-  
+  void setQuantity() async {
+        Map<String,String> data = await _upstoxService.fetchStockData(widget.instrumentKey, widget.stockName, widget.instrumentKey.split("|")[0]);
+      
+      setState(() {
+        _quantityController.text = (widget.instrumentKey.split("|")[0] == "NSE_EQ") ? '1' : "${data['defaultQuanity']}";
+      });
+  }
   void _handleSwipeToSell() {
     // Implement your sell logic here.
     try{
@@ -54,7 +64,11 @@ class _StockSellPageState extends State<StockSellPage> {
       if (quantityToSell > 0) {
         // Add selling information to the portfolio
         if (watchlist!.amountHave[userId]!.value > double.parse(_priceController.text)){
-              watchlist!.addProtfolio(userId, widget.stockName,widget.exchangeName,widget.instrumentKey, widget.instrumentType,"Sell", quantityToSell, widget.livePrice, double.parse(_priceController.text), widget.livePrice, 0);
+              if(widget.instrumentKey.split("|")[0] == "NSE_FO"){
+                  watchlist!.addProtfolio(userId, widget.stockName,widget.exchangeName,widget.instrumentKey, widget.instrumentType,"Sell", quantityToSell, widget.livePrice, double.parse(_priceController.text), widget.livePrice, 0,double.parse(widget.stockName.split(" ")[1]));
+              } else{
+                watchlist!.addProtfolio(userId, widget.stockName,widget.exchangeName,widget.instrumentKey, widget.instrumentType,"Sell", quantityToSell, widget.livePrice, double.parse(_priceController.text), widget.livePrice, 0,0);
+              }
               watchlist!.decrasePrice(userId, double.parse(_priceController.text));
               Navigator.pop(context);
 
