@@ -581,7 +581,7 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
     final exchange = stockData[1];
     final instrumentKey = stockData[2];
     final instrumentType = stockData[3];
-
+   
     showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -591,8 +591,17 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
           currentPrice: currentPrice,
           amountChange: amountChange,
           percentageChange: percentageChange,
+
           onBuy: () {
             // Implement Buy action
+          if (instrumentKey.split("|")[0] == "NSE_INDEX"){
+                ScaffoldMessenger.of(context).showSnackBar(
+
+                  const SnackBar(content: Text('Index Fund Not to buy or sell',style: TextStyle(color:Color.fromARGB(255, 255, 255, 255)),),backgroundColor: Color.fromARGB(255, 247, 62, 11),
+                              duration: const Duration(milliseconds: 500),
+                              ));
+                Navigator.pop(context);
+            } else{
             Navigator.pop(context); // Close the bottom sheet
             // ScaffoldMessenger.of(context).showSnackBar(
             //   SnackBar(content: Text('Buy action for $stockName')),
@@ -611,8 +620,15 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
             ),
           );
 
+          }
           },
           onSell: () {
+            if (instrumentKey.split("|")[0] == "NSE_INDEX"){
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Index Fund Not to buy or sell',style: TextStyle(color:Color.fromARGB(255, 255, 255, 255)),),backgroundColor: Color.fromARGB(255, 247, 62, 11),
+                  duration: const Duration(milliseconds: 500),));
+                Navigator.pop(context);
+            } else{
             Navigator.pop(context);
             Navigator.push(
               context,
@@ -623,6 +639,7 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
                 instrumentType: instrumentType, 
                 livePrice: double.parse(currentPrice)))
             );
+          }
           },
           onSetAlert: () {
             // Implement Set Alert action
@@ -638,6 +655,7 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
         );
       },
     );
+    
   }
 
 
