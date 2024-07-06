@@ -44,19 +44,24 @@ class UpstoxService {
           final response = await http.get(url, headers: headers);
           // print(response.statusCode);
           // print("${response.statusCode}");
+          // print("InstrumentKey:$instrumentKey,Symbol:$symbol , Categories: $categories");
+
           if (response.statusCode == 200) {
             var data = jsonDecode(response.body);
             // print('Data: ${data['data']}');
-            // print("InstrumentKey:$instrumentKey,Symbol:$symbol , Categories: $categories");
             // print('Data: ${data['data']}');
             if (categories  == 'NSE_FO'){
-              print("InstrumentKey:$instrumentKey,Symbol:$symbol , Categories: $categories");
+              // print("InstrumentKey:$instrumentKey,Symbol:$symbol , Categories: $categories");
 
               // print("$categories:${data['data'].keys.toList()[0]}: ${data['data']["${data['data'].keys.toList()[0]}"]}");
-              print("Data: ${data['data']}");
+              // print("Data: ${data['data']}");
               extractData = formatOptionData(data['data']["${data['data'].keys.toList()[0]}"],symbol.split(" ")[0]);
               // print("Extracted Data: $extractData");
-            } else{
+            } 
+            else if(categories == "NSE_INDEX"){
+              extractData = formatIndexData(data['data']["${data['data'].keys.toList()[0]}"]);
+            }
+            else{
                   extractData =  formatData(data['data']["$categories:$symbol"]);
             }
             return extractData;
@@ -64,6 +69,20 @@ class UpstoxService {
             throw Exception('No data available');
           }
     
+  }
+
+  Map<String,String> formatIndexData(var data){
+    double open = data['ohlc']!['open'];
+    String close = data['ohlc']!['close'].toString();
+    double netChange = data['net_change'];
+    String percentageChange = ((netChange/open)*100).toStringAsFixed(2);
+    String defaultQuantity = '0';
+    return {
+      "currentPrice":close,
+      "percentageChange":"$percentageChange%",
+      "amountChange":netChange.toString(),
+      'defaultQuanity':defaultQuantity,
+    };
   }
 
   Map<String, String> formatOptionData(var data, String symbol) {

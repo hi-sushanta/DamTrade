@@ -186,7 +186,7 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
     for (int i=0; i<watchlist!.data['data']![userId]![0].length; i++){
       List<String> demoitem  = [];
       for (String it in watchlist!.data['data']![userId]![i+1]){
-        demoitem.add(it.toUpperCase());
+        demoitem.add(it);
       }
       stock[watchlist!.data['data']![userId]![0][i]] = demoitem;
     }
