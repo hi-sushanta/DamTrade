@@ -170,6 +170,7 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
     _tabController.dispose();
     _timer?.cancel();
     _alertCheckTimer?.cancel();
+    _searchController.dispose();
     super.dispose();
   }
   
