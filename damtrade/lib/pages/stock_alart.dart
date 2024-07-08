@@ -19,12 +19,24 @@ class StockAlert extends StatefulWidget {
 class _StockAlert extends State<StockAlert>{
   
   final TextEditingController _priceController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
 
   
   @override
   void initState(){
     super.initState();
     _requestNotificationPermissions();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
+    });
+
+  }
+
+  @override
+  void dispose(){
+    super.dispose();
+    _priceController.dispose();
+    _focusNode.dispose();
 
   }
   Future<void> _requestNotificationPermissions() async {
@@ -32,6 +44,8 @@ class _StockAlert extends State<StockAlert>{
       await Permission.notification.request();
     }
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -66,10 +80,12 @@ class _StockAlert extends State<StockAlert>{
               SizedBox(height: 10),
               TextField(
                 controller: _priceController,
+                focusNode: _focusNode,
                 keyboardType: TextInputType.number,
                 style: TextStyle(fontSize: 18),
                 decoration: InputDecoration(
                   labelText: 'Alert Price',
+                  
                   labelStyle: TextStyle(color: Colors.green.shade800),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),

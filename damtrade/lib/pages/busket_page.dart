@@ -54,7 +54,11 @@ class _PortfolioPageState extends State<_PortfolioPage> {
   void _startCheckingAlerts() {
       _alertCheckTimer = Timer.periodic(Duration(seconds: 30), (timer) async {
       var stockAlerts = watchlist!.stockAlertStore[userId]!.value;
-      await StockAlertService().checkForAlerts(stockAlerts);
+      if (mounted){
+          await StockAlertService().checkForAlerts(stockAlerts);
+      } else{
+        timer.cancel();
+      }
     });
   }
 
