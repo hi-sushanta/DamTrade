@@ -61,12 +61,12 @@ class _PortfolioPageState extends State<_PortfolioPage> {
 
   void _startFetchingStockData() async {
     _timer = Timer.periodic(const Duration(seconds: 5), (timer) async {
-      // Check if the widget is still mounted
-      if (!mounted) {
-        _timer?.cancel();
-        return;
+      // Check if the widget zis still mounted
+    if (mounted) {
+        await _updateStockData();
+      } else {
+        timer.cancel();
       }
-      await _updateStockData();
     });
   }
 
@@ -141,13 +141,13 @@ class _PortfolioPageState extends State<_PortfolioPage> {
               double.parse(stockData[0][item["name"]]!['currentPrice']!);
           if (item["orderType"] == "Buy") {
             if (item['instrumentType'] == 'CE'){
-              plAmount.add((item['currentPrice'] * item['quantity']) -
-                item["investedAmount"]);
-              profitLoss += ((item['quantity'] * item['currentPrice']) - item['investedAmount']);
+              double plCalculate = ((item['currentPrice'] - item['averagePrice']) * item['quantity']);
+              plAmount.add(plCalculate);
+              profitLoss += plCalculate;
             } else if(item['instrumentType'] == "PE"){
-              plAmount.add(item["investedAmount"] -
-                (item['currentPrice'] * item['quantity']));
-              profitLoss += (item['investedAmount'] - (item['currentPrice'] * item['quantity']));
+              double plCalculate = ((item['averagePrice'] - item['currentPrice']) * item['quantity']);
+              plAmount.add(plCalculate);
+              profitLoss += plCalculate;
             } else{
                 plAmount.add((item['currentPrice'] * item['quantity']) -
                 item["investedAmount"]);
