@@ -4,14 +4,13 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:damtrade/proto/market_data.pb.dart';
 
 import 'json_service.dart';
 
 
 
 class UpstoxService {
-  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjhiNzhjNjRiYWE5YzA1OGEyYzJlZTciLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzIwNDE2NDU0LCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MjA0NzYwMDB9.s0DnMGqUNbJl1lHOgaEI17Deq4MxJquor1dvz2hhJJo';
+  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjhkM2IxYzlmZTZmNTA1YjIyMDNmMTUiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzIwNTMxNzQwLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MjA1NjI0MDB9._ymB6ejWgrHGxlUkSikA0IzC3NXtH_Sp3chE9Taja88';
   final JsonService jsonService;
 
   UpstoxService(this.jsonService);
@@ -131,7 +130,7 @@ class UpstoxService {
 
 class UpstoxNSEService {
   final JsonService nseJsonFilePath;
-  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjhiNzhjNjRiYWE5YzA1OGEyYzJlZTciLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzIwNDE2NDU0LCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MjA0NzYwMDB9.s0DnMGqUNbJl1lHOgaEI17Deq4MxJquor1dvz2hhJJo';
+  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjhkM2IxYzlmZTZmNTA1YjIyMDNmMTUiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzIwNTMxNzQwLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MjA1NjI0MDB9._ymB6ejWgrHGxlUkSikA0IzC3NXtH_Sp3chE9Taja88';
 
   UpstoxNSEService(this.nseJsonFilePath);
 
@@ -173,55 +172,7 @@ class UpstoxNSEService {
 }
 
 
-class StreamUpstoxService {
-  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjhiNzhjNjRiYWE5YzA1OGEyYzJlZTciLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzIwNDE2NDU0LCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MjA0NzYwMDB9.s0DnMGqUNbJl1lHOgaEI17Deq4MxJquor1dvz2hhJJo';
 
-  WebSocketChannel? channel;
-
-  Future<void> connectWebSocket() async {
-      final initialUrl = 'wss://api.upstox.com/v2/feed/market-data-feed';
-      
-      channel = IOWebSocketChannel.connect(initialUrl, headers: {
-      'Authorization': 'Bearer $accessToken',
-      "AcceptHeader": '*/*'
-    });
-     
-      channel?.stream.listen((message) {
-      try {
-        var data = MarketData.fromBuffer(message);
-        print('Received data: ${data.toProto3Json()}');
-      } catch (e) {
-        print('Error decoding message: $e');
-      }
-    }, onError: (error) {
-      print('WebSocket error: $error');
-      reconnect();
-    }, onDone: () {
-      print('WebSocket connection closed.');
-      reconnect();
-    });
-  }
-
-    void reconnect() {
-      print('Reconnecting to WebSocket...');
-      Future.delayed(Duration(seconds: 5), () {
-        connectWebSocket();
-      });
-    }
-
-    void sendSubscriptionRequest(String instrument_key) {
-      final request = {
-        "guid": "unique-guid",
-        "method": "sub",
-        "data": {
-          "mode": "full",
-          "instrumentKeys": [instrument_key]
-        }
-      };
-
-      channel?.sink.add(request);
-    }
-}
 
 // void main() async {
 //   String symbol = "RELIANCE";
