@@ -10,7 +10,7 @@ import 'json_service.dart';
 
 
 class UpstoxService {
-  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjhlNzhlYjU3MzQyYTUzMDJlNTZiZmQiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzIwNjEzMDk5LCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MjA2NDg4MDB9.2Sz2dn3OLhlZzC3ap3c6OaYDWXL8cMka1_shNf8ZhfA';
+  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjhmY2RjNzY3ZGUxNzc5NjdhNzU5M2QiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzIwNzAwMzU5LCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MjA3MzUyMDB9.OHNp8vYHNxKqHypipy9YWnacpgEMCSL08iXyubg4gIY';
   final JsonService jsonService;
 
   UpstoxService(this.jsonService);
@@ -47,13 +47,22 @@ class UpstoxService {
 
           if (response.statusCode == 200) {
             var data = jsonDecode(response.body);
-            // print('Data: ${data['data']}');
-            // print('Data: ${data['data']}');
+            // print('Data: ${data}');
+            
             if (categories  == 'NSE_FO'){
               // print("InstrumentKey:$instrumentKey,Symbol:$symbol , Categories: $categories");
 
               // print("$categories:${data['data'].keys.toList()[0]}: ${data['data']["${data['data'].keys.toList()[0]}"]}");
               // print("Data: ${data['data']}");
+              if (data['data']?.isEmpty){
+                  return {
+                  "currentPrice":'0',
+                  "percentageChange":"0%",
+                  "amountChange":'0',
+                  'defaultQuanity':'0',
+                };
+
+              }
               extractData = formatOptionData(data['data']["${data['data'].keys.toList()[0]}"],symbol.split(" ")[0]);
               // print("Extracted Data: $extractData");
             } 
@@ -85,6 +94,15 @@ class UpstoxService {
   }
 
   Map<String, String> formatOptionData(var data, String symbol) {
+    if (data['ohlc'] == null){
+        return {
+                  "currentPrice":'0',
+                  "percentageChange":"0%",
+                  "amountChange":'0',
+                  'defaultQuanity':'0',
+                };
+
+        }
     double open = data['ohlc']!['open'];
     String close = data['ohlc']!['close'].toString();
     double netChange = data['net_change'];
@@ -130,7 +148,7 @@ class UpstoxService {
 
 class UpstoxNSEService {
   final JsonService nseJsonFilePath;
-  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjhlNzhlYjU3MzQyYTUzMDJlNTZiZmQiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzIwNjEzMDk5LCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MjA2NDg4MDB9.2Sz2dn3OLhlZzC3ap3c6OaYDWXL8cMka1_shNf8ZhfA';
+  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjhmY2RjNzY3ZGUxNzc5NjdhNzU5M2QiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzIwNzAwMzU5LCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MjA3MzUyMDB9.OHNp8vYHNxKqHypipy9YWnacpgEMCSL08iXyubg4gIY';
 
   UpstoxNSEService(this.nseJsonFilePath);
 

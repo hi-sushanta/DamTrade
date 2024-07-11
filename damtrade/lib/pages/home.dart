@@ -228,6 +228,7 @@ void _startFetchingStockData() async {
           // Map<String,String> data = await fetchStockData(stock.split("+")[0],stock.split("+")[1]);
             // final instrumentKey = await _upstoxService.getInstrumentKey(istock);
             var data = await _upstoxService.fetchStockData(stock.split("+")[2],istock,categories);
+            // debugPrint("data:$data");
             // print("$instrumentKey stockSymbol: $istock");
            stockInfo[stock]= data;
         }
