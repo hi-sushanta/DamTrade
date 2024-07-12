@@ -186,7 +186,7 @@ class _PortfolioPageState extends State<_PortfolioPage> {
       appBar: AppBar(
         title: Center(
           child: Text(
-            "Portfolio",
+            "Holdings",
             style: TextStyle(
               color: Colors.green.shade600,
               fontWeight: FontWeight.bold,
@@ -212,10 +212,6 @@ class _PortfolioPageState extends State<_PortfolioPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Holdings",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
           const SizedBox(height: 8),
           Container(
             decoration: BoxDecoration(

@@ -101,7 +101,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
           ),
           NavigationDestination(
             icon: Icon(Icons.shopping_basket_sharp),
-            label: 'Busket',
+            label: 'Holdings',
           ),
           NavigationDestination(
             icon: Icon(Icons.alarm),
