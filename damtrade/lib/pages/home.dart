@@ -468,7 +468,6 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
                                   GestureDetector(
                                     key: ValueKey<String>(stock),
                                     onTap: (){
-                                      debugPrint("watchlist: $i, stock: $stock");
                                       if (stockData.isNotEmpty){
                                           _onStockTap(i,stock,stockData[i][stock]?["currentPrice"]?? "",
                                           stockData[i][stock]?["amountChange"]??"",
@@ -603,7 +602,15 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
                               duration: const Duration(milliseconds: 500),
                               ));
                 Navigator.pop(context);
-            } else{
+            } else if((instrumentKey.split("|")[0] == "NSE_FO") & ((currentPrice == '0') & (amountChange == '0')) & (percentageChange == '0%')) {
+              ScaffoldMessenger.of(context).showSnackBar(
+
+                  const SnackBar(content: Text('Selected Options Is Expired.',style: TextStyle(color:Color.fromARGB(255, 255, 255, 255)),),backgroundColor: Color.fromARGB(255, 247, 62, 11),
+                              duration: const Duration(milliseconds: 500),
+                              ));
+                Navigator.pop(context);
+            }
+            else{
             Navigator.pop(context); // Close the bottom sheet
             // ScaffoldMessenger.of(context).showSnackBar(
             //   SnackBar(content: Text('Buy action for $stockName')),
@@ -630,7 +637,16 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
                   const SnackBar(content: Text('Index Fund Not to buy or sell',style: TextStyle(color:Color.fromARGB(255, 255, 255, 255)),),backgroundColor: Color.fromARGB(255, 247, 62, 11),
                   duration: const Duration(milliseconds: 500),));
                 Navigator.pop(context);
-            } else{
+            } 
+            else if((instrumentKey.split("|")[0] == "NSE_FO") & ((currentPrice == '0') & (amountChange == '0')) & (percentageChange == '0%')) {
+              ScaffoldMessenger.of(context).showSnackBar(
+
+                  const SnackBar(content: Text('Selected Options Is Expired.',style: TextStyle(color:Color.fromARGB(255, 255, 255, 255)),),backgroundColor: Color.fromARGB(255, 247, 62, 11),
+                              duration: const Duration(milliseconds: 500),
+                              ));
+                Navigator.pop(context);
+            }
+            else{
             Navigator.pop(context);
             Navigator.push(
               context,
@@ -644,15 +660,24 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
           }
           },
           onSetAlert: () {
-            // Implement Set Alert action
-            Navigator.pop(context); // Close the bottom sheet
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => StockAlert(stockName: stockName,exchangeName: exchange,instrumentKey: instrumentKey, currentPrice:currentPrice),
-            ),
-          );
-        },
+            if((instrumentKey.split("|")[0] == "NSE_FO") & ((currentPrice == '0') & (amountChange == '0')) & (percentageChange == '0%')) {
+              ScaffoldMessenger.of(context).showSnackBar(
+
+                  const SnackBar(content: Text('Selected Options Is Expired.',style: TextStyle(color:Color.fromARGB(255, 255, 255, 255)),),backgroundColor: Color.fromARGB(255, 247, 62, 11),
+                              duration: const Duration(milliseconds: 500),
+                              ));
+                Navigator.pop(context);
+            } else {
+                  // Implement Set Alert action
+                  Navigator.pop(context); // Close the bottom sheet
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => StockAlert(stockName: stockName,exchangeName: exchange,instrumentKey: instrumentKey, currentPrice:currentPrice),
+                  ),
+                );
+              }
+          },
 
         );
       },
