@@ -8,6 +8,8 @@ import 'pages/watch_list_info.dart';
 
 
 WatchlistItem? watchlist;
+int oneTime = 0;
+
 void main() async {
   // calling of runApp
  WidgetsFlutterBinding.ensureInitialized();

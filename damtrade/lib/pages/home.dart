@@ -19,7 +19,6 @@ import 'package:permission_handler/permission_handler.dart'; // Ensure this impo
 import 'json_service.dart';
 
 final userId = FirebaseAuth.instance.currentUser!.uid;
-int oneTime = 0;
 
 // final WatchlistItem watchlist = WatchlistItem(userId);
 
@@ -382,7 +381,6 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
         if (isLoading) {
           return Center(child: CircularProgressIndicator());
         } else {
-          debugPrint("ONeTime: $oneTime");
           if (oneTime == 0 || oneTime==1){
               //  _updateStockData();
               item = nameWatchlist();
