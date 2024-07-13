@@ -19,7 +19,7 @@ import 'package:permission_handler/permission_handler.dart'; // Ensure this impo
 import 'json_service.dart';
 
 final userId = FirebaseAuth.instance.currentUser!.uid;
-int oneTime = 1;
+int oneTime = 0;
 
 // final WatchlistItem watchlist = WatchlistItem(userId);
 
@@ -375,13 +375,15 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
   @override
   Widget build(BuildContext context)  {
     final Color oddItemColor = Colors.lime.shade100;
+
    return ValueListenableBuilder<bool>(
       valueListenable: watchlist!.isLoading,
       builder: (context, isLoading, _) {
         if (isLoading) {
           return Center(child: CircularProgressIndicator());
         } else {
-          if (oneTime == 1){
+          debugPrint("ONeTime: $oneTime");
+          if (oneTime == 0 || oneTime==1){
               //  _updateStockData();
               item = nameWatchlist();
               watchListItem = getItem();
@@ -398,7 +400,7 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
       appBar: AppBar(
         title: Center(
           child:Text("Dam Trade",
-          style: TextStyle(color:Colors.green.shade600,fontWeight: FontWeight.bold),),
+          style: TextStyle(color:Colors.green.shade600,fontWeight: FontWeight.bold)),
         ),
        bottom: PreferredSize(
           preferredSize: Size.fromHeight(50.0),
