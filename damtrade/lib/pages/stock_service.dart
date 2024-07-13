@@ -41,7 +41,6 @@ class UpstoxService {
             'Authorization': 'Bearer $accessToken',
           };
           final response = await http.get(url, headers: headers);
-          // print(response.statusCode);
           // print("${response.statusCode}");
           // print("InstrumentKey:$instrumentKey,Symbol:$symbol , Categories: $categories");
 

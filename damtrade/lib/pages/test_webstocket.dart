@@ -5,14 +5,11 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
 import 'dart:typed_data';
 import 'package:damtrade/proto/lib/proto/MarektDataFeed.pb.dart'; // Import the generated protobuf classes
-import 'dart:io';
 
 class UpstoxService {
   
   final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjhmY2RjNzY3ZGUxNzc5NjdhNzU5M2QiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzIwNzAwMzU5LCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MjA3MzUyMDB9.OHNp8vYHNxKqHypipy9YWnacpgEMCSL08iXyubg4gIY';
   WebSocketChannel? _channel;
-  StreamSubscription? _subscription;
-  Timer? _pingTimer;
   Map<String, String> extractData = {};
   Completer<void> _dataCompleter = Completer<void>();
 

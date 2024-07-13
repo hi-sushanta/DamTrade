@@ -1,10 +1,7 @@
 import 'dart:io';
-
 import 'package:damtrade/pages/stock_sell.dart';
-import 'package:damtrade/pages/watch_list_info.dart';
 import "package:firebase_auth/firebase_auth.dart";
 import 'package:flutter/material.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 import "tab_bar_modify.dart";
 import '../main.dart';
 import 'stock_service.dart';
@@ -379,7 +376,7 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
       valueListenable: watchlist!.isLoading,
       builder: (context, isLoading, _) {
         if (isLoading) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else {
           if (oneTime == 0 || oneTime==1){
               //  _updateStockData();
