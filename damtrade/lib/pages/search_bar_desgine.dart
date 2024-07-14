@@ -13,12 +13,15 @@ class SearchPage extends StatefulWidget {
   _SearchState createState() => _SearchState(this.index,this.addStock);
 }
 
-class _SearchState extends State<SearchPage> {
+class _SearchState extends State<SearchPage> with TickerProviderStateMixin {
   final int index;
+  final String typeOfCat = "EQUITY";
   final Function(int,String,String,String,String) addStock;
   _SearchState(this.index,this.addStock);
   // final TwelveDataService _twelveDataService = TwelveDataService();
   final UpstoxNSEService _upstoxNSEService = UpstoxNSEService(JsonService());
+  late final TabController _tabController;
+  var item = ["EQUITY","OPTION",'FUTURE',"INDEX"];
   List<String> _suggestions = [];
   List<String> _fullName = [];
   List<String> _exchangeName = [];
@@ -32,6 +35,7 @@ class _SearchState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 4, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
     });
@@ -103,6 +107,22 @@ class _SearchState extends State<SearchPage> {
               onChanged: _onSearchChanged,
             ),
           ),
+          PreferredSize(
+          preferredSize: Size.fromHeight(50.0),
+          child: Container(
+            alignment: Alignment.center,
+            child: TabBar(
+              controller: _tabController,
+              isScrollable: false,
+              indicatorColor: Colors.amber,
+              tabs: item.asMap().entries.map((entry){
+                final int index = entry.key;
+                final String title = entry.value;
+                return _buildTab(title,index);
+              }).toList(),
+            ),
+          ),
+        ),
           if (_suggestions.isNotEmpty && _fullName.isNotEmpty && _exchangeName.isNotEmpty)
             Expanded(
               child: ListView.builder(
@@ -163,4 +183,13 @@ class _SearchState extends State<SearchPage> {
       ),
     );
   }
+
+  Widget _buildTab(String title, int index) {
+    return GestureDetector(
+      child: Tab(
+        text: title,
+      ),
+      
+    );
+  } 
 }
