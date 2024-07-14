@@ -187,6 +187,18 @@ class _SearchState extends State<SearchPage> with TickerProviderStateMixin {
 
   Widget _buildTab(String title, int index) {
     return GestureDetector(
+      onTap: (){
+        setState(() {
+           _tabController.index = index;
+           debugPrint("Index: $index");
+           switch(index){
+            case 0: queryType = "NSE_EQ";
+            case 1: queryType = "NSE_FO";
+            case 2: queryType = "NSE_INDEX";
+           }
+        });
+      },
+      onTapCancel: (){},
       child: Tab(
         text: title,
       ),
