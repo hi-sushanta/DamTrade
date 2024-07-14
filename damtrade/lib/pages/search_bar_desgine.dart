@@ -21,7 +21,8 @@ class _SearchState extends State<SearchPage> with TickerProviderStateMixin {
   // final TwelveDataService _twelveDataService = TwelveDataService();
   final UpstoxNSEService _upstoxNSEService = UpstoxNSEService(JsonService());
   late final TabController _tabController;
-  var item = ["EQUITY","OPTION",'FUTURE',"INDEX"];
+  var item = ["EQUITY","OPTION","INDEX"];
+  String queryType = "NSE_EQ";
   List<String> _suggestions = [];
   List<String> _fullName = [];
   List<String> _exchangeName = [];
@@ -35,7 +36,7 @@ class _SearchState extends State<SearchPage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
     });
@@ -55,7 +56,7 @@ class _SearchState extends State<SearchPage> with TickerProviderStateMixin {
     _timer = Timer(const Duration(milliseconds: 500), () async {
       if (query.isNotEmpty) {
         // final finalData = await _twelveDataService.fetchStockSuggestions(query);
-        final finalData = await _upstoxNSEService.fetchStockSuggestions(query);
+        final finalData = await _upstoxNSEService.fetchStockSuggestions(query,queryType);
         // debugPrint("Final Data: ${finalData}");
         setState(() {
           _suggestions = finalData["suggestion"] ?? [];

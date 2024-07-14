@@ -151,7 +151,7 @@ class UpstoxNSEService {
 
   UpstoxNSEService(this.nseJsonFilePath);
 
-  Future<Map<String, List<String>>> fetchStockSuggestions(String query) async {
+  Future<Map<String, List<String>>> fetchStockSuggestions(String query,String category) async {
     Map<String, List<String>> finalData = {};
     try {
       // print("Query :${query}");
@@ -167,13 +167,14 @@ class UpstoxNSEService {
         return (item['trading_symbol'] as String).toLowerCase().contains(query.toLowerCase());
       }).toList();
       // print("MatchingStock: ${matchingStocks}");
+    final nseEqStocks = matchingStocks.where((item) => item['segment'] == category).toList();
 
-      // Extract required details
-      final suggestions = matchingStocks.map((item) => item['trading_symbol'] as String).toList();
-      final fullName = matchingStocks.map((item) => item['name'] as String).toList();
-      final exchangeName = matchingStocks.map((item) => item['exchange'] as String).toList();
-      final instrumentKey = matchingStocks.map((item) => item['instrument_key'] as String).toList();
-      final instrumentType = matchingStocks.map((item) => item['instrument_type'] as String).toList();
+    // Extract required details
+    final suggestions = nseEqStocks.map((item) => item['trading_symbol'] as String).toList();
+    final fullName = nseEqStocks.map((item) => item['name'] as String).toList();
+    final exchangeName = nseEqStocks.map((item) => item['exchange'] as String).toList();
+    final instrumentKey = nseEqStocks.map((item) => item['instrument_key'] as String).toList();
+    final instrumentType = nseEqStocks.map((item) => item['instrument_type'] as String).toList();
 
       finalData["suggestion"] = suggestions;
       finalData["fullName"] = fullName;
