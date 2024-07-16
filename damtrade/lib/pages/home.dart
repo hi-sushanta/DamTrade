@@ -49,8 +49,8 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-
       home: HomePage(), // Replace with your actual class name
+      debugShowCheckedModeBanner: false,
     );
   }
 

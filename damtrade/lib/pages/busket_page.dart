@@ -16,6 +16,7 @@ class SecondPageContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: _PortfolioPage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
