@@ -22,7 +22,6 @@ class _SearchState extends State<SearchPage> with TickerProviderStateMixin {
   final UpstoxNSEService _upstoxNSEService = UpstoxNSEService(JsonService());
   late final TabController _tabController;
   var item = ["EQUITY","OPTION","INDEX"];
-  String queryType = "NSE_EQ";
   List<String> _suggestions = [];
   List<String> _fullName = [];
   List<String> _exchangeName = [];
@@ -47,7 +46,6 @@ class _SearchState extends State<SearchPage> with TickerProviderStateMixin {
     _timer?.cancel();
     _searchController.dispose();
     _focusNode.dispose();
-
     super.dispose();
   }
 
@@ -56,7 +54,7 @@ class _SearchState extends State<SearchPage> with TickerProviderStateMixin {
     _timer = Timer(const Duration(milliseconds: 500), () async {
       if (query.isNotEmpty) {
         // final finalData = await _twelveDataService.fetchStockSuggestions(query);
-        final finalData = await _upstoxNSEService.fetchStockSuggestions(query,queryType);
+        final finalData = await _upstoxNSEService.fetchStockSuggestions(query,_tabController.index);
         // debugPrint("Final Data: ${finalData}");
         setState(() {
           _suggestions = finalData["suggestion"] ?? [];
@@ -112,7 +110,7 @@ class _SearchState extends State<SearchPage> with TickerProviderStateMixin {
           preferredSize: Size.fromHeight(50.0),
           child: Container(
             alignment: Alignment.center,
-            child: TabBar(
+            child:TabBar(
               controller: _tabController,
               isScrollable: false,
               indicatorColor: Colors.amber,
@@ -122,6 +120,7 @@ class _SearchState extends State<SearchPage> with TickerProviderStateMixin {
                 return _buildTab(title,index);
               }).toList(),
             ),
+            
           ),
         ),
           if (_suggestions.isNotEmpty && _fullName.isNotEmpty && _exchangeName.isNotEmpty)
@@ -190,15 +189,12 @@ class _SearchState extends State<SearchPage> with TickerProviderStateMixin {
       onTap: (){
         setState(() {
            _tabController.index = index;
-           debugPrint("Index: $index");
-           switch(index){
-            case 0: queryType = "NSE_EQ";
-            case 1: queryType = "NSE_FO";
-            case 2: queryType = "NSE_INDEX";
+           if (_searchController.text.isNotEmpty){
+                _onSearchChanged(_searchController.text);
            }
         });
       },
-      onTapCancel: (){},
+      
       child: Tab(
         text: title,
       ),

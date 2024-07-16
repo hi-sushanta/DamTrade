@@ -10,7 +10,7 @@ import 'json_service.dart';
 
 
 class UpstoxService {
-  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2Njk0MGMwN2NiODFjYzFmODJjNTFjNGQiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzIwOTc4NDM5LCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MjA5OTQ0MDB9.dy01d2OJ86pz_nA2jrPMZWDmLAyNflfxF_m2zrexQug';
+  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2Njk1ZTNkOWE4OTYyODI1YjhlZTc0ZmIiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzIxMDk5MjI1LCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MjExNjcyMDB9._1cO-t5V83jacUkbJxdiB8En8wRysr0TeXJyF_2sX90';
   final JsonService jsonService;
 
   UpstoxService(this.jsonService);
@@ -147,12 +147,13 @@ class UpstoxService {
 
 class UpstoxNSEService {
   final JsonService nseJsonFilePath;
-  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2Njk0MGMwN2NiODFjYzFmODJjNTFjNGQiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzIwOTc4NDM5LCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MjA5OTQ0MDB9.dy01d2OJ86pz_nA2jrPMZWDmLAyNflfxF_m2zrexQug';
+  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2Njk1ZTNkOWE4OTYyODI1YjhlZTc0ZmIiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzIxMDk5MjI1LCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MjExNjcyMDB9._1cO-t5V83jacUkbJxdiB8En8wRysr0TeXJyF_2sX90';
 
   UpstoxNSEService(this.nseJsonFilePath);
 
-  Future<Map<String, List<String>>> fetchStockSuggestions(String query,String category) async {
+  Future<Map<String, List<String>>> fetchStockSuggestions(String query,int categoryIndex) async {
     Map<String, List<String>> finalData = {};
+    List<String> category = ["NSE_EQ","NSE_FO","NSE_INDEX"];
     try {
       // print("Query :${query}");
       // Read the local JSON file
@@ -167,7 +168,7 @@ class UpstoxNSEService {
         return (item['trading_symbol'] as String).toLowerCase().contains(query.toLowerCase());
       }).toList();
       // print("MatchingStock: ${matchingStocks}");
-    final nseEqStocks = matchingStocks.where((item) => item['segment'] == category).toList();
+    final nseEqStocks = matchingStocks.where((item) => item['segment'] == category[categoryIndex]).toList();
 
     // Extract required details
     final suggestions = nseEqStocks.map((item) => item['trading_symbol'] as String).toList();
