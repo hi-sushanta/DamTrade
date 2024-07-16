@@ -46,13 +46,9 @@ class UpstoxService {
 
           if (response.statusCode == 200) {
             var data = jsonDecode(response.body);
-            // print('Data: ${data}');
             
             if (categories  == 'NSE_FO'){
-              // print("InstrumentKey:$instrumentKey,Symbol:$symbol , Categories: $categories");
-
-              // print("$categories:${data['data'].keys.toList()[0]}: ${data['data']["${data['data'].keys.toList()[0]}"]}");
-              // print("Data: ${data['data']}");
+              
               if (data['data']?.isEmpty){
                   return {
                   "currentPrice":'0',
@@ -63,7 +59,6 @@ class UpstoxService {
 
               }
               extractData = formatOptionData(data['data']["${data['data'].keys.toList()[0]}"],symbol.split(" ")[0]);
-              // print("Extracted Data: $extractData");
             } 
             else if(categories == "NSE_INDEX"){
               extractData = formatIndexData(data['data']["${data['data'].keys.toList()[0]}"]);
