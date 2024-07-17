@@ -2,9 +2,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:web_socket_channel/io.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
-
 import 'json_service.dart';
 
 
@@ -150,19 +147,12 @@ class UpstoxNSEService {
     Map<String, List<String>> finalData = {};
     List<String> category = ["NSE_EQ","NSE_FO","NSE_INDEX"];
     try {
-      // print("Query :${query}");
-      // Read the local JSON file
-      // final file = File(nseJsonFilePath);
-      // final jsonString = await file.readAsString();
-      // final data = json.decode(jsonString);
       final List<dynamic> data = await nseJsonFilePath.loadJsonData();
 
       // Filter stocks based on the query
       final matchingStocks = (data).where((item) {
-        // print("Item: ${item['trading_symbol']}");
         return (item['trading_symbol'] as String).toLowerCase().contains(query.toLowerCase());
       }).toList();
-      // print("MatchingStock: ${matchingStocks}");
     final nseEqStocks = matchingStocks.where((item) => item['segment'] == category[categoryIndex]).toList();
 
     // Extract required details
@@ -201,137 +191,4 @@ class UpstoxNSEService {
 //   }
   
 // }
-
-
-
-// class StockService {
-//   final String accessToken;
-//   final String instrumentKey;
-//   final String symbol;
-
-//   StockService({
-//     required this.accessToken,
-//     required this.instrumentKey,
-//     required this.symbol,
-//   });
-
-//   void startListening(void Function(Map<String, String>) onData) {
-//     final channel = WebSocketChannel.connect(
-//       Uri.parse('wss://api.upstox.com/websocket/market-quote/quotes?instrument_key=$instrumentKey'),
-//     );
-
-//     channel.sink.add(jsonEncode({
-//       'action': 'subscribe',
-//       'instrument_key': instrumentKey,
-//       'symbol': symbol,
-//       'Authorization': 'Bearer $accessToken',
-//     }));
-
-//     channel.stream.listen(
-//       (message) {
-//         var data = jsonDecode(message);
-//         if (data['data'] != null && data['data']["NSE_EQ:$symbol"] != null) {
-//           Map<String, String> extractData = formatData(data['data']["NSE_EQ:$symbol"]);
-//           onData(extractData);
-//         }
-//       },
-//       onDone: () {
-//         print('WebSocket closed');
-//       },
-//       onError: (error) {
-//         print('WebSocket error: $error');
-//       },
-//     );
-//   }
-
-//   Map<String, String> formatData(var data) {
-//     double open = data['ohlc']!['open'];
-//     String close = data['ohlc']!['close'].toString();
-//     double netChange = data['net_change'];
-//     String percentageChange = ((netChange / open) * 100).toStringAsFixed(2);
-
-//     return {
-//       "currentPrice": close,
-//       "percentageChange": "$percentageChange%",
-//       "amountChange": netChange.toString(),
-//     };
-//   }
-// }
-
-// void main() {
-//   final stockService = StockService(
-//     accessToken: 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjgyMjkxYjkxMTM1ZTQ4MmNmODVmYWMiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzE5ODA2MjM1LCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MTk4NzEyMDB9.GojtFqfDcmcBx6sbQlhDwrwSByLNXxx9r7H6mpcO_fQ',
-//     instrumentKey: 'NSE_EQ|INE585B01010',
-//     symbol: 'MARUTI',
-//   );
-
-//   stockService.startListening((data) {
-//     print('Stock data: $data');
-//   });
-// }
-
-// void main() async {
-//   String symbol = "RELIANCE";
-//   String access_token = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjdjMTJjZTNjOGJhNDE5NWJhMzQ0OWIiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzE5NDA3MzEwLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MTk0MzkyMDB9.36gF6p5cH2BRtW1Gh1GS0u8JULeQ5QzEL_hzSNincFc';
-//   UpstoxService stock_instrument = UpstoxService(JsonService());
-//   String instrument_key = stock_instrument.getInstrumentKey(symbol) as String;
-//   if (instrument_key != 'null'){
-//     var data = await stock_instrument.fetchStockData(instrument_key);
-//     print(data);
-//   } else{
-//     print("please double chack symbol");
-//   }
-  
-// }
-
-
-// void main() async {
-//   String ticker = 'RELIANCE';
-//   Map<String, dynamic> stockData = await _fetchStockData(ticker);
-//   print(stockData);
-// }
-
-// Future<Map<String, String>> fetchStockData(String symbol, String exchange) async {
-//   String url = 'https://www.google.com/finance/quote/$symbol:NASDAQ'; //$exchange';
-  
-//   var response = await http.get(Uri.parse(url));
-  
-//   if (response.statusCode == 200) {
-//     var document = parser.parse(response.body);
-    
-//     // Fetch current price
-//     var priceElement = document.querySelector('.YMlKec.fxKbKc');
-//     if (priceElement == null) {
-//       throw Exception('Current price element not found');
-//     }
-//     double price = double.parse(priceElement.text.trim().substring(1).replaceAll(',', ''));
-    
-//     // Fetch previous price
-//     var prevPriceElement = document.querySelector('.P6K39c');
-//     if (prevPriceElement == null) {
-//       throw Exception('Previous price element not found');
-//     }
-//     double prevPrice = double.parse(prevPriceElement.text.trim().substring(1).replaceAll(',', ''));
-    
-//     double amountChange = price - prevPrice;
-//     double percentageChange = (amountChange / prevPrice) * 100;
-//     Map<String,String> finalData = {
-//       "currentPrice": price.toString(),
-//       "amountChange": amountChange.toStringAsFixed(2),
-//       "percentageChange": "${percentageChange.toStringAsFixed(2)}%",
-//     };
-//     return finalData;
-//   } else {
-//     throw Exception('Failed to load stock data');
-//   }
-// }
-
-// void main() async {
-//   const symbol = "AAPL";
-//   var data = await TwelveDataService().fetchStockSuggestions('a');
-//   // print(data);
-// }
-
-
-
 
