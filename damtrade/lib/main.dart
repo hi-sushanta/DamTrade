@@ -76,11 +76,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     MaterialPageRoute(builder: (context) => AuthGate()));
 
                     },
-                  child: const Text(
-                    'Next',
-                    style: TextStyle(color:Color.fromARGB(255, 0, 0, 0),
-                    fontSize: 16)
-                    ),
 
                    style: ElevatedButton.styleFrom(
                     fixedSize: Size(120.0, 55.0),
@@ -89,6 +84,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   borderRadius: BorderRadius.circular(20.0),
                 ),
                 ),
+                  child: const Text(
+                    'Next',
+                    style: TextStyle(color:Color.fromARGB(255, 0, 0, 0),
+                    fontSize: 16)
+                    ),
                   
                 ),
                   ),
