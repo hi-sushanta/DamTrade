@@ -50,7 +50,9 @@ class _StockAlert extends State<StockAlert>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text('Alert',style: TextStyle(color:Colors.green.shade600,fontWeight: FontWeight.bold)),
         // backgroundColor: Colors.green.shade700,
         elevation: 0,

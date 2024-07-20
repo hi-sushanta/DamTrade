@@ -184,7 +184,9 @@ class _PortfolioPageState extends State<_PortfolioPage> {
     }
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Center(
           child: Text(
             "Holdings",
@@ -216,7 +218,7 @@ class _PortfolioPageState extends State<_PortfolioPage> {
           const SizedBox(height: 8),
           Container(
             decoration: BoxDecoration(
-              color: Colors.grey[200],
+              color: (profitLoss>=0) ? Color.fromARGB(255, 208, 241, 210):Color.fromARGB(255, 247, 219, 217) ,
               borderRadius: BorderRadius.circular(10),
             ),
             padding: const EdgeInsets.all(16.0),
@@ -254,7 +256,9 @@ class _PortfolioPageState extends State<_PortfolioPage> {
                       text: "₹ ${value.toStringAsFixed(2)}",
                       style: TextStyle(
                           fontSize: 18,
-                          color: isProfit ? Colors.green : Colors.red),
+                          color: isProfit ? Colors.green : Colors.red,
+                          fontWeight: FontWeight.bold),
+                          
                     )
                   : TextSpan(
                       text: "₹ ${value.toStringAsFixed(2)}",
@@ -264,7 +268,7 @@ class _PortfolioPageState extends State<_PortfolioPage> {
                   text: " (${percentage.toStringAsFixed(2)}%)",
                   style: TextStyle(
                       fontSize: 16,
-                      color: isProfit ? Colors.green : Colors.red),
+                      color: isProfit ? Colors.green : Colors.red,fontWeight: FontWeight.bold),
                 ),
             ],
           ),
@@ -282,6 +286,8 @@ class _PortfolioPageState extends State<_PortfolioPage> {
           final isProfit = plAmount[index] >= 0;
 
           return Card(
+            color: isProfit ? const Color.fromARGB(255, 235, 255, 235) : const Color.fromARGB(255, 255, 237, 236),
+            elevation: 5,
             margin: EdgeInsets.all(16.0),
             child: Padding(
               padding: const EdgeInsets.all(16.0),

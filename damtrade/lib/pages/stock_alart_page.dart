@@ -64,7 +64,9 @@ class _StockAlertPageState extends State<StockAlertPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Center(
           child:Text('Stock Alerts',
           style: TextStyle(color:Colors.green.shade600,fontWeight: FontWeight.bold),),
@@ -111,6 +113,7 @@ class StockAlertCard extends StatelessWidget {
     bool isPositive = alert.currentPrice >= alert.alertPrice;
 
     return Card(
+      color: Color.fromARGB(255, 235, 247, 212),
       elevation: 5,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),

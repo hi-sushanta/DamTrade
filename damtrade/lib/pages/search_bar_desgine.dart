@@ -85,7 +85,9 @@ class _SearchState extends State<SearchPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title:  Text("Search Stock", style:TextStyle(color:Colors.green.shade600,fontWeight: FontWeight.bold),
         ),
       ),

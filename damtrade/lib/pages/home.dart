@@ -87,6 +87,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
           });
       
         },
+        backgroundColor: Colors.white,
         indicatorColor: Colors.amber,
         selectedIndex: _selectedIndex,
         destinations: const <Widget>[
@@ -392,7 +393,9 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
           
           // Replace with your actual watchlist display logic
           return  Scaffold(
+            backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Center(
           child:Text("Dam Trade",
           style: TextStyle(color:Colors.green.shade600,fontWeight: FontWeight.bold)),
@@ -400,6 +403,7 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
        bottom: PreferredSize(
           preferredSize: Size.fromHeight(50.0),
           child: Container(
+            color: Colors.white,
             alignment: Alignment.center,
             child: TabBar(
               controller: _tabController,
@@ -418,6 +422,7 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
         body: NestedScrollView(
         headerSliverBuilder: (BuildContext contex, bool innerBoxIsScrolled) => [
           SliverAppBar(
+            backgroundColor: Colors.white,
             floating: true, // Ensures the search bar remains visible
             expandedHeight: kToolbarHeight, // Adjust height if needed
             flexibleSpace: Padding(
@@ -581,6 +586,7 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
     final instrumentType = stockData[3];
    
     showModalBottomSheet(
+      backgroundColor: Colors.white,
       context: context,
       builder: (context) {
         return StockDetailSheet(

@@ -105,7 +105,9 @@ class _StockBuyPageState extends State<StockBuyPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text(widget.stockName),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
