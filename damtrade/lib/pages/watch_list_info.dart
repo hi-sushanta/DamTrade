@@ -402,7 +402,7 @@ class WatchlistItem {
     } else{
       hindex = 0;
     }
-    var history = [Icons.add, "Add Money", date, amount, Color(0xFF70E5A0),hindex];
+    var history = [Icons.add, "Add Money", date, amount, Color.fromARGB(255, 54, 236, 8),hindex];
     amountAddHistory[uuid]!.value = List.from(amountAddHistory[uuid]!.value)..add(history);
 
     // Save only the new history entry to Firestore

@@ -39,7 +39,7 @@ class _FundPageState extends State<FundsPage>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black, // Background color
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255), // Background color
       appBar: AppBar(
         title: Center(
           child: const Text(
@@ -103,7 +103,7 @@ class _FundPageState extends State<FundsPage>{
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
               ),
             ),
@@ -188,8 +188,8 @@ class _FundPageState extends State<FundsPage>{
         ),
         child: Icon(icon, color: color),
       ),
-      title: Text(label, style: TextStyle(fontSize: 16, color: Colors.white)),
-      subtitle: Text(date, style: TextStyle(color: Colors.grey)),
+      title: Text(label, style: TextStyle(fontSize: 16, color:  Colors.black,fontWeight: FontWeight.bold)),
+      subtitle: Text(date, style: TextStyle(color: const Color.fromARGB(255, 99, 99, 99))),
       trailing: Text(
         amount,
         style: TextStyle(
