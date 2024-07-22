@@ -14,6 +14,7 @@ import 'stock_alart.dart';
 import 'stock_alart_page.dart';
 import 'package:permission_handler/permission_handler.dart'; // Ensure this import works
 import 'json_service.dart';
+import 'option_chain_screen.dart';
 
 final userId = FirebaseAuth.instance.currentUser!.uid;
 
@@ -71,6 +72,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
     BaseHome(), // Replace with your content widget for Home
     SecondPageContent(), // Replace with your content widget for second tab
     StockAlertPage(), // Replace with your content widget for third tab
+    OptionChain(),
     FundsPage(), // Replace with your content widget for fourth tab
   ];
   
@@ -104,6 +106,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
             icon: Icon(Icons.alarm),
             label: 'Alart',
           ),
+          NavigationDestination(
+            icon: Icon(Icons.keyboard_option_key), 
+            label: "Chain"),
           NavigationDestination(
             icon:Icon(Icons.info), 
             label: "Account")
