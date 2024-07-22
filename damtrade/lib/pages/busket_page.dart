@@ -145,11 +145,11 @@ class _PortfolioPageState extends State<_PortfolioPage> {
           item["currentPrice"] =
               double.parse(stockData[0][item["name"]]!['currentPrice']!);
           if (item["orderType"] == "Buy") {
-            if (item['instrumentType'] == 'CE'){
+            if (item['instrument_type'] == 'CE'){
               double plCalculate = ((item['currentPrice'] - item['averagePrice']) * item['quantity']);
               plAmount.add(plCalculate);
               profitLoss += plCalculate;
-            } else if(item['instrumentType'] == "PE"){
+            } else if(item['instrument_type'] == "PE"){
               double plCalculate = ((item['averagePrice'] - item['currentPrice']) * item['quantity']);
               plAmount.add(plCalculate);
               profitLoss += plCalculate;
