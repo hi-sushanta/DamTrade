@@ -7,7 +7,7 @@ import 'json_service.dart';
 
 
 class UpstoxService {
-  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjliMjQzNGY1MjU0MTJlMDQxMTZmOWIiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzIxNDQzMzgwLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MjE1MTI4MDB9.YOpx3zXxSPpnvugtWHoPB97Wp6eIgTGGZUNOTC_O38Y';
+  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjlkZmIzYzFiZTliZjAxZmY5MjdlNTciLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzIxNjI5NTAwLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MjE2ODU2MDB9.PRxoK8mCu11Ilp8o-EHulhVd9eBmxhOAhfFrhDrZbqs';
   final JsonService jsonService;
 
   UpstoxService(this.jsonService);
@@ -139,8 +139,8 @@ class UpstoxService {
 
 class UpstoxNSEService {
   final JsonService nseJsonFilePath;
-  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjliMjQzNGY1MjU0MTJlMDQxMTZmOWIiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzIxNDQzMzgwLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MjE1MTI4MDB9.YOpx3zXxSPpnvugtWHoPB97Wp6eIgTGGZUNOTC_O38Y';
-
+  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjlkZmIzYzFiZTliZjAxZmY5MjdlNTciLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzIxNjI5NTAwLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MjE2ODU2MDB9.PRxoK8mCu11Ilp8o-EHulhVd9eBmxhOAhfFrhDrZbqs';
+  
   UpstoxNSEService(this.nseJsonFilePath);
 
   Future<Map<String, List<String>>> fetchStockSuggestions(String query,int categoryIndex) async {
