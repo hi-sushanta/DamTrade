@@ -163,9 +163,15 @@ class _PortfolioPageState extends State<_PortfolioPage> {
             //     item["investedAmount"]);
             // profitLoss += ((item['quantity'] * item['currentPrice']) - item['investedAmount']);
           } else {
-            plAmount.add(item["investedAmount"] -
-                (item['currentPrice'] * item['quantity']));
-            profitLoss += (item['investedAmount'] - (item['currentPrice'] * item['quantity']));
+            if ((item['instrument_type'] == "PE") || (item['instrument_type'] == 'CE')){
+              double plCalculate = ((item['averagePrice'] - item['currentPrice']) * item['quantity']);
+              plAmount.add(plCalculate);
+              profitLoss += plCalculate;
+            } else{
+              plAmount.add(item["investedAmount"] -
+                  (item['currentPrice'] * item['quantity']));
+              profitLoss += (item['investedAmount'] - (item['currentPrice'] * item['quantity']));
+            }
           }
           watchlist!.updatePortfolioPLAmount(i,item['index'], item['currentPrice'], plAmount[i]);
         } else {
