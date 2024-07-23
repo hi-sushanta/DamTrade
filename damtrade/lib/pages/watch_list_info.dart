@@ -57,6 +57,17 @@ class WatchlistItem {
       }
     }
 
+    Future<void> updatePortfolioPLAmount(int index, int pindex, double newCurrentPrice,double newPLAmount) async {
+        protfollio[uuid]![index]['plAmount'] = newPLAmount;
+        protfollio[uuid]![index]['currentPrice'] = newCurrentPrice;
+        await _firestore.collection('users').doc(uuid).collection('portfolio').doc(pindex.toString()).update({
+          'plAmount': newPLAmount,
+        });
+        await _firestore.collection('users').doc(uuid).collection('portfolio').doc(pindex.toString()).update({
+          "currentPrice":newCurrentPrice
+        });
+    }
+
 
     List<Map<String, dynamic>> _flattenData(List<dynamic>? nestedData) {
       if (nestedData == null) return [];
