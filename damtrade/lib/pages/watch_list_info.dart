@@ -21,7 +21,7 @@ class WatchlistItem {
   Map<String, ValueNotifier<List<StockAlertStore>>> stockAlertStore = {};
   ValueNotifier<bool> isLoading = ValueNotifier<bool>(true); // To track loading state
   final UpstoxService _upstoxService = UpstoxService(JsonService());
-
+  String accessToken = "";
   WatchlistItem(this.uuid) {
     // addData(uuid!);
     data['data'] = {uuid!:[[],[],[],[]]};
@@ -101,6 +101,8 @@ class WatchlistItem {
         addData(uuid!);
       }
 
+      var accessSnapshot = await _firestore.collection('accessToken').doc('damTrade').get();
+      accessToken = accessSnapshot.data()!['access_token'];
       // Load alerts
       var alertSnapshot = await _firestore
           .collection('users')

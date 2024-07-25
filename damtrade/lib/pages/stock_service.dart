@@ -3,11 +3,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'json_service.dart';
-
-
+import 'package:damtrade/main.dart';
 
 class UpstoxService {
-  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NmEwNWMyZWEwNDAwYjZmOWFhZTM5YWEiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzIxNzg1MzkwLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MjE4NTg0MDB9._b4Svdh9fiWn_yQoVltnaUyQ1n3m5MjDA9qVlmqxyHE';
   final JsonService jsonService;
 
   UpstoxService(this.jsonService);
@@ -30,12 +28,11 @@ class UpstoxService {
 
 
   Future<Map<String, String>> fetchStockData(String instrumentKey,String symbol,String categories) async {
-   
           Map<String,String> extractData = {};
           final url = Uri.parse('https://api.upstox.com/v2/market-quote/quotes?instrument_key=$instrumentKey');
           final headers = {
             'Accept': 'application/json',
-            'Authorization': 'Bearer $accessToken',
+            'Authorization': 'Bearer ${watchlist!.accessToken}',
           };
           final response = await http.get(url, headers: headers);
           // print("${response.statusCode}");
@@ -139,8 +136,7 @@ class UpstoxService {
 
 class UpstoxNSEService {
   final JsonService nseJsonFilePath;
-  final String accessToken = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NmEwNWMyZWEwNDAwYjZmOWFhZTM5YWEiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzIxNzg1MzkwLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MjE4NTg0MDB9._b4Svdh9fiWn_yQoVltnaUyQ1n3m5MjDA9qVlmqxyHE';
-  
+
   UpstoxNSEService(this.nseJsonFilePath);
 
   Future<Map<String, List<String>>> fetchStockSuggestions(String query,int categoryIndex) async {
