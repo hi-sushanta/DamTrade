@@ -176,6 +176,7 @@ class _PortfolioPageState extends State<_PortfolioPage> {
           watchlist!.updatePortfolioPLAmount(i,item['index'], item['currentPrice'], plAmount[i]);
         } else {
           plAmount.add(item['plAmount']);
+          profitLoss += item['plAmount'];
         }
         currentValue += item['currentPrice'] * item["quantity"];
         orderType.add(item["orderType"]);
