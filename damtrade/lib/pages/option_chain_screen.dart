@@ -199,11 +199,12 @@ class OptionRow extends StatelessWidget {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.yellow.shade100,
+                color: Color.fromARGB(255, 218, 239, 216),
                 borderRadius: BorderRadius.circular(8.0),
               ),
               padding: EdgeInsets.symmetric(vertical: 16.0),
-              child: Column(
+              child: GestureDetector(
+                  child: Column(
                 children: [
                   Text(
                     ce.toString(),
@@ -212,8 +213,12 @@ class OptionRow extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Icon(Icons.add, color: Colors.grey),
+                  Icon(Icons.add, color: const Color.fromARGB(255, 158, 158, 158)),
                 ],
+              ),
+              onTap: () => {
+                debugPrint("CE option Tab: LTP:${ce}, strike: ${strike}")
+              },
               ),
             ),
           ),
@@ -233,11 +238,12 @@ class OptionRow extends StatelessWidget {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.yellow.shade100,
+                color: Color.fromARGB(255, 255, 227, 227),
                 borderRadius: BorderRadius.circular(8.0),
               ),
               padding: EdgeInsets.symmetric(vertical: 16.0),
-              child: Column(
+              child: GestureDetector(
+                child:Column(
                 children: [
                   Text(
                     pe.toString(),
@@ -248,6 +254,10 @@ class OptionRow extends StatelessWidget {
                   ),
                   Icon(Icons.add, color: Colors.grey),
                 ],
+              ),
+              onTap: () => {
+                debugPrint("PE option Tab: Ltp ${pe}, strike: ${strike}")
+              },
               ),
             ),
           ),
