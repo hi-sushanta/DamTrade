@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'get_optionData.dart';
 
 void main() {
   runApp(OptionChain());
@@ -23,48 +26,48 @@ class OptionChainScreen extends StatefulWidget {
 
 class _OptionChainScreenState extends State<OptionChainScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  GetOptionData getOptionChain = GetOptionData();
+  Timer? _timer;
 
-  final Map<String, List<Map<String, dynamic>>> optionData = {
-    "0": [
-      {"CE": 284.00, "Strike": 24650, "PE": 59.75},
-      {"CE": 247.00, "Strike": 24700, "PE": 71.45},
-      {"CE": 210.00, "Strike": 24750, "PE": 85.70},
-      {"CE": 177.00, "Strike": 24800, "PE": 103.00},
-      {"CE": 148.75, "Strike": 24850, "PE": 122.30},
-      {"CE": 122.00, "Strike": 24900, "PE": 146.80},
-      {"CE": 99.00, "Strike": 24950, "PE": 171.20},
-      {"CE": 77.90, "Strike": 25000, "PE": 201.75},
-    ],
-    "1": [
-      {"CE": 284.00, "Strike": 24650, "PE": 59.75},
-      {"CE": 247.00, "Strike": 24700, "PE": 71.45},
-      {"CE": 210.00, "Strike": 24750, "PE": 85.70},
-      {"CE": 177.00, "Strike": 24800, "PE": 103.00},
-      {"CE": 148.75, "Strike": 24850, "PE": 122.30},
-      {"CE": 122.00, "Strike": 24900, "PE": 146.80},
-      {"CE": 99.00, "Strike": 24950, "PE": 171.20},
-      {"CE": 77.90, "Strike": 25000, "PE": 201.75},
-    ],
-    "2": [
-      {"CE": 284.00, "Strike": 24650, "PE": 59.75},
-      {"CE": 247.00, "Strike": 24700, "PE": 71.45},
-      {"CE": 210.00, "Strike": 24750, "PE": 85.70},
-      {"CE": 177.00, "Strike": 24800, "PE": 103.00},
-      {"CE": 148.75, "Strike": 24850, "PE": 122.30},
-      {"CE": 122.00, "Strike": 24900, "PE": 146.80},
-      {"CE": 99.00, "Strike": 24950, "PE": 171.20},
-      {"CE": 77.90, "Strike": 25000, "PE": 201.75},
-    ]
-  };
+  Map<String, List<Map<String,dynamic>>> optionData = {};
 
-  final List<double> spotPrices = [24834.85, 24950.20, 24730.0];
+  List<double> spotPrices = [];//[24834.85, 24950.20, 24730.0];
 
   @override
   void initState() {
     super.initState();
+    
     _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(_updateSpotPriceIndex);
+    _updateOptionData().then((_) => _startFetchingOptionChain());
   }
+
+  void _startFetchingOptionChain() async {
+      _timer = Timer.periodic(Duration(seconds: 30), (timer) async {
+        if (mounted) {
+            await _updateOptionData();
+        } else {
+          timer.cancel();
+        }
+      });
+    }
+
+    Future<void> _updateOptionData() async {
+
+      try {
+        await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty 50","0");
+        await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty Bank", "1");
+        await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty Finanacial", "2");
+
+        setState(() {
+          optionData =  getOptionChain.returnOfData;
+          spotPrices = getOptionChain.returnSpotPrice;
+        });
+      } catch (e) {
+        print('Error updating stock data: $e');
+
+      }
+    }
 
   void _updateSpotPriceIndex() {
     setState(() {});
@@ -73,6 +76,7 @@ class _OptionChainScreenState extends State<OptionChainScreen> with SingleTicker
   @override
   void dispose() {
     _tabController.dispose();
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -114,6 +118,10 @@ class _OptionChainScreenState extends State<OptionChainScreen> with SingleTicker
   }
 
   Widget _buildOptionChainView(int tabIndex) {
+    if (!optionData.containsKey(tabIndex.toString())) {
+      return Center(child: CircularProgressIndicator());
+    }
+
     final List<Map<String, dynamic>> data = optionData[tabIndex.toString()]!;
     data.sort((a, b) => a['Strike'].compareTo(b['Strike']));
 
@@ -127,7 +135,7 @@ class _OptionChainScreenState extends State<OptionChainScreen> with SingleTicker
         Container(
           padding: EdgeInsets.symmetric(vertical: 8.0),
           color: Colors.grey.shade300,
-          child: Row(
+          child: const Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Text("CE", style: TextStyle(fontWeight: FontWeight.bold)),
@@ -176,7 +184,7 @@ class OptionRow extends StatelessWidget {
   final int strike;
   final double pe;
 
-  const OptionRow({required this.ce, required this.strike, required this.pe});
+  OptionRow({required this.ce, required this.strike, required this.pe});
 
   @override
   Widget build(BuildContext context) {
@@ -265,4 +273,6 @@ class OptionRow extends StatelessWidget {
       ),
     );
   }
+
 }
+
