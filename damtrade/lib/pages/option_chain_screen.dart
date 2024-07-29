@@ -115,7 +115,6 @@ class _OptionChainScreenState extends State<OptionChainScreen> with SingleTicker
     if (!optionData.containsKey(tabIndex.toString())) {
       return Center(child: CircularProgressIndicator());
     }
-    // debugPrint("Option spot: ${spotPrices}");
     final List<Map<String, dynamic>> data = optionData[tabIndex.toString()]!;
     data.sort((a, b) => a['Strike'].compareTo(b['Strike']));
 
@@ -163,6 +162,9 @@ class _OptionChainScreenState extends State<OptionChainScreen> with SingleTicker
                   ce: item['CE'],
                   strike: item['Strike'],
                   pe: item['PE'],
+                  symbolCe: item['symbolCe'],
+                  symbolPe: item['symbolPe'],
+                  baseIndex: item['index'],
                 );
               }
             },
@@ -177,8 +179,10 @@ class OptionRow extends StatelessWidget {
   final double ce;
   final int strike;
   final double pe;
-
-  OptionRow({required this.ce, required this.strike, required this.pe});
+  final String symbolCe;
+  final String symbolPe;
+  final int baseIndex;
+  OptionRow({required this.ce, required this.strike, required this.pe,required this.symbolCe, required this.symbolPe,required this.baseIndex});
 
   @override
   Widget build(BuildContext context) {
@@ -219,7 +223,7 @@ class OptionRow extends StatelessWidget {
                 ],
               ),
               onTap: () => {
-                debugPrint("CE option Tab: LTP:${ce}, strike: ${strike}")
+                debugPrint("CE option Tab: LTP:${ce}, strike: ${strike}, symbol CE: ${symbolCe}, baseIndex: ${baseIndex}")
               },
               ),
             ),
@@ -258,7 +262,7 @@ class OptionRow extends StatelessWidget {
                 ],
               ),
               onTap: () => {
-                debugPrint("PE option Tab: Ltp ${pe}, strike: ${strike}")
+                debugPrint("PE option Tab: Ltp ${pe}, strike: ${strike}, symbol CE: ${symbolCe}, base Index: ${baseIndex}")
               },
               ),
             ),
