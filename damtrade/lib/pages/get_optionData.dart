@@ -11,8 +11,12 @@ class GetOptionData{
   static const String urlNf = 'https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY';
   static const String urlFnf = 'https://www.nseindia.com/api/option-chain-indices?symbol=FINNIFTY';
   static const String urlIndices = "https://www.nseindia.com/api/allIndices";
+  double bnf_ul= 0.0;
+  double nf_ul = 0.0;
+  double fnf_ul= 0.0;
+
   Map<String,List<Map<String,dynamic>>> returnOfData = {};
-  List<double> returnSpotPrice = [];
+  Map<String,double> returnSpotPrice = {};
   
   Future<void>fetchOptionChain(String symbol,String index) async {
       String optionUrl = '';
@@ -28,18 +32,9 @@ class GetOptionData{
         optionSymbol = 'OPTIDX+FINNIFTY';
       }
       List<Map<String,dynamic>> listOfItem = [];
-      final url = Uri.parse(optionUrl);
-      final headers = {
-          'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36',
-        'accept-language': 'en,gu;q=0.9,hi;q=0.8',
-        'accept-encoding': 'gzip, deflate, br',
-        'Accept': 'application/json',
-      };
-      final response = await http.get(url, headers: headers);
-      print("${response.statusCode}");
-      // print("InstrumentKey:$instrumentKey,Symbol:$symbol , Categories: $categories");
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body);
+      
+        var response = await getData(optionUrl);
+        var data = jsonDecode(response);
         String currExpiryDate = data['records']['expiryDates'][0];
         int i = 0;
         double spotPrice = 0;
@@ -47,6 +42,9 @@ class GetOptionData{
           if (item['expiryDate'] == currExpiryDate){
             int strike = item['strikePrice'];
             Map<String,dynamic> listOfData = {};
+            // if (item['CE']['lastPrice'] == null){
+            //   print("NUlll: ${item}");
+            // }
             double ce_ltp = double.parse(item['CE']['lastPrice'].toString());
             double pe_ltp = double.parse(item['PE']['lastPrice'].toString());
             List formatDate = currExpiryDate.replaceAll("-", " ").split(" ");
@@ -63,25 +61,45 @@ class GetOptionData{
             i += 1;
           }
         }
-        returnSpotPrice.add(spotPrice);
+        returnSpotPrice[index] = spotPrice;
         returnOfData[index] = listOfItem;
-        // return returnOfData;
-        // print(data);
-      
-      } else {
-        throw Exception('No data available');
+       
+    }
+
+    dynamic getData(String urlo) async {
+      final url = Uri.parse(urlo);
+      final headers = {
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36',
+        'accept-language': 'en,gu;q=0.9,hi;q=0.8',
+        'accept-encoding': 'gzip, deflate, br',
+        'Accept': 'application/json',
+      };
+      var response = await http.get(url, headers: headers);
+      // print(response.statusCode);
+      if (response.statusCode == 401){
+        response = await http.get(url,headers: headers);
+      } 
+      if (response.statusCode == 200){
+          return response.body;
       }
+      return "";
     }
 }
-void main(List<String> args) async{
-   GetOptionData getOptionChain = GetOptionData();
-   try{
-      await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty 50","0");
-      // await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty Finanacial",'2');
-      await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty Bank", "1");
+// void main(List<String> args) async{
+//    GetOptionData getOptionChain = GetOptionData();
+//    try{
+//       await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty 50","0");
+//       print(getOptionChain.returnSpotPrice);
+//       await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty Bank", "1");
+//       print(getOptionChain.returnSpotPrice);
+//       // await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty Finanacial",'2');
+//       // print(getOptionChain.returnSpotPrice);
 
-   } catch(e){
-    print(e);
-   }
-   print(getOptionChain.returnSpotPrice);
-}
+//    } catch(e){
+//     print(e);
+//    }
+//   //  print(getOptionChain.bnf_ul);
+//   //  print(getOptionChain.fnf_ul);
+//   //  print(getOptionChain.nf_ul);
+//   //  print(getOptionChain.returnSpotPrice);
+// }

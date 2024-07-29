@@ -3,10 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'get_optionData.dart';
 
-void main() {
-  runApp(OptionChain());
-}
-
 class OptionChain extends StatelessWidget {
   const OptionChain({super.key});
 
@@ -28,22 +24,22 @@ class _OptionChainScreenState extends State<OptionChainScreen> with SingleTicker
   late TabController _tabController;
   GetOptionData getOptionChain = GetOptionData();
   Timer? _timer;
-
+  int setTimer = 5;
   Map<String, List<Map<String,dynamic>>> optionData = {};
 
-  List<double> spotPrices = [];//[24834.85, 24950.20, 24730.0];
+  Map<String,double> spotPrices = {};//[24834.85, 24950.20, 24730.0];
 
   @override
   void initState() {
     super.initState();
     
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_updateSpotPriceIndex);
     _updateOptionData().then((_) => _startFetchingOptionChain());
   }
 
   void _startFetchingOptionChain() async {
-      _timer = Timer.periodic(Duration(seconds: 30), (timer) async {
+      _timer = Timer.periodic(Duration(seconds: setTimer), (timer) async {
         if (mounted) {
             await _updateOptionData();
         } else {
@@ -57,11 +53,11 @@ class _OptionChainScreenState extends State<OptionChainScreen> with SingleTicker
       try {
         await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty 50","0");
         await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty Bank", "1");
-        await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty Finanacial", "2");
 
         setState(() {
           optionData =  getOptionChain.returnOfData;
           spotPrices = getOptionChain.returnSpotPrice;
+          setTimer = 15;
         });
       } catch (e) {
         print('Error updating stock data: $e');
@@ -100,7 +96,6 @@ class _OptionChainScreenState extends State<OptionChainScreen> with SingleTicker
           tabs: [
             Tab(text: 'NIFTY'),
             Tab(text: 'BANKNIFTY'),
-            Tab(text: 'FINNIFTY'),
           ],
           labelColor: Colors.purple,
           unselectedLabelColor: Colors.black,
@@ -111,7 +106,6 @@ class _OptionChainScreenState extends State<OptionChainScreen> with SingleTicker
         children: [
           _buildOptionChainView(0),
           _buildOptionChainView(1),
-          _buildOptionChainView(2),
         ],
       ),
     );
@@ -121,11 +115,11 @@ class _OptionChainScreenState extends State<OptionChainScreen> with SingleTicker
     if (!optionData.containsKey(tabIndex.toString())) {
       return Center(child: CircularProgressIndicator());
     }
-
+    // debugPrint("Option spot: ${spotPrices}");
     final List<Map<String, dynamic>> data = optionData[tabIndex.toString()]!;
     data.sort((a, b) => a['Strike'].compareTo(b['Strike']));
 
-    int spotIndex = data.indexWhere((item) => item['Strike'] > spotPrices[tabIndex]);
+    int spotIndex = data.indexWhere((item) => item['Strike'] > spotPrices[tabIndex.toString()]);
     if (spotIndex == -1) {
       spotIndex = data.length;
     }
@@ -153,10 +147,10 @@ class _OptionChainScreenState extends State<OptionChainScreen> with SingleTicker
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Center(
                     child: Text(
-                      "Spot Price: ₹${spotPrices[tabIndex]}",
+                      "Spot Price: ₹${spotPrices[tabIndex.toString()]}",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Colors.purple,
+                        color: Color.fromARGB(255, 33, 223, 84),
                         fontSize: 18.0,
                       ),
                     ),
