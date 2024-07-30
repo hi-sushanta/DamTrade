@@ -476,7 +476,6 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
                                     key: ValueKey<String>(stock),
                                     onTap: (){
                                       if (stockData.isNotEmpty){
-                                         debugPrint("StockData:${stockData[i][stock]}");
                                           _onStockTap(i,stock,stockData[i][stock]?["currentPrice"]?? "",
                                           stockData[i][stock]?["amountChange"]??"",
                                           stockData[i][stock]?["percentageChange"]??"",
