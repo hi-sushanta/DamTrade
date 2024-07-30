@@ -37,7 +37,7 @@ class GetOptionData{
         var data = jsonDecode(response);
         String currExpiryDate = data['records']['expiryDates'][0];
         int i = 0;
-        double spotPrice = 0;
+        double spotPrice = 0;        
         for (var item in data['records']['data']){
           if (item['expiryDate'] == currExpiryDate){
             int strike = item['strikePrice'];
@@ -50,11 +50,19 @@ class GetOptionData{
             List formatDate = currExpiryDate.replaceAll("-", " ").split(" ");
             String symbolCe = "${optionSymbol} ${strike} CE ${formatDate[0]} ${formatDate[1]} ${formatDate[2]}";
             String symbolPe = "${optionSymbol} ${strike} PE ${formatDate[0]} ${formatDate[1]} ${formatDate[2]}";
+            String ce_amountChange = double.parse(item['CE']['change'].toString()).toStringAsFixed(2);
+            String pe_amountChange = double.parse(item['PE']['change'].toString()).toStringAsFixed(2);
+            String ce_percentageChange = double.parse(item['CE']['pChange'].toString()).toStringAsFixed(2)+"%";
+            String pe_percentageChange = double.parse(item['PE']['pChange'].toString()).toStringAsFixed(2)+"%";
             listOfData['Strike'] = strike;
             listOfData['CE'] = ce_ltp;
             listOfData['PE'] = pe_ltp;
             listOfData['symbolPe'] = symbolPe;
             listOfData['symbolCe'] = symbolCe;
+            listOfData['ce_percentageChange'] = ce_percentageChange;
+            listOfData['pe_percentageChange'] = pe_percentageChange;
+            listOfData['ce_amountChange'] = ce_amountChange;
+            listOfData['pe_amountChange'] = pe_amountChange;
             listOfData['index'] = i;
             spotPrice = double.parse(item['CE']['underlyingValue'].toString());
             listOfItem.add(listOfData);
@@ -98,6 +106,7 @@ class GetOptionData{
 //    } catch(e){
 //     print(e);
 //    }
+//    print(getOptionChain.returnOfData);
 //   //  print(getOptionChain.bnf_ul);
 //   //  print(getOptionChain.fnf_ul);
 //   //  print(getOptionChain.nf_ul);
