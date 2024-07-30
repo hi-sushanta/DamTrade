@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 import 'stock_service.dart';
+import 'dart:math';
 
 
 class WatchlistItem {
@@ -343,11 +344,15 @@ class WatchlistItem {
   }
   void addProtfolio(String uuid, String stockName, String exchangeName,String instrumentKey,String instrumentType ,String orderType, int quantity, double avgPrice, double invPrice, double currPrice, double plAmount, double strikePrice) {    
     
-
+    int pindex = 0;
     if (protfollio[uuid]!.isNotEmpty){
       for (var item in protfollio[uuid]!){
-        pindex = item['index'] + 1;
+        if (item['index']> pindex){
+           pindex = item['index'];
+        }
       }
+      pindex += 1;
+      
     } else{
       pindex = 0;
     }

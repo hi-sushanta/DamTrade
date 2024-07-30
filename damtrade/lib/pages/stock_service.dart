@@ -109,7 +109,7 @@ class UpstoxService {
       "currentPrice":close,
       "percentageChange":"$percentageChange%",
       "amountChange":netChange.toString(),
-      'defaultQuanity':defaultQuantity,
+      'defaultQuantity':defaultQuantity,
     };
   }
 
@@ -125,6 +125,7 @@ class UpstoxService {
       "currentPrice":close,
       "percentageChange":"$percentageChange%",
       "amountChange":netChange.toString(),
+      'defaultQuantity':'1'
     };
   }
 

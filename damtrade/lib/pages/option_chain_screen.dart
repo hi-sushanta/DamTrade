@@ -167,11 +167,11 @@ class _OptionChainScreenState extends State<OptionChainScreen> with SingleTicker
                   pe: item['PE'],
                   symbolCe: item['symbolCe'],
                   symbolPe: item['symbolPe'],
-                  baseIndex: item['index'],
                   ce_amountChange: item['ce_amountChange'],
                   pe_amountChange: item['pe_amountChange'],
                   ce_percentageChange: item['ce_percentageChange'],
                   pe_percentageChange: item['pe_percentageChange'],
+                  defaultQuantity: item['defaultQuantity'],
                 );
               }
             },
@@ -188,16 +188,16 @@ class OptionRow extends StatelessWidget {
   final double pe;
   final String symbolCe;
   final String symbolPe;
-  final int baseIndex;
   final String ce_amountChange;
   final String pe_amountChange;
   final String ce_percentageChange;
   final String pe_percentageChange;
-  
+  final String defaultQuantity;
   const OptionRow({super.key, required this.ce, required this.strike, 
                   required this.pe,required this.symbolCe, required this.symbolPe,
-                  required this.baseIndex, required this.ce_amountChange, required this.pe_amountChange,
-                  required this.ce_percentageChange, required this.pe_percentageChange
+                  required this.ce_amountChange, required this.pe_amountChange,
+                  required this.ce_percentageChange, required this.pe_percentageChange,
+                  required this.defaultQuantity
             });
     
   @override
@@ -239,7 +239,8 @@ class OptionRow extends StatelessWidget {
                 ],
               ),
               onTap: () => {
-                debugPrint("CE option Tab: LTP:${ce}, strike: ${strike}, symbol CE: ${symbolCe}, baseIndex: ${baseIndex}")
+                _onOptionTap(context, 0, symbolCe, ce.toString(), ce_amountChange, ce_amountChange,defaultQuantity)
+                // debugPrint("CE option Tab: LTP:${ce}, strike: ${strike}, symbol CE: ${symbolCe}")
               },
               ),
             ),
@@ -278,7 +279,8 @@ class OptionRow extends StatelessWidget {
                 ],
               ),
               onTap: () => {
-                debugPrint("PE option Tab: Ltp ${pe}, strike: ${strike}, symbol CE: ${symbolCe}, base Index: ${baseIndex}")
+                _onOptionTap(context, 0, symbolPe, pe.toString(), pe_amountChange, ce_percentageChange,defaultQuantity)
+                // debugPrint("PE option Tab: Ltp ${pe}, strike: ${strike}, symbol CE: ${symbolCe}")
               },
               ),
             ),
@@ -288,12 +290,13 @@ class OptionRow extends StatelessWidget {
     );
   }
 
-  void _onStockTap(BuildContext context,int watchIndex, String stock,String currentPrice,String amountChange, String percentageChange) {
+  void _onOptionTap(BuildContext context,int watchIndex, String stock,String currentPrice,String amountChange, String percentageChange,String defaultQuantity) {
     final stockData = stock.split("+");
-    final stockName = stockData[0];
-    final exchange = stockData[1];
-    final instrumentKey = stockData[2];
-    final instrumentType = stockData[3];
+    final stockName = stockData[1];
+    final exchange = stockData[2];
+    final instrumentKey = stockData[0]+"+"+stockData[3];
+    final instrumentType = stockData[1].split(" ")[2];
+    debugPrint("$stockName,$exchange,$instrumentKey,$instrumentType");
    
     showModalBottomSheet(
       backgroundColor: Colors.white,
@@ -305,16 +308,10 @@ class OptionRow extends StatelessWidget {
           currentPrice: currentPrice,
           amountChange: amountChange,
           percentageChange: percentageChange,
+          defaultQuantity: defaultQuantity,
           onBuy: () {
             // Implement Buy action
-          if (instrumentKey.split("|")[0] == "NSE_INDEX"){
-                ScaffoldMessenger.of(context).showSnackBar(
-
-                  const SnackBar(content: Text('Index Fund Not to buy or sell',style: TextStyle(color:Color.fromARGB(255, 255, 255, 255)),),backgroundColor: Color.fromARGB(255, 247, 62, 11),
-                              duration: const Duration(milliseconds: 500),
-                              ));
-                Navigator.pop(context);
-            } else if((instrumentKey.split("|")[0] == "NSE_FO") & ((currentPrice == '0'))) {
+          if(((currentPrice == '0'))) {
               ScaffoldMessenger.of(context).showSnackBar(
 
                   const SnackBar(content: Text('Selected Options Is Expired.',style: TextStyle(color:Color.fromARGB(255, 255, 255, 255)),),backgroundColor: Color.fromARGB(255, 247, 62, 11),
@@ -336,6 +333,7 @@ class OptionRow extends StatelessWidget {
                   instrumentKey: instrumentKey,
                   instrumentType: instrumentType,
                   livePrice: double.parse(currentPrice), // Example, use actual BSE price
+                  defaultQuantity: defaultQuantity,
                 ),
 
             ),
@@ -344,13 +342,7 @@ class OptionRow extends StatelessWidget {
           }
           },
           onSell: () {
-            if (instrumentKey.split("|")[0] == "NSE_INDEX"){
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Index Fund Not to buy or sell',style: TextStyle(color:Color.fromARGB(255, 255, 255, 255)),),backgroundColor: Color.fromARGB(255, 247, 62, 11),
-                  duration: const Duration(milliseconds: 500),));
-                Navigator.pop(context);
-            } 
-            else if((instrumentKey.split("|")[0] == "NSE_FO") & ((currentPrice == '0'))) {
+            if(((currentPrice == '0'))) {
               ScaffoldMessenger.of(context).showSnackBar(
 
                   const SnackBar(content: Text('Selected Options Is Expired.',style: TextStyle(color:Color.fromARGB(255, 255, 255, 255)),),backgroundColor: Color.fromARGB(255, 247, 62, 11),
@@ -367,29 +359,12 @@ class OptionRow extends StatelessWidget {
                 exchangeName: exchange,
                 instrumentKey: instrumentKey,
                 instrumentType: instrumentType, 
-                livePrice: double.parse(currentPrice)))
+                livePrice: double.parse(currentPrice),
+                defaultQuantity: defaultQuantity,),)
             );
           }
           },
-          onSetAlert: () {
-            if((instrumentKey.split("|")[0] == "NSE_FO") & ((currentPrice == '0'))) {
-              ScaffoldMessenger.of(context).showSnackBar(
-
-                  const SnackBar(content: Text('Selected Options Is Expired.',style: TextStyle(color:Color.fromARGB(255, 255, 255, 255)),),backgroundColor: Color.fromARGB(255, 247, 62, 11),
-                              duration: const Duration(milliseconds: 500),
-                              ));
-                Navigator.pop(context);
-            } else {
-                  // Implement Set Alert action
-                  Navigator.pop(context); // Close the bottom sheet
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => StockAlert(stockName: stockName,exchangeName: exchange,instrumentKey: instrumentKey, currentPrice:currentPrice),
-                  ),
-                );
-              }
-          },
+          
 
         );
       },
@@ -421,18 +396,18 @@ class StockDetailSheet extends StatelessWidget {
   final String currentPrice;
   final String amountChange;
   final String percentageChange;
+  final String defaultQuantity;
   final Function onBuy;
   final Function onSell;
-  final Function onSetAlert;
   StockDetailSheet({
     required this.stockName,
     required this.exchange,
     required this.currentPrice,
     required this.amountChange,
     required this.percentageChange,
+    required this.defaultQuantity,
     required this.onBuy,
     required this.onSell,
-    required this.onSetAlert,
   });
 
   
@@ -485,14 +460,7 @@ class StockDetailSheet extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          Center(
-            child: TextButton.icon(
-              onPressed: () => onSetAlert(),
-              icon: Icon(Icons.notifications,color: Colors.amber.shade400,),
-              label: Text('Set Alert',style: TextStyle(color:Colors.amber.shade400)),
-            ),
-          ),
+          
         ],
       ),
     );

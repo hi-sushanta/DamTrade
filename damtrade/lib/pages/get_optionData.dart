@@ -21,12 +21,15 @@ class GetOptionData{
   Future<void>fetchOptionChain(String symbol,String index) async {
       String optionUrl = '';
       String optionSymbol = '';
+      String defaultQuantity = '0';
       if (symbol == "NSE_INDEX|Nifty 50"){
         optionUrl = urlNf;
         optionSymbol = 'OPTIDX+NIFTY';
+        defaultQuantity = '25';
       } else if (symbol == "NSE_INDEX|Nifty Bank"){
         optionUrl = urlBnf;
         optionSymbol = "OPTIDX+BANKNIFTY";
+        defaultQuantity = '15';
       }else if(symbol == "NSE_INDEX|Nifty Finanacial"){
         optionUrl = urlFnf;
         optionSymbol = 'OPTIDX+FINNIFTY';
@@ -48,8 +51,8 @@ class GetOptionData{
             double ce_ltp = double.parse(item['CE']['lastPrice'].toString());
             double pe_ltp = double.parse(item['PE']['lastPrice'].toString());
             List formatDate = currExpiryDate.replaceAll("-", " ").split(" ");
-            String symbolCe = "${optionSymbol} ${strike} CE ${formatDate[0]} ${formatDate[1]} ${formatDate[2]}";
-            String symbolPe = "${optionSymbol} ${strike} PE ${formatDate[0]} ${formatDate[1]} ${formatDate[2]}";
+            String symbolCe = "NSE_FO|${optionSymbol} ${strike} CE ${formatDate[0]} ${formatDate[1]} ${formatDate[2]}+NSE+${i}";
+            String symbolPe = "NSE_FO|${optionSymbol} ${strike} PE ${formatDate[0]} ${formatDate[1]} ${formatDate[2]}+NSE+${i}";
             String ce_amountChange = double.parse(item['CE']['change'].toString()).toStringAsFixed(2);
             String pe_amountChange = double.parse(item['PE']['change'].toString()).toStringAsFixed(2);
             String ce_percentageChange = double.parse(item['CE']['pChange'].toString()).toStringAsFixed(2)+"%";
@@ -63,7 +66,7 @@ class GetOptionData{
             listOfData['pe_percentageChange'] = pe_percentageChange;
             listOfData['ce_amountChange'] = ce_amountChange;
             listOfData['pe_amountChange'] = pe_amountChange;
-            listOfData['index'] = i;
+            listOfData['defaultQuantity'] = defaultQuantity;
             spotPrice = double.parse(item['CE']['underlyingValue'].toString());
             listOfItem.add(listOfData);
             i += 1;

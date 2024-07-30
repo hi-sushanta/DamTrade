@@ -11,12 +11,14 @@ class StockBuyPage extends StatefulWidget {
   final String exchangeName;
   final String instrumentKey;
   final String instrumentType;
+  final String defaultQuantity;
   StockBuyPage({
     required this.stockName,
     required this.exchangeName,
     required this.livePrice,
     required this.instrumentKey,
-    required this.instrumentType
+    required this.instrumentType,
+    required this.defaultQuantity
   });
 
   @override
@@ -37,11 +39,9 @@ class _StockBuyPageState extends State<StockBuyPage> {
     _quantityController.addListener(_updatePrice);
   }
 
-  void setQuantity() async {
-        Map<String,String> data = await _upstoxService.fetchStockData(widget.instrumentKey, widget.stockName, widget.instrumentKey.split("|")[0]);
-      
+  void setQuantity() async {      
       setState(() {
-        _quantityController.text = (widget.instrumentKey.split("|")[0] == "NSE_EQ") ? '1' : "${data['defaultQuanity']}";
+        _quantityController.text = widget.defaultQuantity;
       });
   }
 

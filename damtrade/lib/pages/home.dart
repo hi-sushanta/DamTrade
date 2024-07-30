@@ -476,9 +476,11 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
                                     key: ValueKey<String>(stock),
                                     onTap: (){
                                       if (stockData.isNotEmpty){
+                                         debugPrint("StockData:${stockData[i][stock]}");
                                           _onStockTap(i,stock,stockData[i][stock]?["currentPrice"]?? "",
                                           stockData[i][stock]?["amountChange"]??"",
-                                          stockData[i][stock]?["percentageChange"]??"");
+                                          stockData[i][stock]?["percentageChange"]??"",
+                                          stockData[i][stock]?['defaultQuantity']??"");
 
                                       }else{
                                         // _onStockTap(i,stock,"null","null","null");
@@ -583,7 +585,7 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
 
   // }
 
-    void _onStockTap(int watchIndex, String stock,String currentPrice,String amountChange, String percentageChange) {
+    void _onStockTap(int watchIndex, String stock,String currentPrice,String amountChange, String percentageChange,String defaultQuantity){
     final stockData = stock.split("+");
     final stockName = stockData[0];
     final exchange = stockData[1];
@@ -600,6 +602,7 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
           currentPrice: currentPrice,
           amountChange: amountChange,
           percentageChange: percentageChange,
+          defaultQuantity:defaultQuantity,
 
           onBuy: () {
             // Implement Buy action
@@ -631,7 +634,8 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
                   exchangeName: exchange,
                   instrumentKey: instrumentKey,
                   instrumentType: instrumentType,
-                  livePrice: double.parse(currentPrice), // Example, use actual BSE price
+                  livePrice: double.parse(currentPrice),
+                  defaultQuantity:defaultQuantity // Example, use actual NSE price
                 ),
 
             ),
@@ -663,7 +667,9 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
                 exchangeName: exchange,
                 instrumentKey: instrumentKey,
                 instrumentType: instrumentType, 
-                livePrice: double.parse(currentPrice)))
+                livePrice: double.parse(currentPrice),
+                defaultQuantity:defaultQuantity),
+                )
             );
           }
           },
@@ -743,6 +749,7 @@ class StockDetailSheet extends StatelessWidget {
   final String currentPrice;
   final String amountChange;
   final String percentageChange;
+  final String defaultQuantity;
   final Function onBuy;
   final Function onSell;
   final Function onSetAlert;
@@ -752,6 +759,7 @@ class StockDetailSheet extends StatelessWidget {
     required this.currentPrice,
     required this.amountChange,
     required this.percentageChange,
+    required this.defaultQuantity,
     required this.onBuy,
     required this.onSell,
     required this.onSetAlert,
