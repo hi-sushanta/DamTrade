@@ -6,7 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 import 'stock_service.dart';
-import 'dart:math';
 
 
 class WatchlistItem {

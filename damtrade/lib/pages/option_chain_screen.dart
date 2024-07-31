@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'get_optionData.dart';
 import 'stock_buy.dart';
 import 'stock_sell.dart';
-import 'stock_alart.dart';
 
 class OptionChain extends StatelessWidget {
   const OptionChain({super.key});
@@ -30,7 +29,7 @@ class _OptionChainScreenState extends State<OptionChainScreen> with SingleTicker
   int setTimer = 5;
   Map<String, List<Map<String,dynamic>>> optionData = {};
 
-  Map<String,double> spotPrices = {};//[24834.85, 24950.20, 24730.0];
+  Map<String,double> spotPrices = {};
 
   @override
   void initState() {
@@ -296,7 +295,7 @@ class OptionRow extends StatelessWidget {
     final exchange = stockData[2];
     final instrumentKey = stockData[0]+"+"+stockData[3];
     final instrumentType = stockData[1].split(" ")[2];
-    debugPrint("$stockName,$exchange,$instrumentKey,$instrumentType");
+    // debugPrint("$stockName,$exchange,$instrumentKey,$instrumentType");
    
     showModalBottomSheet(
       backgroundColor: Colors.white,

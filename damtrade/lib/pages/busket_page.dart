@@ -8,6 +8,7 @@ import 'package:damtrade/main.dart';
 import 'stock_service.dart';
 import 'home.dart';
 import 'stock_alart_page.dart';
+import 'get_optionData.dart';
 
 class SecondPageContent extends StatelessWidget {
   const SecondPageContent({super.key});
@@ -34,7 +35,7 @@ class _PortfolioPageState extends State<_PortfolioPage> {
   List<double> plAmount = [];
   List<String> orderType = [];
   final UpstoxService _upstoxService = UpstoxService(JsonService());
-
+  final GetOptionData getOptionData = GetOptionData();
 
   @override
   void initState() {
@@ -82,7 +83,16 @@ class _PortfolioPageState extends State<_PortfolioPage> {
       Map<String, Map<String, String>> stockInfo = {};
       for (var item in watchlist!.protfollio[userId]!) {
         String istock = item['name'];
-        Map<String, String> data = await _upstoxService.fetchStockData(item['instrument_key'],istock,item['instrument_key'].split("|")[0]);
+        String instrumentKey = item['instrument_key'];
+        Map<String,String>data = {};
+        if (instrumentKey.contains('OPTIDX')){
+          String type = item['name'].split(" ")[2];
+          List dateList = item['name'].split(" ");
+          String date = "${dateList[3]}-${dateList[4]}-${dateList[5]}";
+          data = await getOptionData.fetchOptionData(istock.split(" ")[0], type, int.parse(instrumentKey.split("+")[1]),date);
+        } else{
+          data = await _upstoxService.fetchStockData(item['instrument_key'],istock,item['instrument_key'].split("|")[0]);
+        }
         stockInfo[istock] = data;
       }
       updatedStockData.add(stockInfo);

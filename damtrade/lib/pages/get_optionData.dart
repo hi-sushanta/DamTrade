@@ -95,14 +95,60 @@ class GetOptionData{
       }
       return "";
     }
+
+    Future<Map<String, String>>fetchOptionData(String symbol,String typeOf,int index,String date) async{
+    String optionUrl = '';
+    String defaultQuantity = '0'; 
+    String currentPrice = '0';
+    String percentageChange = '0%';
+    String netChange = '0';
+    if (symbol == "NIFTY"){
+      optionUrl = urlNf;
+      defaultQuantity = '25';
+    } else if (symbol == "BANKNIFTY"){
+      optionUrl = urlBnf;
+      defaultQuantity = '15';
+    }
+    var response = await getData(optionUrl);
+    var data = jsonDecode(response);
+
+    // String currExpiryDate = data['records']['expiryDates'][0];
+    // print(currExpiryDate);
+    int i = 0;
+    for (var item in data['records']['data']){
+      if (item['expiryDate'] == date){
+        if(index == i){
+            currentPrice = item[typeOf]['lastPrice'].toString();
+            netChange = item[typeOf]['change'].toStringAsFixed(2);
+            percentageChange = "${item[typeOf]['pChange'].toStringAsFixed(2)}%";
+            return {
+              "currentPrice": currentPrice,
+              'percentageChange':percentageChange,
+              'amountChange':netChange,
+              'defaultQuantity':defaultQuantity
+            };
+        }
+        i+=1;
+      }
+    }
+
+    return {
+        "currentPrice":currentPrice,
+        'percentageChange':percentageChange,
+        'amountChange': netChange,
+        'defaultQuantity':defaultQuantity
+      };
+    }
 }
 // void main(List<String> args) async{
 //    GetOptionData getOptionChain = GetOptionData();
 //    try{
-//       await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty 50","0");
-//       print(getOptionChain.returnSpotPrice);
-//       await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty Bank", "1");
-//       print(getOptionChain.returnSpotPrice);
+//       // await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty 50","0");
+//       // print(getOptionChain.returnSpotPrice);
+//       // await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty Bank", "1");
+//       // print(getOptionChain.returnSpotPrice);
+//       var data = await getOptionChain.fetchOptionData('BANKNIFTY', 'CE', 0,"31-Jul-2024");
+//       print('Data: $data');
 //       // await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty Finanacial",'2');
 //       // print(getOptionChain.returnSpotPrice);
 
