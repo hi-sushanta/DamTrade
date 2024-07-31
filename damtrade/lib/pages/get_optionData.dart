@@ -144,24 +144,24 @@ class GetOptionData{
         };
     }
 }
-void main(List<String> args) async{
-   GetOptionData getOptionChain = GetOptionData();
-   try{
-      await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty 50","0");
-      print(getOptionChain.returnOfData);
-      // await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty Bank", "1");
-      // print(getOptionChain.returnSpotPrice);
-      // var data = await getOptionChain.fetchOptionData('BANKNIFTY', 'CE', 0,"31-Jul-2024");
-      // print('Data: $data');
-      // await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty Finanacial",'2');
-      // print(getOptionChain.returnSpotPrice);
+// void main(List<String> args) async{
+//    GetOptionData getOptionChain = GetOptionData();
+//    try{
+//       await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty 50","0");
+//       print(getOptionChain.returnOfData);
+//       // await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty Bank", "1");
+//       // print(getOptionChain.returnSpotPrice);
+//       // var data = await getOptionChain.fetchOptionData('BANKNIFTY', 'CE', 0,"31-Jul-2024");
+//       // print('Data: $data');
+//       // await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty Finanacial",'2');
+//       // print(getOptionChain.returnSpotPrice);
 
-   } catch(e){
-    print(e);
-   }
-   print(getOptionChain.returnOfData);
-  //  print(getOptionChain.bnf_ul);
-  //  print(getOptionChain.fnf_ul);
-  //  print(getOptionChain.nf_ul);
-  //  print(getOptionChain.returnSpotPrice);
-}
+//    } catch(e){
+//     print(e);
+//    }
+//    print(getOptionChain.returnOfData);
+//   //  print(getOptionChain.bnf_ul);
+//   //  print(getOptionChain.fnf_ul);
+//   //  print(getOptionChain.nf_ul);
+//   //  print(getOptionChain.returnSpotPrice);
+// }
