@@ -310,10 +310,10 @@ class OptionRow extends StatelessWidget {
           defaultQuantity: defaultQuantity,
           onBuy: () {
             // Implement Buy action
-          if(((currentPrice == '0'))) {
+          if(((currentPrice == '0.0'))) {
               ScaffoldMessenger.of(context).showSnackBar(
 
-                  const SnackBar(content: Text('Selected Options Is Expired.',style: TextStyle(color:Color.fromARGB(255, 255, 255, 255)),),backgroundColor: Color.fromARGB(255, 247, 62, 11),
+                  const SnackBar(content: Text('Selected Options Price Is 0.0 so please try another one.',style: TextStyle(color:Color.fromARGB(255, 255, 255, 255)),),backgroundColor: Color.fromARGB(255, 247, 62, 11),
                               duration: const Duration(milliseconds: 500),
                               ));
                 Navigator.pop(context);
@@ -341,10 +341,10 @@ class OptionRow extends StatelessWidget {
           }
           },
           onSell: () {
-            if(((currentPrice == '0'))) {
+            if(((currentPrice == '0.0'))) {
               ScaffoldMessenger.of(context).showSnackBar(
 
-                  const SnackBar(content: Text('Selected Options Is Expired.',style: TextStyle(color:Color.fromARGB(255, 255, 255, 255)),),backgroundColor: Color.fromARGB(255, 247, 62, 11),
+                  const SnackBar(content: Text('Selected Options Price Is 0.0 so please try another one.',style: TextStyle(color:Color.fromARGB(255, 255, 255, 255)),),backgroundColor: Color.fromARGB(255, 247, 62, 11),
                               duration: const Duration(milliseconds: 500),
                               ));
                 Navigator.pop(context);
