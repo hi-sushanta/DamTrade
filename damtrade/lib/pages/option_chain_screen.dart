@@ -30,15 +30,26 @@ class _OptionChainScreenState extends State<OptionChainScreen> with SingleTicker
   Map<String, List<Map<String,dynamic>>> optionData = {};
 
   Map<String,double> spotPrices = {};
+  late ScrollController _scrollController;
+  bool _isInitialScroll = true;
 
   @override
   void initState() {
     super.initState();
-    
+    _scrollController = ScrollController();
     _tabController = TabController(length: 2, vsync: this);
-    _tabController.addListener(_updateSpotPriceIndex);
+    _tabController.addListener(_onTabChanged);
     _updateOptionData().then((_) => _startFetchingOptionChain());
   }
+
+  void _onTabChanged() {
+    if (!_isInitialScroll) {
+      _scrollToSpotPrice(_tabController.index);
+      
+    }
+    _isInitialScroll = false;
+  }
+
 
   void _startFetchingOptionChain() async {
       _timer = Timer.periodic(Duration(seconds: setTimer), (timer) async {
@@ -51,7 +62,6 @@ class _OptionChainScreenState extends State<OptionChainScreen> with SingleTicker
     }
 
     Future<void> _updateOptionData() async {
-
       try {
         await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty 50","0");
         await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty Bank", "1");
@@ -59,8 +69,12 @@ class _OptionChainScreenState extends State<OptionChainScreen> with SingleTicker
         setState(() {
           optionData =  getOptionChain.returnOfData;
           spotPrices = getOptionChain.returnSpotPrice;
-          setTimer = 15;
+          // setTimer = 15;
         });
+
+        // Scroll to the spot price after updating the option data
+      _scrollToSpotPrice(_tabController.index);
+
       } catch (e) {
         print('Error updating stock data: $e');
 
@@ -71,10 +85,35 @@ class _OptionChainScreenState extends State<OptionChainScreen> with SingleTicker
     setState(() {});
   }
 
+    void _scrollToSpotPrice(int tabIndex) {
+    if (!optionData.containsKey(tabIndex.toString())) return;
+
+    final data = optionData[tabIndex.toString()]!;
+    final spotIndex = data.indexWhere((item) => item['Strike'] > spotPrices[tabIndex.toString()]);
+    if (spotIndex == -1) return;
+
+    // Calculate the exact offset for the spot price
+    const itemHeight = 100.0; // Adjust this value based on the actual item height
+    final offset = spotIndex * itemHeight;
+
+
+    // Scroll to the spot price
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollController.animateTo(
+        offset,
+        duration: Duration(seconds: 1),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
+
+
   @override
   void dispose() {
     _tabController.dispose();
     _timer?.cancel();
+    _scrollController.dispose();
+
     super.dispose();
   }
 
@@ -98,6 +137,7 @@ class _OptionChainScreenState extends State<OptionChainScreen> with SingleTicker
           tabs: [
             Tab(text: 'NIFTY'),
             Tab(text: 'BANKNIFTY'),
+              
           ],
           labelColor: Colors.purple,
           unselectedLabelColor: Colors.black,
@@ -141,6 +181,7 @@ class _OptionChainScreenState extends State<OptionChainScreen> with SingleTicker
         ),
         Expanded(
           child: ListView.builder(
+            controller: _scrollController,
             itemCount: data.length + 1,
             itemBuilder: (context, index) {
               if (index == spotIndex) {
