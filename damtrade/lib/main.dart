@@ -57,8 +57,8 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           // Option 2: Setting Image height to full (with aspect ratio)
           Image.asset(
-            'assets/sushanta.jpeg',
-            fit: BoxFit.cover,
+            'assets/BullAndBear.jpg',
+            fit: BoxFit.fill,
             height: double.infinity,
             width: double.infinity
           ),
@@ -79,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
                    style: ElevatedButton.styleFrom(
                     fixedSize: Size(120.0, 55.0),
-                backgroundColor: Color.fromARGB(255, 234, 234, 234), // Set button color
+                backgroundColor: Color.fromARGB(255, 255, 255, 255), // Set button color
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20.0),
                 ),
