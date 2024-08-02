@@ -25,7 +25,7 @@ class _StockAlertPageState extends State<StockAlertPage> {
     _requestNotificationPermissions();
     StockAlertService().initializeNotifications();
     _startCheckingAlerts();
-    // _updateAlerts();
+    _updateAlerts();
   }
 
   @override 
@@ -42,23 +42,21 @@ class _StockAlertPageState extends State<StockAlertPage> {
 
   void _startCheckingAlerts() {
       _alertCheckTimer = Timer.periodic(Duration(seconds: 30), (timer) async {
-      var stockAlerts = watchlist!.stockAlertStore[userId]!.value;
       if (mounted) {
-          await StockAlertService().checkForAlerts(stockAlerts);
-
+          _updateAlerts();
+          if (mounted) setState(() {});
       } else {
         timer.cancel();
       }
-      setState(() {
-        
-      });
+      
     });
   }
 
   void _updateAlerts() async {
+    if(!mounted) return;
     var stockAlerts = watchlist!.stockAlertStore[userId]!.value;
     await StockAlertService().checkForAlerts(stockAlerts);
-    setState(() {}); // Ensure UI updates after alert check
+    if(mounted) setState(() {}); // Ensure UI updates after alert check
   }
 
   @override
@@ -256,30 +254,28 @@ class StockAlertService {
   }
 
   Future<void> checkForAlerts(List<StockAlertStore> alerts) async {
-    List<StockAlertStore> alertsToRemove = [];
-    int i = 0;
-    List<int> removeAlertIndex = [];
-    for (var alert in alerts) {
-      var stockData = await _upstoxService.fetchStockData(alert.instrumentKey,alert.stockName,alert.instrumentKey.split("|")[0]);
-      var latestPrice = double.parse(stockData['currentPrice']!); // Adjust based on actual key
-      alert.currentPrice = latestPrice;
-      if (latestPrice == alert.alertPrice) {
-        _notifiedAlerts.add(alert.stockName);
-        await showNotification(alert);
-        alertsToRemove.add(alert); // Mark alert for removal
-        watchlist!.removeAlartStock(userId, i);
+  List<int> alertsToRemoveIndices = [];
 
-      }
-      i += 1;
+  for (int i = 0; i < alerts.length; i++) {
+    var alert = alerts[i];
+    var stockData = await _upstoxService.fetchStockData(alert.instrumentKey, alert.stockName, alert.instrumentKey.split("|")[0]);
+    var latestPrice = double.parse(stockData['currentPrice']!); // Adjust based on actual key
+    alert.currentPrice = latestPrice;
+
+    if (latestPrice == alert.alertPrice) {
+      _notifiedAlerts.add(alert.stockName);
+      await showNotification(alert);
+      alertsToRemoveIndices.add(i); // Collect indices of alerts to be removed
     }
-
-    // Remove alerts that have been notified
-    for (var alert in alertsToRemove) {
-      alerts.remove(alert);
-    }
-
-    // Ensure UI updates
-    watchlist!.stockAlertStore[userId]!.value = alerts;
-    watchlist!.stockAlertStore[userId]!.notifyListeners();
   }
+
+  // Remove alerts that have been notified
+  for (var index in alertsToRemoveIndices.reversed) {
+    watchlist!.removeAlartStock(userId, index);
+  }
+
+  // Ensure UI updates
+  watchlist!.stockAlertStore[userId]!.notifyListeners();
+}
+
 }
