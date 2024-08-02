@@ -32,7 +32,7 @@ class _OptionChainScreenState extends State<OptionChainScreen> with SingleTicker
   Map<String,double> spotPrices = {};
   late ScrollController _scrollController;
   bool _isInitialScroll = true;
-
+  bool _firstScroll = true;
   @override
   void initState() {
     super.initState();
@@ -73,7 +73,10 @@ class _OptionChainScreenState extends State<OptionChainScreen> with SingleTicker
         });
 
         // Scroll to the spot price after updating the option data
-      _scrollToSpotPrice(_tabController.index);
+      if (_firstScroll){
+          _scrollToSpotPrice(_tabController.index);
+          _firstScroll = false;
+      }
 
       } catch (e) {
         print('Error updating stock data: $e');
