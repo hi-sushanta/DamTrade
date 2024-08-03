@@ -282,7 +282,7 @@ class OptionRow extends StatelessWidget {
                 ],
               ),
               onTap: () => {
-                _onOptionTap(context, 0, symbolCe, ce.toString(), ce_amountChange, ce_amountChange,defaultQuantity)
+                _onOptionTap(context, 0, symbolCe, ce.toString(), ce_amountChange, ce_percentageChange,defaultQuantity)
                 // debugPrint("CE option Tab: LTP:${ce}, strike: ${strike}, symbol CE: ${symbolCe}")
               },
               ),
@@ -322,7 +322,7 @@ class OptionRow extends StatelessWidget {
                 ],
               ),
               onTap: () => {
-                _onOptionTap(context, 0, symbolPe, pe.toString(), pe_amountChange, ce_percentageChange,defaultQuantity)
+                _onOptionTap(context, 0, symbolPe, pe.toString(), pe_amountChange, pe_percentageChange,defaultQuantity)
                 // debugPrint("PE option Tab: Ltp ${pe}, strike: ${strike}, symbol CE: ${symbolCe}")
               },
               ),
