@@ -81,6 +81,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
         body: _pages[_selectedIndex], // Display content based on selected index
         bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
