@@ -11,9 +11,6 @@ class GetOptionData{
   static const String urlNf = 'https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY';
   static const String urlFnf = 'https://www.nseindia.com/api/option-chain-indices?symbol=FINNIFTY';
   static const String urlIndices = "https://www.nseindia.com/api/allIndices";
-  double bnf_ul= 0.0;
-  double nf_ul = 0.0;
-  double fnf_ul= 0.0;
 
   Map<String,List<Map<String,dynamic>>> returnOfData = {};
   Map<String,double> returnSpotPrice = {};
