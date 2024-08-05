@@ -91,7 +91,6 @@ class UpstoxService {
                 };
 
         }
-    // print("Data: $data");
     double open = data['ohlc']!['open'];
     String close = data['ohlc']!['close'].toString();
     double netChange = data['net_change'];
@@ -108,11 +107,12 @@ class UpstoxService {
       defaultQuantity = '15';
     } else if(symbol == "SENSEX"){
       defaultQuantity = '10';
+    } else if(symbol == "BANKEX"){
+      defaultQuantity = '15';
     }
     else{
       defaultQuantity = data['depth']['buy'][0]['quantity'].toString();
     }
-    // print("Open: $open,Close: $close, NetChange: $netChange, Net ChangeWith String: ${netChange.toString()}");
    if((open == 0.0) && (close == "0.0")){
       close = "0";
       return{
@@ -200,18 +200,4 @@ class UpstoxNSEService {
 
 
 
-
-// void main() async {
-//   String symbol = "RELIANCE";
-//   String access_token = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjdjMTJjZTNjOGJhNDE5NWJhMzQ0OWIiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzE5NDA3MzEwLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MTk0MzkyMDB9.36gF6p5cH2BRtW1Gh1GS0u8JULeQ5QzEL_hzSNincFc';
-//   UpstoxService stock_instrument = UpstoxService(JsonService());
-//   String instrument_key = stock_instrument.getInstrumentKey(symbol) as String;
-//   if (instrument_key != 'null'){
-//     var data = await stock_instrument.fetchStockData(instrument_key);
-//     print(data);
-//   } else{
-//     print("please double chack symbol");
-//   }
-  
-// }
 
