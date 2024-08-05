@@ -41,7 +41,7 @@ class UpstoxService {
           if (response.statusCode == 200) {
             var data = jsonDecode(response.body);
             
-            if (categories  == 'NSE_FO'){
+            if ((categories  == 'NSE_FO') || (categories == 'BSE_FO')){
               
               if (data['data']?.isEmpty){
                   return {
@@ -54,7 +54,7 @@ class UpstoxService {
               }
               extractData = formatOptionData(data['data']["${data['data'].keys.toList()[0]}"],symbol.split(" ")[0]);
             } 
-            else if(categories == "NSE_INDEX"){
+            else if((categories == "NSE_INDEX") || (categories == 'BSE_INDEX')){
               extractData = formatIndexData(data['data']["${data['data'].keys.toList()[0]}"]);
             }
             else{
@@ -91,10 +91,16 @@ class UpstoxService {
                 };
 
         }
+    // print("Data: $data");
     double open = data['ohlc']!['open'];
     String close = data['ohlc']!['close'].toString();
     double netChange = data['net_change'];
-    String percentageChange = ((netChange/open)*100).toStringAsFixed(2);
+
+    
+    String percentageChange = "0";
+    if (open != 0.0){
+      percentageChange = ((netChange/open)*100).toStringAsFixed(2);
+    }
     String defaultQuantity = '0';
     if (symbol == "NIFTY"){
       defaultQuantity = '25';
@@ -104,6 +110,16 @@ class UpstoxService {
     }
     else{
       defaultQuantity = data['depth']['buy'][0]['quantity'].toString();
+    }
+    // print("Open: $open,Close: $close, NetChange: $netChange, Net ChangeWith String: ${netChange.toString()}");
+   if((open == 0.0) && (close == "0.0")){
+      close = "0";
+      return{
+      "currentPrice":close,
+      "percentageChange":"$percentageChange%",
+      "amountChange":'0',
+      'defaultQuantity':defaultQuantity,
+    };
     }
     return  {
       "currentPrice":close,
@@ -142,7 +158,16 @@ class UpstoxNSEService {
 
   Future<Map<String, List<String>>> fetchStockSuggestions(String query,int categoryIndex) async {
     Map<String, List<String>> finalData = {};
-    List<String> category = ["NSE_EQ","NSE_FO","NSE_INDEX"];
+    List<String> category = ["NSE_EQ","BSE_EQ","NSE_FO","BSE_FO","NSE_INDEX","BSE_INDEX"];
+    int extraIndex = 1;
+    if (categoryIndex == 1){
+      extraIndex = 3;
+      categoryIndex = 2;
+    } else if(categoryIndex == 2){
+      extraIndex = 5;
+      categoryIndex = 4;
+    }
+
     try {
       final List<dynamic> data = await nseJsonFilePath.loadJsonData();
 
@@ -150,7 +175,7 @@ class UpstoxNSEService {
       final matchingStocks = (data).where((item) {
         return (item['trading_symbol'] as String).toLowerCase().contains(query.toLowerCase());
       }).toList();
-    final nseEqStocks = matchingStocks.where((item) => item['segment'] == category[categoryIndex]).toList();
+    final nseEqStocks = matchingStocks.where((item) => ((item['segment'] == category[categoryIndex]) || (item['segment'] == category[extraIndex]))).toList();
 
     // Extract required details
     final suggestions = nseEqStocks.map((item) => item['trading_symbol'] as String).toList();

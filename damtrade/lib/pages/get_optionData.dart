@@ -37,7 +37,7 @@ class GetOptionData{
         var data = jsonDecode(response);
         String currExpiryDate = data['records']['expiryDates'][0];
         int i = 0;
-        double spotPrice = 0;        
+        double spotPrice = 0; 
         for (var item in data['records']['data']){
           if (item['expiryDate'] == currExpiryDate){
             int strike = item['strikePrice'];
@@ -45,17 +45,17 @@ class GetOptionData{
             // if (item['CE']['lastPrice'] == null){
             //   print("NUlll: ${item}");
             // }
-            double ce_ltp = double.parse(item['CE']['lastPrice'].toString());
-            double pe_ltp = double.parse(item['PE']['lastPrice'].toString());
+            double ce_ltp = double.parse(item.containsKey("CE") && item["CE"].containsKey("lastPrice") ? item["CE"]["lastPrice"].toString() : "0.0");
+            double pe_ltp = double.parse(item.containsKey("PE") && item["PE"].containsKey("lastPrice") ? item["PE"]["lastPrice"].toString() : "0.0");
             List formatDate = currExpiryDate.replaceAll("-", " ").split(" ");
             String symbolCe = "NSE_FO|${optionSymbol} ${strike} CE ${formatDate[0]} ${formatDate[1]} ${formatDate[2]}+NSE+${i}";
             String symbolPe = "NSE_FO|${optionSymbol} ${strike} PE ${formatDate[0]} ${formatDate[1]} ${formatDate[2]}+NSE+${i}";
-            String ce_amountChange = double.parse(item['CE']['change'].toString()).toStringAsFixed(2);
-            String pe_amountChange = double.parse(item['PE']['change'].toString()).toStringAsFixed(2);
-            String ce_percentageChange = double.parse(item['CE']['pChange'].toString()).toStringAsFixed(2)+"%";
-            String pe_percentageChange = double.parse(item['PE']['pChange'].toString()).toStringAsFixed(2)+"%";
-            String pe_changeInOiPercentage = item['PE']['pchangeinOpenInterest'].toStringAsFixed(1);
-            String ce_changeInOiPercentage = item['CE']['pchangeinOpenInterest'].toStringAsFixed(1);
+            String ce_amountChange = double.parse(item.containsKey("CE") && item["CE"].containsKey("change") ? item['CE']['change'].toString(): "0.0").toStringAsFixed(2);
+            String pe_amountChange = double.parse(item.containsKey("PE") && item["PE"].containsKey("change") ? item['PE']['change'].toString(): "0.0").toStringAsFixed(2);
+            String ce_percentageChange = double.parse(item.containsKey("CE") && item["CE"].containsKey("pChange") ? item['CE']['pChange'].toString(): "0.0").toStringAsFixed(2)+"%";
+            String pe_percentageChange = double.parse(item.containsKey("PE") && item["PE"].containsKey("pChange") ? item['PE']['pChange'].toString(): "0.0").toStringAsFixed(2)+"%";
+            String pe_changeInOiPercentage = (item.containsKey("PE") && item["PE"].containsKey("pchangeinOpenInterest")) ? item['PE']['pchangeinOpenInterest'].toStringAsFixed(1): "0.0";
+            String ce_changeInOiPercentage = (item.containsKey("CE") && item["CE"].containsKey("pchangeinOpenInterest")) ? item['CE']['pchangeinOpenInterest'].toStringAsFixed(1): "0.0";
             listOfData['Strike'] = strike;
             listOfData['CE'] = ce_ltp;
             listOfData['PE'] = pe_ltp;
@@ -68,7 +68,11 @@ class GetOptionData{
             listOfData['defaultQuantity'] = defaultQuantity;
             listOfData['ce_oiChange'] = ce_changeInOiPercentage;
             listOfData['pe_oiChange'] = pe_changeInOiPercentage;
-            spotPrice = double.parse(item['CE']['underlyingValue'].toString());
+            if(item.containsKey("CE")){
+                spotPrice = double.parse(item['CE']['underlyingValue'].toString());
+            } else if (item.containsKey("PE")){
+                spotPrice = double.parse(item['PE']['underlyingValue'].toString());
+            } 
             listOfItem.add(listOfData);
             i += 1;
           }
@@ -144,9 +148,9 @@ class GetOptionData{
 // void main(List<String> args) async{
 //    GetOptionData getOptionChain = GetOptionData();
 //    try{
-//       await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty 50","0");
-//       print(getOptionChain.returnOfData);
-//       // await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty Bank", "1");
+//       // await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty 50","0");
+//       // print(getOptionChain.returnOfData);
+//       await getOptionChain.fetchOptionChain("NSE_INDEX|Nifty Bank", "1");
 //       // print(getOptionChain.returnSpotPrice);
 //       // var data = await getOptionChain.fetchOptionData('BANKNIFTY', 'CE', 0,"31-Jul-2024");
 //       // print('Data: $data');
@@ -156,7 +160,7 @@ class GetOptionData{
 //    } catch(e){
 //     print(e);
 //    }
-//    print(getOptionChain.returnOfData);
+//   //  print(getOptionChain.returnOfData['1']);
 //   //  print(getOptionChain.bnf_ul);
 //   //  print(getOptionChain.fnf_ul);
 //   //  print(getOptionChain.nf_ul);

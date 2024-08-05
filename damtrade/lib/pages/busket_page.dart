@@ -309,7 +309,7 @@ class _PortfolioPageState extends State<_PortfolioPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    holding['name'],
+                    "${holding['name']} (${holding['exchange_name']})",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                   ),
                   const SizedBox(height: 8),

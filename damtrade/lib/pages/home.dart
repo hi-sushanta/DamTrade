@@ -606,14 +606,14 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
 
           onBuy: () {
             // Implement Buy action
-          if (instrumentKey.split("|")[0] == "NSE_INDEX"){
+          if ((instrumentKey.split("|")[0] == "NSE_INDEX") || (instrumentKey.split("|")[0] == "BSE_INDEX")){
                 ScaffoldMessenger.of(context).showSnackBar(
 
                   const SnackBar(content: Text('Index Fund Not to buy or sell',style: TextStyle(color:Color.fromARGB(255, 255, 255, 255)),),backgroundColor: Color.fromARGB(255, 247, 62, 11),
                               duration: const Duration(milliseconds: 500),
                               ));
                 Navigator.pop(context);
-            } else if((instrumentKey.split("|")[0] == "NSE_FO") & ((currentPrice == '0') & (amountChange == '0')) & (percentageChange == '0%')) {
+            } else if(((instrumentKey.split("|")[0] == "NSE_FO") || (instrumentKey.split("|")[0] == "BSE_FO")) & ((currentPrice == '0') & (amountChange == '0')) & (percentageChange == '0%')) {
               ScaffoldMessenger.of(context).showSnackBar(
 
                   const SnackBar(content: Text('Selected Options Is Expired.',style: TextStyle(color:Color.fromARGB(255, 255, 255, 255)),),backgroundColor: Color.fromARGB(255, 247, 62, 11),
@@ -644,13 +644,13 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
           }
           },
           onSell: () {
-            if (instrumentKey.split("|")[0] == "NSE_INDEX"){
+            if ((instrumentKey.split("|")[0] == "NSE_INDEX") || (instrumentKey.split("|")[0] == "BSE_INDEX")){
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Index Fund Not to buy or sell',style: TextStyle(color:Color.fromARGB(255, 255, 255, 255)),),backgroundColor: Color.fromARGB(255, 247, 62, 11),
                   duration: const Duration(milliseconds: 500),));
                 Navigator.pop(context);
             } 
-            else if((instrumentKey.split("|")[0] == "NSE_FO") & ((currentPrice == '0') & (amountChange == '0')) & (percentageChange == '0%')) {
+            else if(((instrumentKey.split("|")[0] == "NSE_FO") || (instrumentKey.split("|")[0] == "BSE_FO")) & ((currentPrice == '0') & (amountChange == '0')) & (percentageChange == '0%')) {
               ScaffoldMessenger.of(context).showSnackBar(
 
                   const SnackBar(content: Text('Selected Options Is Expired.',style: TextStyle(color:Color.fromARGB(255, 255, 255, 255)),),backgroundColor: Color.fromARGB(255, 247, 62, 11),
@@ -674,7 +674,7 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
           }
           },
           onSetAlert: () {
-            if((instrumentKey.split("|")[0] == "NSE_FO") & ((currentPrice == '0') & (amountChange == '0')) & (percentageChange == '0%')) {
+            if(((instrumentKey.split("|")[0] == "NSE_FO") || (instrumentKey.split("|")[0] == "BSE_FO")) & ((currentPrice == '0') & (amountChange == '0')) & (percentageChange == '0%')) {
               ScaffoldMessenger.of(context).showSnackBar(
 
                   const SnackBar(content: Text('Selected Options Is Expired.',style: TextStyle(color:Color.fromARGB(255, 255, 255, 255)),),backgroundColor: Color.fromARGB(255, 247, 62, 11),
