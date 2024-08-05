@@ -41,7 +41,7 @@ class UpstoxService {
           if (response.statusCode == 200) {
             var data = jsonDecode(response.body);
             
-            if (categories  == 'NSE_FO'){
+            if ((categories  == 'NSE_FO') || (categories == 'BSE_FO')){
               
               if (data['data']?.isEmpty){
                   return {
@@ -54,7 +54,7 @@ class UpstoxService {
               }
               extractData = formatOptionData(data['data']["${data['data'].keys.toList()[0]}"],symbol.split(" ")[0]);
             } 
-            else if(categories == "NSE_INDEX"){
+            else if((categories == "NSE_INDEX") || (categories == 'BSE_INDEX')){
               extractData = formatIndexData(data['data']["${data['data'].keys.toList()[0]}"]);
             }
             else{
@@ -94,16 +94,33 @@ class UpstoxService {
     double open = data['ohlc']!['open'];
     String close = data['ohlc']!['close'].toString();
     double netChange = data['net_change'];
-    String percentageChange = ((netChange/open)*100).toStringAsFixed(2);
+
+    String percentageChange = "0";
+    if (open != 0.0){
+      percentageChange = ((netChange/open)*100).toStringAsFixed(2);
+    }
     String defaultQuantity = '0';
     if (symbol == "NIFTY"){
       defaultQuantity = '25';
     }
     else if(symbol == "BANKNIFTY"){
       defaultQuantity = '15';
+    } else if(symbol == "SENSEX"){
+      defaultQuantity = '10';
+    } else if(symbol == "BANKEX"){
+      defaultQuantity = '15';
     }
     else{
       defaultQuantity = data['depth']['buy'][0]['quantity'].toString();
+    }
+   if((open == 0.0) && (close == "0.0")){
+      close = "0";
+      return{
+      "currentPrice":close,
+      "percentageChange":"$percentageChange%",
+      "amountChange":'0',
+      'defaultQuantity':defaultQuantity,
+    };
     }
     return  {
       "currentPrice":close,
@@ -142,7 +159,16 @@ class UpstoxNSEService {
 
   Future<Map<String, List<String>>> fetchStockSuggestions(String query,int categoryIndex) async {
     Map<String, List<String>> finalData = {};
-    List<String> category = ["NSE_EQ","NSE_FO","NSE_INDEX"];
+    List<String> category = ["NSE_EQ","BSE_EQ","NSE_FO","BSE_FO","NSE_INDEX","BSE_INDEX"];
+    int extraIndex = 1;
+    if (categoryIndex == 1){
+      extraIndex = 3;
+      categoryIndex = 2;
+    } else if(categoryIndex == 2){
+      extraIndex = 5;
+      categoryIndex = 4;
+    }
+
     try {
       final List<dynamic> data = await nseJsonFilePath.loadJsonData();
 
@@ -150,7 +176,7 @@ class UpstoxNSEService {
       final matchingStocks = (data).where((item) {
         return (item['trading_symbol'] as String).toLowerCase().contains(query.toLowerCase());
       }).toList();
-    final nseEqStocks = matchingStocks.where((item) => item['segment'] == category[categoryIndex]).toList();
+    final nseEqStocks = matchingStocks.where((item) => ((item['segment'] == category[categoryIndex]) || (item['segment'] == category[extraIndex]))).toList();
 
     // Extract required details
     final suggestions = nseEqStocks.map((item) => item['trading_symbol'] as String).toList();
@@ -174,18 +200,4 @@ class UpstoxNSEService {
 
 
 
-
-// void main() async {
-//   String symbol = "RELIANCE";
-//   String access_token = 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUJVOTgiLCJqdGkiOiI2NjdjMTJjZTNjOGJhNDE5NWJhMzQ0OWIiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzE5NDA3MzEwLCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MTk0MzkyMDB9.36gF6p5cH2BRtW1Gh1GS0u8JULeQ5QzEL_hzSNincFc';
-//   UpstoxService stock_instrument = UpstoxService(JsonService());
-//   String instrument_key = stock_instrument.getInstrumentKey(symbol) as String;
-//   if (instrument_key != 'null'){
-//     var data = await stock_instrument.fetchStockData(instrument_key);
-//     print(data);
-//   } else{
-//     print("please double chack symbol");
-//   }
-  
-// }
 
