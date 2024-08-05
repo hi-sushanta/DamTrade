@@ -706,7 +706,7 @@ void addStock(int index,String suggestion,String exchange,String instrumentKey, 
       return Padding(padding: EdgeInsets.all(8.0),
         child: Text(
           value.split(' ').last, // Extract numerical value
-          style:  TextStyle(fontSize: 16.0, color: color)
+          style:  TextStyle(fontSize: 14.0, color: color)
         ));
     }
     else{
