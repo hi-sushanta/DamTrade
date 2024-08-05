@@ -96,7 +96,6 @@ class UpstoxService {
     String close = data['ohlc']!['close'].toString();
     double netChange = data['net_change'];
 
-    
     String percentageChange = "0";
     if (open != 0.0){
       percentageChange = ((netChange/open)*100).toStringAsFixed(2);
@@ -107,6 +106,8 @@ class UpstoxService {
     }
     else if(symbol == "BANKNIFTY"){
       defaultQuantity = '15';
+    } else if(symbol == "SENSEX"){
+      defaultQuantity = '10';
     }
     else{
       defaultQuantity = data['depth']['buy'][0]['quantity'].toString();
