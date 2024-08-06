@@ -160,12 +160,12 @@ class _StockBuyPageState extends State<StockBuyPage> {
       padding: const EdgeInsets.all(16.0),
       child: SwipeButton.expand(
         activeTrackColor: Colors.blue,
-        thumb: Icon(Icons.double_arrow, color: Colors.white),
+        thumb: const Icon(Icons.double_arrow, color: Colors.white),
         activeThumbColor: const Color.fromARGB(255, 119, 251, 124),
         onSwipe: _handleSwipeToBuy,
         borderRadius: BorderRadius.circular(30.0),
         height: 60.0,
-        child: Text(
+        child: const Text(
           "SWIPE TO BUY",
           style: TextStyle(fontSize: 16, color: Colors.white),
         ),
