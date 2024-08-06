@@ -50,7 +50,7 @@ class _FundPageState extends State<FundsPage>{
           ),
         ),
         ),
-        backgroundColor: Colors.lime,
+        backgroundColor: Color.fromARGB(255, 204, 248, 210),
         elevation: 0,
         centerTitle: true,
         
@@ -60,7 +60,7 @@ class _FundPageState extends State<FundsPage>{
         children: [
           Container(
             padding: EdgeInsets.symmetric(vertical: 16),
-            color: Colors.lime, // Light blue color
+            color:  Color.fromARGB(255, 204, 248, 210), // Light blue color
             child: Column(
               children: [
                 Text(
