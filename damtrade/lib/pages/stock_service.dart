@@ -81,7 +81,7 @@ class UpstoxService {
     };
   }
 
-  Map<String, String> formatOptionData(var data, String symbol) {
+ Map<String, String> formatOptionData(var data, String symbol) {
     if (data['ohlc'] == null){
         return {
                   "currentPrice":'0',
@@ -100,15 +100,15 @@ class UpstoxService {
       percentageChange = ((netChange/open)*100).toStringAsFixed(2);
     }
     String defaultQuantity = '0';
-    if (symbol == "NIFTY"){
+    if ((symbol == "NIFTY")||(symbol == "FINNIFTY")||(symbol == "SENSEX50")){
       defaultQuantity = '25';
     }
-    else if(symbol == "BANKNIFTY"){
+    else if((symbol == "BANKNIFTY") || (symbol == "BANKEX")){
       defaultQuantity = '15';
-    } else if(symbol == "SENSEX"){
+    } else if((symbol == "SENSEX") || (symbol == "NIFTYNXT50")){
       defaultQuantity = '10';
-    } else if(symbol == "BANKEX"){
-      defaultQuantity = '15';
+    } else if(symbol == "MIDCPNIFTY"){
+      defaultQuantity = '50';
     }
     else{
       defaultQuantity = data['depth']['buy'][0]['quantity'].toString();
