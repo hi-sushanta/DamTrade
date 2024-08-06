@@ -1,14 +1,17 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:damtrade/main.dart';
 import 'package:damtrade/pages/home.dart';
+import 'package:damtrade/pages/json_service.dart';
+import 'package:damtrade/pages/stock_service.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class StockAlert extends StatefulWidget {
   final String stockName;
   final String exchangeName;
-  final String currentPrice;
+  String currentPrice;
   final String instrumentKey;
   StockAlert({super.key, required this.stockName, required this.exchangeName,required this.instrumentKey, required this.currentPrice});
   
@@ -20,7 +23,9 @@ class _StockAlert extends State<StockAlert>{
   
   final TextEditingController _priceController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-
+  final UpstoxService _upstoxService = UpstoxService(JsonService());
+  Timer? _timer;
+  int i = 0;
   
   @override
   void initState(){
@@ -29,16 +34,38 @@ class _StockAlert extends State<StockAlert>{
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
     });
+    _updateStockData().then((_) => _startFetchingStockData());
 
   }
+void _startFetchingStockData() async {
+    _timer = Timer.periodic(Duration(seconds: 15), (timer) async {
+      if (mounted) {
+        await _updateStockData();
+      } else {
+        timer.cancel();
+      }
+    });
+  }
 
+  Future<void> _updateStockData() async{
+    try{
+      var data = await _upstoxService.fetchStockData(widget.instrumentKey, widget.stockName, widget.instrumentKey.split("|")[0]);
+      setState(() {
+        widget.currentPrice = data['currentPrice']!;
+        i+=1;
+      });
+    } catch(e){
+      debugPrint("Error for Updating stock price $e");
+    }
+  }
   @override
   void dispose(){
-    super.dispose();
     _priceController.dispose();
     _focusNode.dispose();
-
+    _timer?.cancel();
+    super.dispose();
   }
+
   Future<void> _requestNotificationPermissions() async {
     if (Platform.isAndroid && await Permission.notification.isDenied) {
       await Permission.notification.request();
@@ -99,6 +126,10 @@ class _StockAlert extends State<StockAlert>{
                   ),
                   prefixIcon: Icon(Icons.attach_money, color: Colors.green.shade800),
                 ),
+              ),
+              SizedBox(height: 30),
+              Center(
+                child:Text("Current Price: ${widget.currentPrice}")
               ),
               SizedBox(height: 30),
               Center(
