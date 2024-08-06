@@ -100,7 +100,7 @@ class UpstoxService {
       percentageChange = ((netChange/open)*100).toStringAsFixed(2);
     }
     String defaultQuantity = '0';
-    if ((symbol == "NIFTY")||(symbol == "FINNIFTY")){
+    if ((symbol == "NIFTY")||(symbol == "FINNIFTY")||(symbol == "SENSEX50")){
       defaultQuantity = '25';
     }
     else if((symbol == "BANKNIFTY") || (symbol == "BANKEX")){
