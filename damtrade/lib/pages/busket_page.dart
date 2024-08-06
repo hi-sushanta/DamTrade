@@ -192,9 +192,8 @@ class _PortfolioPageState extends State<_PortfolioPage> {
         orderType.add(item["orderType"]);
         i += 1;
       }
-      if (profitLoss > 0.0){
-        profitLossPercentage = (profitLoss / investedAmount) * 100;
-      }
+      
+      profitLossPercentage = (profitLoss / investedAmount) * 100;
     }
 
     return Scaffold(
