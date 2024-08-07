@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:damtrade/pages/get_optionData.dart';
 import 'package:damtrade/pages/json_service.dart';
 import 'package:damtrade/pages/stock_service.dart';
 import 'package:flutter/material.dart';
@@ -8,10 +11,10 @@ import 'package:damtrade/main.dart';
 class StockSellPage extends StatefulWidget {
   final String stockName;
   final String exchangeName;
-  final double livePrice;
+  double livePrice;
   final String instrumentKey;
   final String instrumentType;
-  final String defaultQuantity;
+  String defaultQuantity;
   StockSellPage({
     required this.stockName,
     required this.exchangeName,
@@ -29,6 +32,8 @@ class _StockSellPageState extends State<StockSellPage> {
   final TextEditingController _quantityController = TextEditingController(text: '1');
   final TextEditingController _priceController = TextEditingController();
   final UpstoxService _upstoxService = UpstoxService(JsonService());
+  final GetOptionData getOptionData = GetOptionData();
+  Timer? _timer;
 
   @override
   void initState() {
@@ -36,15 +41,48 @@ class _StockSellPageState extends State<StockSellPage> {
     setQuantity();
     _updatePrice();
     _quantityController.addListener(_updatePrice);
+    _updateStockData().then((_) => _startFetchingStockData());
   }
 
   @override
   void dispose() {
     _quantityController.dispose();
     _priceController.dispose();
+    _timer?.cancel();
     super.dispose();
   }
 
+void _startFetchingStockData() async {
+    _timer = Timer.periodic(Duration(seconds: 15), (timer) async {
+      if (mounted) {
+        await _updateStockData();
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  Future<void> _updateStockData() async{
+    try{
+      Map<String,String>data = {};
+
+      if (widget.instrumentKey.contains('OPTIDX')){
+        String type = widget.stockName.split(" ")[2];
+        List dateList = widget.stockName.split(" ");
+        String date = "${dateList[3]}-${dateList[4]}-${dateList[5]}";
+        data = await getOptionData.fetchOptionData(widget.stockName.split(" ")[0], type, int.parse(widget.instrumentKey.split("+")[1]),date);
+      } else{
+         data = await _upstoxService.fetchStockData(widget.instrumentKey, widget.stockName, widget.instrumentKey.split("|")[0]);
+
+      } 
+      setState(() {
+        widget.livePrice = double.parse(data['currentPrice']!);
+        _updatePrice();
+      });
+    } catch(e){
+      debugPrint("Error for Updating stock price $e");
+    }
+  }
   void _updatePrice() {
     final quantity = int.tryParse(_quantityController.text) ?? 1;
     final totalPrice = widget.livePrice * quantity;

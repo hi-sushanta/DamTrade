@@ -69,7 +69,7 @@ class _OptionChainScreenState extends State<OptionChainScreen> with SingleTicker
         setState(() {
           optionData =  getOptionChain.returnOfData;
           spotPrices = getOptionChain.returnSpotPrice;
-          // setTimer = 15;
+          setTimer = 15;
         });
 
         // Scroll to the spot price after updating the option data

@@ -1,17 +1,19 @@
 import 'package:damtrade/main.dart';
+import 'package:damtrade/pages/get_optionData.dart';
 import 'package:damtrade/pages/home.dart';
 import 'package:damtrade/pages/json_service.dart';
 import 'package:damtrade/pages/stock_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swipe_button/flutter_swipe_button.dart';
+import 'dart:async';
 
 class StockBuyPage extends StatefulWidget {
   final String stockName;
-  final double livePrice;
+  double livePrice;
   final String exchangeName;
   final String instrumentKey;
   final String instrumentType;
-  final String defaultQuantity;
+  String defaultQuantity;
   StockBuyPage({
     required this.stockName,
     required this.exchangeName,
@@ -29,6 +31,9 @@ class _StockBuyPageState extends State<StockBuyPage> {
   final TextEditingController _quantityController = TextEditingController(text: '1');
   final TextEditingController _priceController = TextEditingController();
   final UpstoxService _upstoxService = UpstoxService(JsonService());
+  final GetOptionData getOptionData = GetOptionData();
+
+  Timer? _timer;
 
 
   @override
@@ -37,6 +42,40 @@ class _StockBuyPageState extends State<StockBuyPage> {
     setQuantity();
     _updatePrice();
     _quantityController.addListener(_updatePrice);
+    _updateStockData().then((_) => _startFetchingStockData());
+  }
+  
+  
+void _startFetchingStockData() async {
+    _timer = Timer.periodic(Duration(seconds: 15), (timer) async {
+      if (mounted) {
+        await _updateStockData();
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  Future<void> _updateStockData() async{
+    try{
+      Map<String,String>data = {};
+
+      if (widget.instrumentKey.contains('OPTIDX')){
+        String type = widget.stockName.split(" ")[2];
+        List dateList = widget.stockName.split(" ");
+        String date = "${dateList[3]}-${dateList[4]}-${dateList[5]}";
+        data = await getOptionData.fetchOptionData(widget.stockName.split(" ")[0], type, int.parse(widget.instrumentKey.split("+")[1]),date);
+      } else{
+         data = await _upstoxService.fetchStockData(widget.instrumentKey, widget.stockName, widget.instrumentKey.split("|")[0]);
+
+      }
+      setState(() {
+        widget.livePrice = double.parse(data['currentPrice']!);
+        _updatePrice();
+      });
+    } catch(e){
+      debugPrint("Error for Updating stock price $e");
+    }
   }
 
   void setQuantity() async {      
@@ -49,6 +88,7 @@ class _StockBuyPageState extends State<StockBuyPage> {
   void dispose() {
     _quantityController.dispose();
     _priceController.dispose();
+    _timer!.cancel();
     super.dispose();
   }
 
@@ -160,12 +200,12 @@ class _StockBuyPageState extends State<StockBuyPage> {
       padding: const EdgeInsets.all(16.0),
       child: SwipeButton.expand(
         activeTrackColor: Colors.blue,
-        thumb: Icon(Icons.double_arrow, color: Colors.white),
+        thumb: const Icon(Icons.double_arrow, color: Colors.white),
         activeThumbColor: const Color.fromARGB(255, 119, 251, 124),
         onSwipe: _handleSwipeToBuy,
         borderRadius: BorderRadius.circular(30.0),
         height: 60.0,
-        child: Text(
+        child: const Text(
           "SWIPE TO BUY",
           style: TextStyle(fontSize: 16, color: Colors.white),
         ),
