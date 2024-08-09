@@ -193,7 +193,9 @@ class _PortfolioPageState extends State<_PortfolioPage> {
         i += 1;
       }
       
-      profitLossPercentage = (profitLoss / investedAmount) * 100;
+      if(profitLoss != 0.0){
+          profitLossPercentage = (profitLoss / investedAmount) * 100;
+      }
     }
 
     return Scaffold(
