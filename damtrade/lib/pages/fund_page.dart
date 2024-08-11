@@ -4,6 +4,7 @@ import '../main.dart';
 import 'add_fund.dart';
 import 'dart:async';
 import 'stock_alart_page.dart';
+import 'history_pages.dart';
 
 class FundsPage extends StatefulWidget {
    @override
@@ -152,6 +153,11 @@ class _FundPageState extends State<FundsPage>{
                 builder: (context) => InputPage(),
             ),
           );
+          } else{
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => HistoryOfContent()),
+            );
           }
             },
         style: ElevatedButton.styleFrom(
