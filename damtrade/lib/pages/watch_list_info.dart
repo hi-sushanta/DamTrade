@@ -16,6 +16,7 @@ class WatchlistItem {
   int hindex = 0;
   Map<String, Map<String, List>> data = {};
   Map<String, List<Map<String, dynamic>>> protfollio = {};
+  Map<String, List<Map<String, dynamic>>> history = {};
   Map<String, ValueNotifier<double>> amountHave = {};
   Map<String, ValueNotifier<List<List>>> amountAddHistory = {};
   Map<String, ValueNotifier<List<StockAlertStore>>> stockAlertStore = {};
@@ -26,6 +27,7 @@ class WatchlistItem {
     // addData(uuid!);
     data['data'] = {uuid!:[[],[],[],[]]};
     protfollio[uuid!] = [];
+    history[uuid!] = [];
     amountHave[uuid!] = ValueNotifier<double>(3000000.0);
     amountAddHistory[uuid!] = ValueNotifier<List<List>>([]);
     stockAlertStore[uuid!] = ValueNotifier<List<StockAlertStore>>([]);
@@ -128,6 +130,15 @@ class WatchlistItem {
 
       protfollio[uuid!] = portfolios.map((data) => data as Map<String, dynamic>).toList();
 
+      // Load History 
+      var historyOfUserSnapshot = await _firestore
+          .collection('users')
+          .doc(uuid)
+          .collection('history')
+          .get();
+      var historyOfUsers = historyOfUserSnapshot.docs.map((doc) => doc.data()).toList();
+      history[uuid!] = historyOfUsers.map((data) => data as Map<String,dynamic>).toList();
+
       // Load amountHave
       var amountDoc = await _firestore.collection('users').doc(uuid).get();
       if (amountDoc.exists && amountDoc.data()!.containsKey('amountHave')) {
@@ -176,6 +187,12 @@ class WatchlistItem {
         }).toList();
 
         stockAlertStore[uuid!]!.value = alerts;
+      });
+
+      // Listen to history changes
+      _firestore.collection('users').doc(uuid).collection('history').snapshots().listen((snapshot) {
+        var historyOfUsers = snapshot.docs.map((doc) => doc.data()).toList();
+        history[uuid!] = historyOfUsers.map((data) => data as Map<String, dynamic>).toList();
       });
 
       // Listen to portfolio changes
@@ -234,7 +251,7 @@ class WatchlistItem {
     }
   }
 
-
+  
   Future<void> _saveAlertToFirestore(StockAlertStore alert,String index) async {
     if (uuid != null) {
       var docRef = _firestore
@@ -332,6 +349,20 @@ class WatchlistItem {
     }
   }
 
+  Future<void> _saveHistoryOfUsersToFirestore(int index) async{
+    if(uuid != null){
+      for (var stock in history[uuid]!){
+        var docRef = _firestore
+            .collection('users')
+            .doc(uuid)
+            .collection('history')
+            .doc(index.toString());
+        
+        await docRef.set(stock);
+      }
+    }
+  }
+
   void updateWatchListItem(int newIndex, int index,dynamic moveItem){
         data["data"]![uuid]![index].insert(newIndex, moveItem);
         _saveDataToFirestore();
@@ -340,6 +371,40 @@ class WatchlistItem {
   void removeWatchListItem(int listIndex, int itemIndex){
       data['data']![uuid]![listIndex].removeAt(itemIndex);
       _saveDataToFirestore();
+  }
+  void addHistoryOfUsers(String uuid, String stockName, String exchangeName,String instrumentKey,String instrumentType ,String orderType, int quantity, double avgPrice, double invPrice, double currPrice, double plAmount, double strikePrice) {    
+    
+    int pindex = 0;
+    if (history[uuid]!.isNotEmpty){
+      for (var item in history[uuid]!){
+        if (item['index']> pindex){
+           pindex = item['index'];
+        }
+      }
+      pindex += 1;
+      
+    } else{
+      pindex = 0;
+    }
+
+    var stock = {
+      "name": stockName,
+      'exchange_name':exchangeName,
+      'instrument_key':instrumentKey,
+      'instrument_type':instrumentType,
+      "orderType": orderType,
+      "quantity": quantity,
+      "averagePrice": avgPrice,
+      "investedAmount": invPrice,
+      "currentPrice": currPrice,
+      "plAmount": plAmount,
+      "strikePrice":strikePrice,
+      'index':pindex,
+    };
+
+    history[uuid]!.add(stock);
+    // Save to Firestore
+    _saveHistoryOfUsersToFirestore(pindex);
   }
   void addProtfolio(String uuid, String stockName, String exchangeName,String instrumentKey,String instrumentType ,String orderType, int quantity, double avgPrice, double invPrice, double currPrice, double plAmount, double strikePrice) {    
     
