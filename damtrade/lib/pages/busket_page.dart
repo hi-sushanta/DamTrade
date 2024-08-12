@@ -110,10 +110,15 @@ class _PortfolioPageState extends State<_PortfolioPage> {
     }
   }
 
-  void _handleSwipeAction(int index,double amount, String StockName,int stockIndex) {
+
+  void _handleSwipeAction(String stockName,String exchangeName, String instrumentKey,
+                          String instrumentType,String orderTypes,int quantity,double avgPrice,
+                          double invPrice,double currPrice,double plAmount, double strikePrice,double amount,
+                          int stockIndex,int index) {
     setState(() {
         watchlist!.incrasePrice(userId, amount);
-        watchlist!.removeProtfollio(userId,index,stockIndex);//protfollio[userId]!.removeAt(index);
+        watchlist!.removeProtfollio(userId,index,stockIndex);
+        watchlist!.addHistoryOfUsers(userId, stockName, exchangeName, instrumentKey, instrumentType, orderTypes, quantity, avgPrice, invPrice, currPrice, plAmount, strikePrice);
         orderType = [];
         _updateProfitLoss();
       
@@ -169,9 +174,6 @@ class _PortfolioPageState extends State<_PortfolioPage> {
                profitLoss += ((item['quantity'] * item['currentPrice']) - item['investedAmount']);
 
             }
-            // plAmount.add((item['currentPrice'] * item['quantity']) -
-            //     item["investedAmount"]);
-            // profitLoss += ((item['quantity'] * item['currentPrice']) - item['investedAmount']);
           } else {
             if ((item['instrument_type'] == "PE") || (item['instrument_type'] == 'CE')){
               double plCalculate = ((item['averagePrice'] - item['currentPrice']) * item['quantity']);
@@ -336,7 +338,9 @@ class _PortfolioPageState extends State<_PortfolioPage> {
                       activeThumbColor: orderType[index] == 'Buy'
                           ? Colors.red[300]
                           : Colors.blue[300],
-                      onSwipe: () => _handleSwipeAction(index,(holding['investedAmount']+(holding['plAmount'])), holding['name'],holding['index']),
+                      onSwipe: () => _handleSwipeAction(holding['name'],holding['exchange_name'],holding['instrument_key'],holding['instrument_type'],
+                                                        holding['orderType'],holding['quantity'],holding['averagePrice'],holding['investedAmount'],holding['currentPrice'],
+                                                        holding['plAmount'],holding['strikePrice'],(holding['investedAmount']+(holding['plAmount'])),holding['index'],index),
                       borderRadius: BorderRadius.circular(30.0),
                       height: 60.0,
                       child: Text(

@@ -4,6 +4,7 @@ import '../main.dart';
 import 'add_fund.dart';
 import 'dart:async';
 import 'stock_alart_page.dart';
+import 'history_pages.dart';
 
 class FundsPage extends StatefulWidget {
    @override
@@ -86,8 +87,8 @@ class _FundPageState extends State<FundsPage>{
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _buildActionButton(context,Icons.add, 'Add Money', Color(0xFF70E5A0)),
-                    // SizedBox(width: 16),
-                    // _buildActionButton(Icons.remove, 'Withdraw', Color(0xFFFFAB91)),
+                    SizedBox(width: 16),
+                    _buildActionButton(context,Icons.history, 'History', Color(0xFFFFAB91)),
                   ],
                 ),
               ],
@@ -142,34 +143,42 @@ class _FundPageState extends State<FundsPage>{
   }
 
   Widget _buildActionButton(BuildContext context,IconData icon, String label, Color color) {
+    
     return ElevatedButton(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => InputPage(),
+        onPressed: () {
+          if(label != 'History'){
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => InputPage(),
+            ),
+          );
+          } else{
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => HistoryOfContent()),
+            );
+          }
+            },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.black, // Button background color
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+            side: BorderSide(color: color),
+          ),
+          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 24),
+            SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(color: color),
+            ),
+          ],
         ),
       );
-          },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.black, // Button background color
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-          side: BorderSide(color: color),
-        ),
-        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: color, size: 24),
-          SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(color: color),
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _buildTransactionItem({
