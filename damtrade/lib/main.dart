@@ -57,7 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           // Option 2: Setting Image height to full (with aspect ratio)
           Image.asset(
-            'assets/DamTrade-logo2.png',
+            'assets/DamTrade-logo-banar.png',
             fit: BoxFit.fill,
             height: double.infinity,
             width: double.infinity
