@@ -151,6 +151,7 @@ class HomePageBar extends State<BaseHome> with TickerProviderStateMixin{
       // debugPrint("Hellow It's done");
     _tabController = TabController(length: watchlist!.data['data']![userId]![0].length, vsync: this);
     _requestNotificationPermissions();
+    _updateStockData();
     _updateStockData().then((_) => _startFetchingStockData());
     StockAlertService().initializeNotifications();
     _startCheckingAlerts(); // Start checking alerts
