@@ -53,6 +53,7 @@ dependencies:
   web_socket_channel: ^3.0.0
   protobuf: ^3.1.0
   uuid: ^4.4.0
+  firebase_storage: ^11.7.7
 
 dev_dependencies:
   protoc_plugin: ^21.1.2
@@ -87,6 +88,7 @@ flutter:
     - assets/BullAndBear.jpg
     - assets/NSE.json
     - assets/DamTrade-logo2.png
+    - assets/DamTrade-logo-banar.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
