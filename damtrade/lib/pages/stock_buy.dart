@@ -175,6 +175,9 @@ void _startFetchingStockData() async {
       children: [
         _buildInputField("Quantity", _quantityController, TextInputType.number),
         _buildInputField("Total Price", _priceController, TextInputType.number, enabled: false),
+        Center(
+          child:Text("Current Price: ₹${widget.livePrice}",style:TextStyle(fontWeight: FontWeight.bold)
+          ))
       ],
     );
   }

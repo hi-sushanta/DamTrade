@@ -129,7 +129,7 @@ void _startFetchingStockData() async {
               ),
               SizedBox(height: 30),
               Center(
-                child:Text("Current Price: ${widget.currentPrice}")
+                child:Text("Current Price: ₹${widget.currentPrice}",style:TextStyle(fontWeight: FontWeight.bold))
               ),
               SizedBox(height: 30),
               Center(
