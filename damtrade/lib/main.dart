@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false, // Remove the debug banner
-      home: MyHomePage(), // Replace with your actual class name
+      home: MyHomePage(), 
     );
   }
 }
@@ -40,7 +40,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-    //String? user = FirebaseAuth.instance.currentUser!.email ?? FirebaseAuth.instance.currentUser!.displayName;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
@@ -71,7 +70,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     widthFactor: 50.0,
                     child: ElevatedButton(
                       onPressed: () {
-                    // Handle button 1 press
                      Navigator.push(context,
                     MaterialPageRoute(builder: (context) => AuthGate()));
 
