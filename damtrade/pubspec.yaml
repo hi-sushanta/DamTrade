@@ -60,6 +60,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.4.1
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -67,6 +69,16 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: "assets/DamTrade_splash.png"
+  android: true
+  ios: true
+
+  android_12:
+    color: "#ffffff"
+    image: "assets/DamTrade_splash.png"
 
 flutter_launcher_icons:
   android: true
@@ -89,6 +101,7 @@ flutter:
     - assets/NSE.json
     - assets/DamTrade-logo2.png
     - assets/DamTrade-logo-banar.png
+    - assets/DamTrade_splash.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
